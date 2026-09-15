@@ -35,6 +35,21 @@ export default function HomePage() {
   const [shopCategory, setShopCategory] = useState<string | null>(null);
   const [viewingProduct, setViewingProduct] = useState<Product | null>(null);
 
+  // Authentication state
+  const [authInitialMode, setAuthInitialMode] = useState<'login' | 'register'>('login');
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedUser = localStorage.getItem('falbazar_user');
+        return savedUser ? (JSON.parse(savedUser) as UserProfile) : null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
+
+
   // Keep the SPA navigation inside the browser history so Android/Chrome
   // back returns to the previous website view instead of leaving the site.
   const productsRef = useRef(allProductsList);
@@ -131,20 +146,6 @@ export default function HomePage() {
 
     window.history.pushState(state, '', window.location.href);
   }, [currentView, shopCategory, viewingProduct?.id, authInitialMode]);
-
-  // Authentication state
-  const [authInitialMode, setAuthInitialMode] = useState<'login' | 'register'>('login');
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const savedUser = localStorage.getItem('falbazar_user');
-        return savedUser ? (JSON.parse(savedUser) as UserProfile) : null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
 
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
