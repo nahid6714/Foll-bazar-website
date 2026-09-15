@@ -497,7 +497,8 @@ export default function SiteHeader({
                 className="cart-btn"
                 aria-label="কার্ট"
                 onClick={() => {
-                  if (onOpenCartPage && window.innerWidth < 768) {
+                  if (onOpenCartPage) {
+                    setIsCartOpen(false);
                     onOpenCartPage();
                   } else {
                     setIsCartOpen(!isCartOpen);

@@ -335,20 +335,9 @@ export default function CartOrderView({
     return currentDistrictObj ? currentDistrictObj.upazilas : [];
   }, [currentDistrictObj]);
 
-  // Fallback demo item if cart is empty so user can immediately test the exact UI in Screenshot 4
-  const displayItems: CartItem[] = useMemo(() => {
-    if (cartItems.length > 0) return cartItems;
-    return [
-      {
-        id: 'demo-lichu-pack',
-        title: 'দেশি লিচু ফ্রেশ প্যাক',
-        image: 'https://demo.scaleuper.com/public/uploads/product/1783257937-6a4a5b5148647-bagan-theke-taja-licu.webp',
-        price: 2,
-        oldPrice: 10,
-        quantity: 1,
-      },
-    ];
-  }, [cartItems]);
+  // Only show products that are actually in the user's cart.
+  // An empty cart must never inject a demo/default product into checkout.
+  const displayItems: CartItem[] = cartItems;
 
   // Financial calculations
   const totalItemCount = displayItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -474,6 +463,30 @@ export default function CartOrderView({
       onOrderSuccess(orderData);
     }, 800);
   };
+
+  if (displayItems.length === 0) {
+    return (
+      <div className="cart-order-page-wrapper bg-[#f8fafc] min-h-screen pb-28 pt-3 sm:pt-6">
+        <div className="max-w-2xl mx-auto px-3 sm:px-4">
+          <div className="checkout-card bg-white rounded-2xl border border-gray-200/80 shadow-sm p-8 sm:p-10 text-center">
+            <div className="mx-auto mb-5 w-16 h-16 rounded-full bg-[#fff1f4] flex items-center justify-center">
+              <ShoppingBag className="w-8 h-8 text-[#df2d4d]" />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">আপনার কার্ট খালি</h1>
+            <p className="text-sm sm:text-base text-gray-500 mb-6">অর্ডার করার জন্য আগে আপনার পছন্দের পণ্য কার্টে যোগ করুন।</p>
+            <button
+              type="button"
+              onClick={onNavigateToShop}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#df2d4d] px-6 py-3 text-sm font-semibold text-white hover:bg-[#c82340] transition"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              পণ্য দেখুন ও কার্টে যোগ করুন
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="cart-order-page-wrapper bg-[#f8fafc] min-h-screen pb-28 pt-3 sm:pt-6">

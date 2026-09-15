@@ -6,7 +6,7 @@ interface MobileBottomNavProps {
   cartCount: number;
   onOpenCart: () => void;
   onOpenLogin: () => void;
-  activeTab?: 'home' | 'shop' | 'cart' | 'login' | 'product-detail' | 'auth';
+  activeTab?: 'home' | 'shop' | 'cart' | 'login' | 'product-detail' | 'auth' | 'track';
   onNavigate?: (tab: 'home' | 'shop' | 'cart' | 'auth') => void;
 }
 

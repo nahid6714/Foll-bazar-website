@@ -14,7 +14,7 @@ import FeaturesBar from '@/components/FeaturesBar';
 import SiteFooter from '@/components/SiteFooter';
 import VomOrderModal from '@/components/VomOrderModal';
 import OrderSuccessModal from '@/components/OrderSuccessModal';
-import OrderTrackModal from '@/components/OrderTrackModal';
+import OrderTrackView from '@/components/OrderTrackView';
 import PromoPopup from '@/components/PromoPopup';
 import GccLiveChat from '@/components/GccLiveChat';
 import MobileBottomNav from '@/components/MobileBottomNav';
@@ -35,7 +35,7 @@ import {
 
 export default function HomePage() {
   // Navigation view state: 'home' | 'shop' | 'product-detail' | 'auth' | 'cart'
-  const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart' | 'track'>('home');
   const [shopCategory, setShopCategory] = useState<string | null>(null);
   const [viewingProduct, setViewingProduct] = useState<Product | null>(null);
 
@@ -230,7 +230,7 @@ export default function HomePage() {
           setCurrentView('cart');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        onOpenTrackModal={() => setIsTrackModalOpen(true)}
+        onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onOpenComplaintModal={() => setIsComplaintOpen(true)}
         allProducts={allProductsList}
         onNavigateToHome={() => {
@@ -275,6 +275,13 @@ export default function HomePage() {
             onOrderSuccess={handleOrderSuccess}
             currentUser={currentUser}
           />
+        ) : currentView === 'track' ? (
+          <OrderTrackView
+            onBack={() => {
+              setCurrentView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         ) : currentView === 'auth' ? (
           /* Dedicated Login / Register View matching Screenshots 1, 2, 3 */
           <AuthView
@@ -287,7 +294,7 @@ export default function HomePage() {
               setCurrentView('shop');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            onOpenTrackModal={() => setIsTrackModalOpen(true)}
+            onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           />
         ) : currentView === 'product-detail' && viewingProduct ? (
           /* Dedicated Product Details Page matching Screenshots 1-5 */
@@ -309,6 +316,7 @@ export default function HomePage() {
         ) : currentView === 'shop' ? (
           /* Dedicated Shop Page View with Filtering & Sorting */
           <ShopView
+            key={`shop-${shopCategory || 'all'}`}
             onOrderProduct={handleOrderProduct}
             onAddToCart={handleAddToCart}
             initialCategory={shopCategory}
@@ -387,7 +395,7 @@ export default function HomePage() {
 
       {/* 15. Site Footer */}
       <SiteFooter
-        onOpenTrackModal={() => setIsTrackModalOpen(true)}
+        onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onOpenComplaintModal={() => setIsComplaintOpen(true)}
       />
 
@@ -406,11 +414,11 @@ export default function HomePage() {
       <OrderSuccessModal order={confirmedOrder} onClose={() => setConfirmedOrder(null)} />
 
       {/* 18. Order Track Modal */}
-      <OrderTrackModal isOpen={isTrackModalOpen} onClose={() => setIsTrackModalOpen(false)} />
+      
 
       {/* 19. Live Shopping Assistant & Complaint Widget */}
       <GccLiveChat
-        onOpenTrackModal={() => setIsTrackModalOpen(true)}
+        onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onOrderProduct={handleOrderProduct}
         allProducts={allProductsList}
         externalOpenComplaint={isComplaintOpen}

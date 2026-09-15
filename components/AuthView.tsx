@@ -381,7 +381,7 @@ export default function AuthView({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="auth-btn-primary"
+                className="auth-btn-primary" style={{ backgroundColor: '#df2d4d', color: '#ffffff', borderColor: '#df2d4d' }}
               >
                 {isLoading ? (
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -661,7 +661,7 @@ export default function AuthView({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="auth-btn-primary"
+                className="auth-btn-primary" style={{ backgroundColor: '#df2d4d', color: '#ffffff', borderColor: '#df2d4d' }}
               >
                 {isLoading ? (
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
