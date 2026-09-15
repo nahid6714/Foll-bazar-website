@@ -1,0 +1,512 @@
+{
+  "flashSale": [
+    {
+      "id": "246",
+      "title": "দেশি লিচু ফ্রেশ প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783253731-6a4a4ae39287a-desi-licu-fres-pzak.webp",
+      "oldPrice": "150",
+      "price": "1300",
+      "soldText": "বিক্রি 10 • বাকি 961",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "245",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258119-6a4a5c071f90b-golapi-licu-spesal.webp",
+      "oldPrice": "1200",
+      "price": "1300",
+      "soldText": "বিক্রি 0 • বাকি 970",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "244",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258072-6a4a5bd80bfda-organik-baganer-licu.webp",
+      "oldPrice": "130",
+      "price": "520",
+      "soldText": "বিক্রি 0 • বাকি 974",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "243",
+      "title": "প্রিমিয়াম লাল লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258031-6a4a5bafce02d-primiyam-lal-licu.webp",
+      "oldPrice": "250",
+      "price": "1250",
+      "soldText": "বিক্রি 0 • বাকি 998",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "242",
+      "title": "বাছাই করা বড় লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257985-6a4a5b8132a1d-bagan-theke-taja-licu.webp",
+      "oldPrice": "1250",
+      "price": "1300",
+      "soldText": "বিক্রি 0 • বাকি 974",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "241",
+      "title": "বাগান থেকে তাজা লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257937-6a4a5b5148647-bagan-theke-taja-licu.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": "বিক্রি 0 • বাকি 977",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "240",
+      "title": "লিচু কম্বো ফ্যামিলি বক্স",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257873-6a4a5b1133bdb-licu-kmbo-fzamili-bks.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": "বিক্রি 0 • বাকি 975",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "239",
+      "title": "মিষ্টি রসাল লিচু প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257785-6a4a5ab982dae-mishti-rsal-licu-pzak.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": "বিক্রি 0 • বাকি 977",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "238",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257684-6a4a5a5450d49-golapi-licu-spesal.webp",
+      "oldPrice": "150",
+      "price": "330",
+      "soldText": "বিক্রি 0 • বাকি 978",
+      "progressWidth": "6",
+      "discount": null
+    },
+    {
+      "id": "237",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254773-6a4a4ef5c9a04-organik-baganer-licu.webp",
+      "oldPrice": "320",
+      "price": "1300",
+      "soldText": "বিক্রি 0 • বাকি 979",
+      "progressWidth": "6",
+      "discount": null
+    }
+  ],
+  "hotDeal": [
+    {
+      "id": "246",
+      "title": "দেশি লিচু ফ্রেশ প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783253731-6a4a4ae39287a-desi-licu-fres-pzak.webp",
+      "oldPrice": "150",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "245",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258119-6a4a5c071f90b-golapi-licu-spesal.webp",
+      "oldPrice": "1200",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "244",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258072-6a4a5bd80bfda-organik-baganer-licu.webp",
+      "oldPrice": "130",
+      "price": "520",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "243",
+      "title": "প্রিমিয়াম লাল লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258031-6a4a5bafce02d-primiyam-lal-licu.webp",
+      "oldPrice": "250",
+      "price": "1250",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "242",
+      "title": "বাছাই করা বড় লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257985-6a4a5b8132a1d-bagan-theke-taja-licu.webp",
+      "oldPrice": "1250",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "241",
+      "title": "বাগান থেকে তাজা লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257937-6a4a5b5148647-bagan-theke-taja-licu.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "240",
+      "title": "লিচু কম্বো ফ্যামিলি বক্স",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257873-6a4a5b1133bdb-licu-kmbo-fzamili-bks.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "239",
+      "title": "মিষ্টি রসাল লিচু প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257785-6a4a5ab982dae-mishti-rsal-licu-pzak.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "238",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257684-6a4a5a5450d49-golapi-licu-spesal.webp",
+      "oldPrice": "150",
+      "price": "330",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "237",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254773-6a4a4ef5c9a04-organik-baganer-licu.webp",
+      "oldPrice": "320",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    }
+  ],
+  "dinajpur": [
+    {
+      "id": "246",
+      "title": "দেশি লিচু ফ্রেশ প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783253731-6a4a4ae39287a-desi-licu-fres-pzak.webp",
+      "oldPrice": "150",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "240",
+      "title": "লিচু কম্বো ফ্যামিলি বক্স",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257873-6a4a5b1133bdb-licu-kmbo-fzamili-bks.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "239",
+      "title": "মিষ্টি রসাল লিচু প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257785-6a4a5ab982dae-mishti-rsal-licu-pzak.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "238",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257684-6a4a5a5450d49-golapi-licu-spesal.webp",
+      "oldPrice": "150",
+      "price": "330",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "237",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254773-6a4a4ef5c9a04-organik-baganer-licu.webp",
+      "oldPrice": "320",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "236",
+      "title": "প্রিমিয়াম লাল লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254703-6a4a4eafcb512-primiyam-lal-licu.webp",
+      "oldPrice": "450",
+      "price": "850",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "235",
+      "title": "হোম ডেলিভারি লিচু প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254656-6a4a4e804b3ac-hom-delivari-licu-pzak.webp",
+      "oldPrice": "850",
+      "price": "650",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "234",
+      "title": "বাছাই করা বড় লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254608-6a4a4e50e62d4-bachai-kra-br-licu.webp",
+      "oldPrice": "500",
+      "price": "350",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "233",
+      "title": "দিনাজপুর প্রিমিয়াম লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254529-6a4a4e017f4d2-dinajpur-primiyam-licu.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "232",
+      "title": "দিনাজপুর লিচু বাজেট প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258180-6a4a5c447e08c-dinajpur-licu-bajet-pzak.webp",
+      "oldPrice": "1200",
+      "price": "230",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    }
+  ],
+  "premium": [
+    {
+      "id": "245",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258119-6a4a5c071f90b-golapi-licu-spesal.webp",
+      "oldPrice": "1200",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "244",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258072-6a4a5bd80bfda-organik-baganer-licu.webp",
+      "oldPrice": "130",
+      "price": "520",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "243",
+      "title": "প্রিমিয়াম লাল লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258031-6a4a5bafce02d-primiyam-lal-licu.webp",
+      "oldPrice": "250",
+      "price": "1250",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "242",
+      "title": "বাছাই করা বড় লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257985-6a4a5b8132a1d-bagan-theke-taja-licu.webp",
+      "oldPrice": "1250",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "241",
+      "title": "বাগান থেকে তাজা লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257937-6a4a5b5148647-bagan-theke-taja-licu.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    }
+  ],
+  "allProducts": [
+    {
+      "id": "246",
+      "title": "দেশি লিচু ফ্রেশ প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783253731-6a4a4ae39287a-desi-licu-fres-pzak.webp",
+      "oldPrice": "150",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "245",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258119-6a4a5c071f90b-golapi-licu-spesal.webp",
+      "oldPrice": "1200",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "244",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258072-6a4a5bd80bfda-organik-baganer-licu.webp",
+      "oldPrice": "130",
+      "price": "520",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "243",
+      "title": "প্রিমিয়াম লাল লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258031-6a4a5bafce02d-primiyam-lal-licu.webp",
+      "oldPrice": "250",
+      "price": "1250",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "242",
+      "title": "বাছাই করা বড় লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257985-6a4a5b8132a1d-bagan-theke-taja-licu.webp",
+      "oldPrice": "1250",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "241",
+      "title": "বাগান থেকে তাজা লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257937-6a4a5b5148647-bagan-theke-taja-licu.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "240",
+      "title": "লিচু কম্বো ফ্যামিলি বক্স",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257873-6a4a5b1133bdb-licu-kmbo-fzamili-bks.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "239",
+      "title": "মিষ্টি রসাল লিচু প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257785-6a4a5ab982dae-mishti-rsal-licu-pzak.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "238",
+      "title": "গোলাপি লিচু স্পেশাল",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783257684-6a4a5a5450d49-golapi-licu-spesal.webp",
+      "oldPrice": "150",
+      "price": "330",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "237",
+      "title": "অর্গানিক বাগানের লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254773-6a4a4ef5c9a04-organik-baganer-licu.webp",
+      "oldPrice": "320",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "236",
+      "title": "প্রিমিয়াম লাল লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254703-6a4a4eafcb512-primiyam-lal-licu.webp",
+      "oldPrice": "450",
+      "price": "850",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "235",
+      "title": "হোম ডেলিভারি লিচু প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254656-6a4a4e804b3ac-hom-delivari-licu-pzak.webp",
+      "oldPrice": "850",
+      "price": "650",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "234",
+      "title": "বাছাই করা বড় লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254608-6a4a4e50e62d4-bachai-kra-br-licu.webp",
+      "oldPrice": "500",
+      "price": "350",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "233",
+      "title": "দিনাজপুর প্রিমিয়াম লিচু",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783254529-6a4a4e017f4d2-dinajpur-primiyam-licu.webp",
+      "oldPrice": "1900",
+      "price": "1300",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    },
+    {
+      "id": "232",
+      "title": "দিনাজপুর লিচু বাজেট প্যাক",
+      "image": "https://demo.scaleuper.com/public/uploads/product/1783258180-6a4a5c447e08c-dinajpur-licu-bajet-pzak.webp",
+      "oldPrice": "1200",
+      "price": "230",
+      "soldText": null,
+      "progressWidth": null,
+      "discount": null
+    }
+  ]
+}
