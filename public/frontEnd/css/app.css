@@ -7596,3 +7596,83 @@ html, body {
   .add-cart-modal-root { display:none !important; }
   .profile-icon-circle { width:40px; height:40px; }
 }
+
+
+/* =============================================================
+   2026-09-16 SAFE UI PATCH
+   Desktop checkout = side-by-side; mobile keeps bottom navigation.
+   Cart items expose the same litchi package sizes as product details.
+   ============================================================= */
+.cart-variant-select-wrap { display:flex; align-items:center; gap:6px; margin-top:7px; font-size:11px; color:#6b7280; }
+.cart-variant-select-wrap select { border:1px solid #d1d5db; border-radius:8px; background:#fff; color:#374151; padding:4px 8px; outline:none; font-size:11px; }
+.cart-variant-select-wrap select:focus { border-color:#df2d4d; box-shadow:0 0 0 2px rgba(223,45,77,.10); }
+.add-cart-variant-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:0 0 16px; }
+.add-cart-variant-btn { min-height:44px; border:1px solid #d9dde3; border-radius:11px; background:#fff; color:#374151; font-weight:700; cursor:pointer; }
+.add-cart-variant-btn.is-selected { border-color:#df2d4d; background:#fff1f4; color:#df2d4d; box-shadow:0 0 0 1px #df2d4d inset; }
+
+@media (min-width:768px) {
+  .checkout-main-container { width:min(100% - 32px,1180px)!important; max-width:1180px!important; display:grid!important; grid-template-columns:minmax(0,1.55fr) minmax(340px,.9fr)!important; align-items:start!important; gap:22px!important; }
+  .checkout-main-container > .checkout-summary-card { grid-column:2!important; grid-row:2 / span 2!important; position:sticky!important; top:105px!important; margin-bottom:0!important; }
+  .checkout-main-container > .checkout-delivery-card { grid-column:1!important; grid-row:2!important; }
+  .checkout-main-container > .checkout-payment-card { grid-column:1!important; grid-row:3!important; }
+  .checkout-main-container > .checkout-error-banner { grid-column:1 / -1!important; }
+  .checkout-main-container > div:first-child { grid-column:1 / -1!important; grid-row:1!important; }
+  .checkout-sticky-bar > div { max-width:1180px!important; }
+}
+@media (max-width:767px) {
+  .mobile-bottom-nav { display:flex!important; z-index:99990!important; }
+  .cart-order-page-wrapper { padding-bottom:150px!important; }
+  .cart-order-page-wrapper .checkout-sticky-bar { bottom:calc(64px + env(safe-area-inset-bottom,0px))!important; z-index:99980!important; }
+  .cart-order-page-wrapper .checkout-sticky-bar > div { max-width:none!important; }
+  .checkout-main-container { width:100%!important; max-width:none!important; display:block!important; }
+  .checkout-main-container > .checkout-summary-card,
+  .checkout-main-container > .checkout-delivery-card,
+  .checkout-main-container > .checkout-payment-card { width:100%!important; }
+}
+
+
+/* Complaint page */
+.complaint-page { background:#f8fafc; min-height:70vh; }
+.complaint-hero { background:#df2d4d; color:#fff; text-align:center; padding:34px 16px 48px; }
+.complaint-hero h1 { margin:8px 0 4px; font-size:32px; font-weight:800; }
+.complaint-hero p { margin:0; font-size:14px; opacity:.92; }
+.complaint-container { width:min(100% - 32px,1180px); margin:-1px auto 0; padding:42px 0 70px; display:grid; grid-template-columns:minmax(0,1fr) minmax(420px,.95fr); gap:28px; align-items:start; }
+.complaint-contact-card { background:#df2d4d; color:#fff; border-radius:28px; padding:48px; box-shadow:0 18px 40px rgba(223,45,77,.16); }
+.complaint-contact-icon { width:78px;height:78px;border-radius:18px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;margin-bottom:28px; }
+.complaint-contact-card h2 { font-size:30px; margin:0 0 14px; font-weight:800; }
+.complaint-contact-card>p { font-size:17px; line-height:1.8; opacity:.92; margin:0 0 28px; }
+.complaint-contact-list { display:grid; gap:14px; }
+.complaint-contact-list>a,.complaint-contact-list>div { display:flex;align-items:center;gap:18px;padding:18px 20px;border-radius:18px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none; }
+.complaint-contact-list span { width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex:none; }
+.complaint-contact-list svg { width:25px; }
+.complaint-contact-list small { display:block;opacity:.8;margin-bottom:3px;font-size:13px; }
+.complaint-contact-list strong { display:block;font-size:18px; }
+.complaint-trust-row { border-top:1px solid rgba(255,255,255,.25);margin-top:28px;padding-top:24px;display:flex;flex-direction:column;gap:14px;font-size:16px; }
+.complaint-trust-row span { display:flex;align-items:center;gap:10px; }
+.complaint-trust-row svg { width:23px; }
+.complaint-form-card { background:#fff;border:1px solid #e5e7eb;border-radius:28px;padding:36px;box-shadow:0 10px 30px rgba(15,23,42,.06); }
+.complaint-form-title { display:flex;gap:14px;align-items:flex-start;margin-bottom:28px; }
+.complaint-form-title>svg { width:28px;color:#df2d4d;flex:none;margin-top:2px; }
+.complaint-form-title h2 { margin:0;font-size:27px;color:#111827; }
+.complaint-form-title p { margin:7px 0 0;color:#6b7280;font-size:14px;line-height:1.6; }
+.complaint-form-card form { display:grid;gap:18px; }
+.complaint-form-card label { display:grid;gap:7px;font-weight:700;color:#374151;font-size:14px; }
+.complaint-form-card label b { color:#df2d4d; }
+.complaint-form-card label span { color:#9ca3af;font-weight:500; }
+.complaint-form-card input,.complaint-form-card textarea { width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:13px;padding:13px 15px;font:inherit;color:#111827;outline:none;background:#fff;resize:vertical; }
+.complaint-form-card input:focus,.complaint-form-card textarea:focus { border-color:#df2d4d;box-shadow:0 0 0 3px rgba(223,45,77,.1); }
+.complaint-upload { position:relative;min-height:150px;border:2px dashed #d1d5db;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;color:#9ca3af;overflow:hidden; }
+.complaint-upload>svg { width:42px;color:#c7cbd1; }
+.complaint-upload span { font-weight:500; }
+.complaint-upload strong { color:#df2d4d; }
+.complaint-upload small { display:block;margin-top:6px;font-weight:400; }
+.complaint-upload input { position:absolute;inset:0;opacity:0;cursor:pointer;border:0; }
+.complaint-submit,.complaint-success button { border:0;border-radius:14px;background:#df2d4d;color:#fff;min-height:54px;padding:0 22px;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer; }
+.complaint-submit:hover,.complaint-success button:hover { background:#c82340; }
+.complaint-success { text-align:center;padding:35px 10px;display:grid;justify-items:center;gap:10px;color:#374151; }
+.complaint-success svg { color:#16a34a; }
+.complaint-success h3 { margin:0;font-size:22px;color:#111827; }
+.complaint-success p { margin:0 0 12px;color:#6b7280; }
+@media (max-width:767px) {
+ .complaint-hero{padding:28px 16px 40px}.complaint-hero h1{font-size:25px}.complaint-container{width:100%;padding:0 24px 100px;display:block}.complaint-contact-card{border-radius:0 0 28px 28px;padding:42px 24px}.complaint-contact-card h2{font-size:25px}.complaint-contact-card>p{font-size:15px}.complaint-form-card{margin-top:24px;padding:24px 18px;border-radius:24px}.complaint-form-title h2{font-size:24px}.complaint-contact-list strong{font-size:16px}.complaint-trust-row{font-size:14px}.complaint-upload{min-height:130px}
+}

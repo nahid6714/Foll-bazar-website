@@ -24,6 +24,7 @@ import ProductDetailsView from '@/components/ProductDetailsView';
 import AuthView, { UserProfile } from '@/components/AuthView';
 import CartOrderView from '@/components/CartOrderView';
 import AddToCartModal from '@/components/AddToCartModal';
+import ComplaintView from '@/components/ComplaintView';
 
 import {
   Product,
@@ -36,7 +37,7 @@ import {
 
 export default function HomePage() {
   // Navigation view state: 'home' | 'shop' | 'product-detail' | 'auth' | 'cart'
-  const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart' | 'track'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart' | 'track' | 'complaint'>('home');
   const [shopCategory, setShopCategory] = useState<string | null>(null);
   const [viewingProduct, setViewingProduct] = useState<Product | null>(null);
 
@@ -117,6 +118,10 @@ export default function HomePage() {
             price: itemPrice,
             oldPrice: numericOldPrice,
             quantity: quantity,
+            basePrice: numericPrice,
+            baseOldPrice: numericOldPrice,
+            variant,
+
           },
         ];
       }
@@ -153,6 +158,26 @@ export default function HomePage() {
         })
         .filter(Boolean) as CartItem[]
     );
+  };
+
+  // Change package size/variant from cart without losing the selected product.
+  const handleChangeCartVariant = (id: string, variant: string) => {
+    setCart((prev) => prev.map((item) => {
+      if (item.id !== id) return item;
+      const basePrice = item.basePrice ?? item.price;
+      const baseOldPrice = item.baseOldPrice ?? item.oldPrice ?? null;
+      const multiplier = variant === '৫০০ গ্রাম' ? 0.5 : variant === '২ কেজি' ? 2 : 1;
+      return {
+        ...item,
+        id: item.id.split('-').slice(0, -1).join('-') || item.id,
+        title: `${item.title.replace(/ \(১ কেজি\)| \(২ কেজি\)| \(৫০০ গ্রাম\)/g, '')} (${variant})`,
+        price: Math.round(basePrice * multiplier),
+        oldPrice: baseOldPrice == null ? null : Math.round(baseOldPrice * multiplier),
+        basePrice,
+        baseOldPrice,
+        variant,
+      };
+    }));
   };
 
   // Remove from cart
@@ -245,7 +270,7 @@ export default function HomePage() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-        onOpenComplaintModal={() => setIsComplaintOpen(true)}
+        onOpenComplaintModal={() => { setIsComplaintOpen(false); setCurrentView('complaint'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         allProducts={allProductsList}
         onNavigateToHome={() => {
           setCurrentView('home');
@@ -282,6 +307,7 @@ export default function HomePage() {
             cartItems={cart}
             onUpdateQty={handleUpdateCartQty}
             onRemoveItem={handleRemoveFromCart}
+            onChangeVariant={handleChangeCartVariant}
             onNavigateToShop={() => {
               setCurrentView('shop');
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -291,6 +317,13 @@ export default function HomePage() {
           />
         ) : currentView === 'track' ? (
           <OrderTrackView
+            onBack={() => {
+              setCurrentView('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : currentView === 'complaint' ? (
+          <ComplaintView
             onBack={() => {
               setCurrentView('home');
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -410,7 +443,7 @@ export default function HomePage() {
       {/* 15. Site Footer */}
       <SiteFooter
         onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-        onOpenComplaintModal={() => setIsComplaintOpen(true)}
+        onOpenComplaintModal={() => { setIsComplaintOpen(false); setCurrentView('complaint'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
       />
 
       {/* 16. Quick Order & Checkout Modal */}
@@ -431,7 +464,7 @@ export default function HomePage() {
           setIsAddCartModalOpen(false);
           setAddCartProduct(null);
         }}
-        onConfirm={(product, quantity) => handleAddToCart(product, quantity)}
+        onConfirm={(product, quantity, variant) => handleAddToCart(product, quantity, variant)}
       />
 
       {/* 17. Order Success Confirmation Modal */}
@@ -452,9 +485,8 @@ export default function HomePage() {
       {/* 21. Promo Modal Popup on first load */}
       <PromoPopup />
 
-      {/* 22. Mobile Bottom Navigation (Hidden on Cart/Checkout page for sticky order action) */}
-      {currentView !== 'cart' && (
-        <MobileBottomNav
+      {/* 22. Mobile Bottom Navigation */}
+      <MobileBottomNav
           cartCount={totalCartCount}
           activeTab={currentView}
           onOpenCart={() => {
@@ -466,8 +498,7 @@ export default function HomePage() {
             setCurrentView(tab);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-        />
-      )}
+      />
 
       {/* 23. Toast notification */}
       <CartToast message={toastMessage} />

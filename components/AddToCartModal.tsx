@@ -8,14 +8,16 @@ interface AddToCartModalProps {
   product: Product | null;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (product: Product, quantity: number) => void;
+  onConfirm: (product: Product, quantity: number, variant?: string) => void;
 }
 
 export default function AddToCartModal({ product, isOpen, onClose, onConfirm }: AddToCartModalProps) {
   const [quantity, setQuantity] = useState(1);
+  const variants = ['৫০০ গ্রাম', '১ কেজি', '২ কেজি'];
+  const [variant, setVariant] = useState('১ কেজি');
 
   useEffect(() => {
-    if (isOpen) setQuantity(1);
+    if (isOpen) { setQuantity(1); setVariant('১ কেজি'); }
   }, [isOpen, product?.id]);
 
   useEffect(() => {
@@ -55,6 +57,15 @@ export default function AddToCartModal({ product, isOpen, onClose, onConfirm }: 
           </div>
         </div>
 
+        <div className="add-cart-option-label">প্যাকের সাইজ নির্বাচন করুন</div>
+        <div className="add-cart-variant-row">
+          {variants.map((itemVariant) => (
+            <button key={itemVariant} type="button" onClick={() => setVariant(itemVariant)} className={`add-cart-variant-btn ${variant === itemVariant ? 'is-selected' : ''}`}>
+              {itemVariant}
+            </button>
+          ))}
+        </div>
+
         <div className="add-cart-option-label">কতটি প্যাক নিতে চান?</div>
         <div className="add-cart-quantity-row">
           <span>পরিমাণ</span>
@@ -75,7 +86,7 @@ export default function AddToCartModal({ product, isOpen, onClose, onConfirm }: 
             type="button"
             className="add-cart-modal-confirm"
             onClick={() => {
-              onConfirm(product, quantity);
+              onConfirm(product, quantity, variant);
               onClose();
             }}
           >

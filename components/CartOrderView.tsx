@@ -279,6 +279,7 @@ interface CartOrderViewProps {
   cartItems: CartItem[];
   onUpdateQty: (id: string, delta: number) => void;
   onRemoveItem: (id: string) => void;
+  onChangeVariant: (id: string, variant: string) => void;
   onNavigateToShop: () => void;
   onOrderSuccess: (orderData: OrderSubmittedData) => void;
   currentUser?: { name: string; phone: string; email?: string } | null;
@@ -292,6 +293,7 @@ export default function CartOrderView({
   cartItems,
   onUpdateQty,
   onRemoveItem,
+  onChangeVariant,
   onNavigateToShop,
   onOrderSuccess,
   currentUser,
@@ -490,7 +492,7 @@ export default function CartOrderView({
 
   return (
     <div className="cart-order-page-wrapper bg-[#f8fafc] min-h-screen pb-28 pt-3 sm:pt-6">
-      <div className="max-w-2xl mx-auto px-3 sm:px-4">
+      <div className="checkout-main-container max-w-2xl mx-auto px-3 sm:px-4">
         {/* Top Back / Navigation link */}
         <div className="flex items-center justify-between mb-3 px-1">
           <button
@@ -562,6 +564,14 @@ export default function CartOrderView({
                       </span>
                     )}
                   </div>
+                  <label className="cart-variant-select-wrap">
+                    <span>সাইজ</span>
+                    <select value={item.variant || '১ কেজি'} onChange={(e) => onChangeVariant(item.id, e.target.value)} aria-label="পণ্যের সাইজ">
+                      <option value="৫০০ গ্রাম">৫০০ গ্রাম</option>
+                      <option value="১ কেজি">১ কেজি</option>
+                      <option value="২ কেজি">২ কেজি</option>
+                    </select>
+                  </label>
                 </div>
 
                 {/* Remove button (Top right ✕) */}

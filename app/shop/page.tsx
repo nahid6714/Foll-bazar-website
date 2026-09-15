@@ -45,34 +45,43 @@ export default function ShopPage() {
   } | null>(null);
 
   // Add to cart
-  const handleAddToCart = (product: Product, quantity = 1) => {
+  const handleAddToCart = (product: Product, quantity = 1, variant?: string) => {
     const numericPrice = parseInt(product.price.replace(/[^0-9]/g, ''), 10) || 0;
     const numericOldPrice = product.oldPrice
       ? parseInt(product.oldPrice.replace(/[^0-9]/g, ''), 10)
       : null;
 
+    const multiplier = variant === '৫০০ গ্রাম' ? 0.5 : variant === '২ কেজি' ? 2 : 1;
+    const itemPrice = Math.round(numericPrice * multiplier);
+    const itemOldPrice = numericOldPrice == null ? null : Math.round(numericOldPrice * multiplier);
+    const itemId = variant ? `${product.id}-${variant}` : product.id;
+    const itemTitle = variant ? `${product.title} (${variant})` : product.title;
+
     setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+      const existing = prev.find((item) => item.id === itemId);
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+          item.id === itemId ? { ...item, quantity: item.quantity + quantity } : item
         );
       } else {
         return [
           ...prev,
           {
-            id: product.id,
-            title: product.title,
+            id: itemId,
+            title: itemTitle,
             image: product.image,
-            price: numericPrice,
-            oldPrice: numericOldPrice,
+            price: itemPrice,
+            oldPrice: itemOldPrice,
             quantity,
+            basePrice: numericPrice,
+            baseOldPrice: numericOldPrice,
+            variant,
           },
         ];
       }
     });
 
-    setToastMessage(`"${product.title}" সফলভাবে কার্টে যোগ করা হয়েছে!`);
+    setToastMessage(`"${itemTitle}" সফলভাবে কার্টে যোগ করা হয়েছে!`);
     setTimeout(() => {
       setToastMessage(null);
     }, 2800);
@@ -191,7 +200,7 @@ export default function ShopPage() {
           setIsAddCartModalOpen(false);
           setAddCartProduct(null);
         }}
-        onConfirm={(product, quantity) => handleAddToCart(product, quantity)}
+        onConfirm={(product, quantity, variant) => handleAddToCart(product, quantity, variant)}
       />
 
       {/* 7. Order Success Confirmation Modal */}

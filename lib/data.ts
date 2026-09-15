@@ -18,6 +18,10 @@ export interface CartItem {
   price: number;
   oldPrice?: number | null;
   quantity: number;
+  /** Base 1kg price used to safely recalculate the selected package size. */
+  basePrice?: number;
+  baseOldPrice?: number | null;
+  variant?: string;
 }
 
 export const categories = [
