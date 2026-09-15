@@ -14,13 +14,11 @@ import MobileBottomNav from '@/components/MobileBottomNav';
 import CartToast from '@/components/CartToast';
 import AddToCartModal from '@/components/AddToCartModal';
 
-import {
-  Product,
-  CartItem,
-  allProductsList,
-} from '@/lib/data';
+import { Product, CartItem } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 
 export default function ShopPage() {
+  const { products: allProductsList } = useSiteData();
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);

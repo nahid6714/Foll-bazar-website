@@ -7,6 +7,9 @@ export interface Product {
   soldText?: string | null;
   progressWidth?: string | null;
   discount?: string | null;
+  isFeatured?: boolean;
+  isFlashSale?: boolean;
+  isHotDeal?: boolean;
   category?: string;
   categoryName?: string;
 }

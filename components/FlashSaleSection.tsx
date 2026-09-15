@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { flashSaleProducts, Product } from '@/lib/data';
+import { Product } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 import ProductCard from './ProductCard';
 
 interface FlashSaleSectionProps {
@@ -15,6 +16,7 @@ export default function FlashSaleSection({
   onAddToCart,
   onViewDetails,
 }: FlashSaleSectionProps) {
+  const { flashSaleProducts } = useSiteData();
   // Real countdown timer
   const [timeLeft, setTimeLeft] = useState({
     days: '02',

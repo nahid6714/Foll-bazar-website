@@ -1,14 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { categories } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 
 interface MobileCategoryScrollProps {
   onSelectCategory?: (slug: string) => void;
   activeCategory?: string | null;
 }
 
-export default function MobileCategoryScroll({ onSelectCategory, activeCategory }: MobileCategoryScrollProps) {
+export default function MobileCategoryScroll({ onSelectCategory, activeCategory }: MobileCategoryScrollProps)
+  {
+  const { categories } = useSiteData();
   const [internalSlug, setInternalSlug] = useState<string>(categories[0]?.slug || '');
   const activeSlug = activeCategory !== undefined ? (activeCategory || '') : internalSlug;
 

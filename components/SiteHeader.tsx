@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { categories, CartItem, Product } from '@/lib/data';
+import { CartItem, Product } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 
 interface SiteHeaderProps {
   cart: CartItem[];
@@ -34,6 +35,7 @@ export default function SiteHeader({
   currentUser,
   onOpenCartPage,
 }: SiteHeaderProps) {
+  const { categories } = useSiteData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubCat, setOpenSubCat] = useState<string | null>(null);
   const [openChildCat, setOpenChildCat] = useState<string | null>(null);

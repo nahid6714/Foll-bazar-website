@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { allProductsList, Product } from '@/lib/data';
+import { Product } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 import ProductCard from './ProductCard';
 
 interface AllProductsSectionProps {
@@ -14,7 +15,9 @@ export default function AllProductsSection({
   onOrderProduct,
   onAddToCart,
   onViewDetails,
-}: AllProductsSectionProps) {
+}: AllProductsSectionProps)
+  {
+  const { products: allProductsList } = useSiteData();
   const [displayedCount, setDisplayedCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);

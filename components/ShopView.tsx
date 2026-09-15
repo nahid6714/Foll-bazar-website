@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { allProductsList, categories, Product } from '@/lib/data';
+import { Product } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 import ProductCard from './ProductCard';
 import { SlidersHorizontal, ChevronDown, X, RotateCcw, Check, Sparkles } from 'lucide-react';
 
@@ -45,7 +46,10 @@ export default function ShopView({
   onBackToHome,
   onViewDetails,
   onCategoryChange,
-}: ShopViewProps) {
+}: ShopViewProps)
+  {
+  const { products: allProductsList, categories } = useSiteData();
+
   // Category state
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
 

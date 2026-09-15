@@ -26,16 +26,11 @@ import CartOrderView from '@/components/CartOrderView';
 import AddToCartModal from '@/components/AddToCartModal';
 import ComplaintView from '@/components/ComplaintView';
 
-import {
-  Product,
-  CartItem,
-  promoBanners,
-  dinajpurProducts,
-  premiumProducts,
-  allProductsList,
-} from '@/lib/data';
+import { Product, CartItem, promoBanners } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 
 export default function HomePage() {
+  const { products: allProductsList, dinajpurProducts, premiumProducts } = useSiteData();
   // Navigation view state: 'home' | 'shop' | 'product-detail' | 'auth' | 'cart'
   const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart' | 'track' | 'complaint'>('home');
   const [shopCategory, setShopCategory] = useState<string | null>(null);

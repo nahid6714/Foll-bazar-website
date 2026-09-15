@@ -1,5 +1,6 @@
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
+import { SiteDataProvider } from '@/lib/site-data';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -30,7 +31,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="bn">
       <body className="app-home" suppressHydrationWarning>
-        {children}
+        <SiteDataProvider>{children}</SiteDataProvider>
       </body>
     </html>
   );

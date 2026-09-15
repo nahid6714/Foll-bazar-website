@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Product, allProductsList } from '@/lib/data';
+import { Product } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 import ProductCard from './ProductCard';
 import {
   Star,
@@ -39,7 +40,10 @@ export default function ProductDetailsView({
   onViewProductDetails,
   onAddToCart,
   onOrderProduct,
-}: ProductDetailsViewProps) {
+}: ProductDetailsViewProps)
+  {
+  const { products: allProductsList } = useSiteData();
+
   // Gallery images: main product image + complementary litchi harvest photos + 1 video thumbnail
   const defaultGallery = useMemo(() => {
     return [

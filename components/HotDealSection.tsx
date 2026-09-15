@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { hotDealProducts, Product } from '@/lib/data';
+import { Product } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 import ProductCard from './ProductCard';
 
 interface HotDealSectionProps {
@@ -14,7 +15,9 @@ export default function HotDealSection({
   onOrderProduct,
   onAddToCart,
   onViewDetails,
-}: HotDealSectionProps) {
+}: HotDealSectionProps)
+  {
+  const { hotDealProducts } = useSiteData();
   return (
     <section className="hot-deal-section">
       <div className="container">
