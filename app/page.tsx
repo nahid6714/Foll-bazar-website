@@ -23,6 +23,7 @@ import ShopView from '@/components/ShopView';
 import ProductDetailsView from '@/components/ProductDetailsView';
 import AuthView, { UserProfile } from '@/components/AuthView';
 import CartOrderView from '@/components/CartOrderView';
+import AddToCartModal from '@/components/AddToCartModal';
 
 import {
   Product,
@@ -56,6 +57,8 @@ export default function HomePage() {
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [addCartProduct, setAddCartProduct] = useState<Product | null>(null);
+  const [isAddCartModalOpen, setIsAddCartModalOpen] = useState(false);
 
   // Modal states
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -124,6 +127,17 @@ export default function HomePage() {
     setTimeout(() => {
       setToastMessage(null);
     }, 2800);
+  };
+
+  // Product-card add-to-cart behavior: desktop opens the selection modal;
+  // mobile adds directly so the mobile cart/checkout remains uninterrupted.
+  const handleProductAddToCart = (product: Product) => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      setAddCartProduct(product);
+      setIsAddCartModalOpen(true);
+      return;
+    }
+    handleAddToCart(product);
   };
 
   // Update cart qty
@@ -310,7 +324,7 @@ export default function HomePage() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onViewProductDetails={handleViewProductDetails}
-            onAddToCart={handleAddToCart}
+            onAddToCart={handleProductAddToCart}
             onOrderProduct={handleOrderProduct}
           />
         ) : currentView === 'shop' ? (
@@ -318,7 +332,7 @@ export default function HomePage() {
           <ShopView
             key={`shop-${shopCategory || 'all'}`}
             onOrderProduct={handleOrderProduct}
-            onAddToCart={handleAddToCart}
+            onAddToCart={handleProductAddToCart}
             initialCategory={shopCategory}
             onCategoryChange={(categorySlug) => setShopCategory(categorySlug)}
             onBackToHome={() => {
@@ -337,7 +351,7 @@ export default function HomePage() {
             {/* 5. Flash Sale Section */}
             <FlashSaleSection
               onOrderProduct={handleOrderProduct}
-              onAddToCart={handleAddToCart}
+              onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
@@ -347,7 +361,7 @@ export default function HomePage() {
             {/* 7. Hot Deal Section */}
             <HotDealSection
               onOrderProduct={handleOrderProduct}
-              onAddToCart={handleAddToCart}
+              onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
@@ -360,7 +374,7 @@ export default function HomePage() {
               title="দিনাজপুর লিচু"
               products={dinajpurProducts}
               onOrderProduct={handleOrderProduct}
-              onAddToCart={handleAddToCart}
+              onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
@@ -370,7 +384,7 @@ export default function HomePage() {
               title="প্রিমিয়াম লিচু"
               products={premiumProducts}
               onOrderProduct={handleOrderProduct}
-              onAddToCart={handleAddToCart}
+              onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
@@ -380,7 +394,7 @@ export default function HomePage() {
             {/* 12. সকল প্রোডাক্ট Section */}
             <AllProductsSection
               onOrderProduct={handleOrderProduct}
-              onAddToCart={handleAddToCart}
+              onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
@@ -408,6 +422,16 @@ export default function HomePage() {
         initialQuantity={orderModalQuantity}
         onClose={() => setIsOrderModalOpen(false)}
         onSuccess={handleOrderSuccess}
+      />
+
+      <AddToCartModal
+        isOpen={isAddCartModalOpen}
+        product={addCartProduct}
+        onClose={() => {
+          setIsAddCartModalOpen(false);
+          setAddCartProduct(null);
+        }}
+        onConfirm={(product, quantity) => handleAddToCart(product, quantity)}
       />
 
       {/* 17. Order Success Confirmation Modal */}

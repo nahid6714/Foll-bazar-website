@@ -694,27 +694,12 @@ export default function SiteHeader({
               }}
               style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              {currentUser ? (
-                <span
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    backgroundColor: '#df2d4d',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                  }}
-                  title={currentUser.name}
-                >
-                  {currentUser.name.charAt(0).toUpperCase()}
-                </span>
-              ) : (
-                <i className="far fa-user"></i>
-              )}
+              <span className="profile-icon-circle" title={currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}>
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21a8 8 0 0 1 16 0" />
+                </svg>
+              </span>
             </button>
 
             <button

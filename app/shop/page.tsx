@@ -12,6 +12,7 @@ import OrderTrackModal from '@/components/OrderTrackModal';
 import GccLiveChat from '@/components/GccLiveChat';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import CartToast from '@/components/CartToast';
+import AddToCartModal from '@/components/AddToCartModal';
 
 import {
   Product,
@@ -23,6 +24,8 @@ export default function ShopPage() {
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [addCartProduct, setAddCartProduct] = useState<Product | null>(null);
+  const [isAddCartModalOpen, setIsAddCartModalOpen] = useState(false);
 
   // Modal states
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -42,7 +45,7 @@ export default function ShopPage() {
   } | null>(null);
 
   // Add to cart
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: Product, quantity = 1) => {
     const numericPrice = parseInt(product.price.replace(/[^0-9]/g, ''), 10) || 0;
     const numericOldPrice = product.oldPrice
       ? parseInt(product.oldPrice.replace(/[^0-9]/g, ''), 10)
@@ -52,7 +55,7 @@ export default function ShopPage() {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         );
       } else {
         return [
@@ -63,7 +66,7 @@ export default function ShopPage() {
             image: product.image,
             price: numericPrice,
             oldPrice: numericOldPrice,
-            quantity: 1,
+            quantity,
           },
         ];
       }
@@ -73,6 +76,16 @@ export default function ShopPage() {
     setTimeout(() => {
       setToastMessage(null);
     }, 2800);
+  };
+
+  // Desktop: show the product-selection modal. Mobile: add immediately.
+  const handleProductAddToCart = (product: Product) => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      setAddCartProduct(product);
+      setIsAddCartModalOpen(true);
+      return;
+    }
+    handleAddToCart(product);
   };
 
   // Update cart qty
@@ -148,7 +161,7 @@ export default function ShopPage() {
       <main className="app-main" style={{ flex: 1 }}>
         <ShopView
           onOrderProduct={handleOrderProduct}
-          onAddToCart={handleAddToCart}
+          onAddToCart={handleProductAddToCart}
           onBackToHome={() => { window.location.href = '/'; }}
         />
       </main>
@@ -169,6 +182,16 @@ export default function ShopPage() {
         cartItems={cart}
         onClose={() => setIsOrderModalOpen(false)}
         onSuccess={handleOrderSuccess}
+      />
+
+      <AddToCartModal
+        isOpen={isAddCartModalOpen}
+        product={addCartProduct}
+        onClose={() => {
+          setIsAddCartModalOpen(false);
+          setAddCartProduct(null);
+        }}
+        onConfirm={(product, quantity) => handleAddToCart(product, quantity)}
       />
 
       {/* 7. Order Success Confirmation Modal */}

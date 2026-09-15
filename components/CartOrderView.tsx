@@ -467,7 +467,7 @@ export default function CartOrderView({
   if (displayItems.length === 0) {
     return (
       <div className="cart-order-page-wrapper bg-[#f8fafc] min-h-screen pb-28 pt-3 sm:pt-6">
-        <div className="max-w-2xl mx-auto px-3 sm:px-4">
+        <div className="checkout-main-container max-w-2xl mx-auto px-3 sm:px-4">
           <div className="checkout-card bg-white rounded-2xl border border-gray-200/80 shadow-sm p-8 sm:p-10 text-center">
             <div className="mx-auto mb-5 w-16 h-16 rounded-full bg-[#fff1f4] flex items-center justify-center">
               <ShoppingBag className="w-8 h-8 text-[#df2d4d]" />
@@ -506,7 +506,7 @@ export default function CartOrderView({
 
         {/* Global Error Banner */}
         {errorMessage && (
-          <div className="mb-4 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm rounded-xl flex items-start gap-2 shadow-xs">
+          <div className="checkout-error-banner mb-4 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm rounded-xl flex items-start gap-2 shadow-xs">
             <span className="font-bold text-base leading-none">⚠️</span>
             <div className="flex-1 font-medium">{errorMessage}</div>
           </div>
@@ -515,7 +515,7 @@ export default function CartOrderView({
         {/* ========================================================================= */}
         {/* 1. ORDER SUMMARY CARD - EXACT MATCH SCREENSHOT 4                         */}
         {/* ========================================================================= */}
-        <div className="checkout-card bg-white rounded-2xl border border-gray-200/80 shadow-xs p-4 sm:p-5 mb-4">
+        <div className="checkout-card checkout-summary-card bg-white rounded-2xl border border-gray-200/80 shadow-xs p-4 sm:p-5 mb-4">
           {/* Card Header */}
           <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-3.5">
             <div className="flex items-center gap-2">
@@ -667,7 +667,7 @@ export default function CartOrderView({
         {/* ========================================================================= */}
         {/* 2. DELIVERY INFORMATION CARD - EXACT MATCH SCREENSHOT 3 & 4               */}
         {/* ========================================================================= */}
-        <div className="checkout-card bg-white rounded-2xl border border-gray-200/80 shadow-xs p-4 sm:p-5 mb-4">
+        <div className="checkout-card checkout-delivery-card bg-white rounded-2xl border border-gray-200/80 shadow-xs p-4 sm:p-5 mb-4">
           {/* Step 1 Header */}
           <div className="flex items-center gap-3 mb-4">
             <div className="checkout-step-badge">
@@ -856,7 +856,7 @@ export default function CartOrderView({
         {/* ========================================================================= */}
         {/* 3. PAYMENT METHOD CARD - EXACT MATCH SCREENSHOTS 1 & 2                    */}
         {/* ========================================================================= */}
-        <div className="checkout-card bg-white rounded-2xl border border-gray-200/80 shadow-xs p-4 sm:p-5 mb-6">
+        <div className="checkout-card checkout-payment-card bg-white rounded-2xl border border-gray-200/80 shadow-xs p-4 sm:p-5 mb-6">
           {/* Step 2 Header */}
           <div className="flex items-center gap-3 mb-4">
             <div className="checkout-step-badge">
