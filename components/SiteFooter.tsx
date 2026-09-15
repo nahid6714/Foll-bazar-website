@@ -126,19 +126,6 @@ export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal }: S
             </p>
           )}
 
-          <div className="footer-apps">
-            <span className="footer-apps-title">আমাদের অ্যাপ ডাউনলোড করুন</span>
-            <div className="footer-app-badges">
-              <a href="#" onClick={(e) => e.preventDefault()} className="app-badge">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/uploads/play.svg" alt="Google Play" />
-              </a>
-              <a href="#" onClick={(e) => e.preventDefault()} className="app-badge">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/uploads/app.png" alt="App Store" />
-              </a>
-            </div>
-          </div>
         </div>
       </div>
 
