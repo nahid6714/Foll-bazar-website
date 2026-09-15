@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { allProductsList, categories, Product } from '@/lib/data';
 import ProductCard from './ProductCard';
 import { SlidersHorizontal, ChevronDown, X, RotateCcw, Check, Sparkles } from 'lucide-react';
@@ -11,6 +11,7 @@ interface ShopViewProps {
   initialCategory?: string | null;
   onBackToHome?: () => void;
   onViewDetails?: (product: Product) => void;
+  onCategoryChange?: (categorySlug: string | null) => void;
 }
 
 type SortType = 'latest' | 'oldest' | 'price-desc' | 'price-asc' | 'name-asc' | 'name-desc';
@@ -43,6 +44,7 @@ export default function ShopView({
   initialCategory = null,
   onBackToHome,
   onViewDetails,
+  onCategoryChange,
 }: ShopViewProps) {
   // Category state
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
@@ -60,6 +62,22 @@ export default function ShopView({
   const [onlyDiscount, setOnlyDiscount] = useState<boolean>(false);
   const [tempOnlyDiscount, setTempOnlyDiscount] = useState<boolean>(false);
   const [tempCategory, setTempCategory] = useState<string | null>(initialCategory);
+
+  // Keep the local filter state synchronized with navigation coming from the
+  // header/mobile menu. This prevents the ShopView from retaining an older
+  // category when the parent changes category while the component stays mounted.
+  useEffect(() => {
+    const nextCategory = initialCategory || null;
+    setSelectedCategory(nextCategory);
+    setTempCategory(nextCategory);
+  }, [initialCategory]);
+
+  const selectCategory = useCallback((categorySlug: string | null) => {
+    const nextCategory = categorySlug || null;
+    setSelectedCategory(nextCategory);
+    setTempCategory(nextCategory);
+    onCategoryChange?.(nextCategory);
+  }, [onCategoryChange]);
 
   // Filtered & Sorted products
   const filteredProducts = useMemo(() => {
@@ -126,6 +144,7 @@ export default function ShopView({
   // Apply filters from drawer
   const handleApplyFilter = () => {
     setSelectedCategory(tempCategory);
+    onCategoryChange?.(tempCategory || null);
     setPriceRange(tempPriceRange);
     setOnlyDiscount(tempOnlyDiscount);
     setIsFilterDrawerOpen(false);
@@ -135,6 +154,7 @@ export default function ShopView({
   const handleResetFilters = () => {
     setSelectedCategory(null);
     setTempCategory(null);
+    onCategoryChange?.(null);
     setPriceRange({ min: 0, max: 3000 });
     setTempPriceRange({ min: 0, max: 3000 });
     setOnlyDiscount(false);
@@ -162,7 +182,7 @@ export default function ShopView({
                 ? 'bg-[#df2d4d] text-white border-[#df2d4d] shadow-sm font-semibold'
                 : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
             }`}
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => selectCategory(null)}
           >
             সব পণ্য
           </button>
@@ -177,7 +197,7 @@ export default function ShopView({
                     ? 'bg-[#df2d4d] text-white border-[#df2d4d] shadow-sm font-semibold'
                     : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}
-                onClick={() => setSelectedCategory(isActive ? null : cat.slug)}
+                onClick={() => selectCategory(isActive ? null : cat.slug)}
               >
                 {cat.name}
               </button>
@@ -200,7 +220,7 @@ export default function ShopView({
             <span className="text-gray-300">/</span>
             <button
               type="button"
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => selectCategory(null)}
               className={`hover:text-[#df2d4d] transition-colors ${
                 !selectedCategory ? 'text-gray-900 font-semibold' : 'text-gray-500'
               }`}
@@ -266,7 +286,7 @@ export default function ShopView({
                 {currentCategoryName}
                 <button
                   type="button"
-                  onClick={() => setSelectedCategory(null)}
+                  onClick={() => selectCategory(null)}
                   className="hover:text-red-800 p-0.5"
                   aria-label="ক্যাটাগরি ফিল্টার মুছুন"
                 >

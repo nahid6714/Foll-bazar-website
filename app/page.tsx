@@ -312,6 +312,7 @@ export default function HomePage() {
             onOrderProduct={handleOrderProduct}
             onAddToCart={handleAddToCart}
             initialCategory={shopCategory}
+            onCategoryChange={(categorySlug) => setShopCategory(categorySlug)}
             onBackToHome={() => {
               setCurrentView('home');
               setShopCategory(null);

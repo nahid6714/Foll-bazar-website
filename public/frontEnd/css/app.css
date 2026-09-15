@@ -7433,3 +7433,64 @@ html, body {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     }
 }
+
+/* =============================================================
+   FINAL MOBILE STABILITY + AUTH INPUT FIXES
+   ============================================================= */
+
+/* The auth input itself owns the border. The wrapper is only for positioning
+   the icon/eye button; keeping both borders created the double-box seen on
+   the login page. */
+.auth-input-wrap {
+    border: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.auth-input-wrap:focus-within {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+@media (max-width: 767px) {
+    /* Preserve normal page scrolling/touch panning on phones. */
+    html, body {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    body.app-home,
+    .app-home {
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+        touch-action: auto !important;
+        overscroll-behavior-y: auto !important;
+    }
+
+    /* The drawer itself remains independently scrollable when open. */
+    .app-home .main-nav.open {
+        overflow: hidden !important;
+    }
+
+    .app-home .drawer-links {
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior: contain;
+    }
+
+    .auth-input {
+        display: block !important;
+        border: 1.5px solid #cbd5e1 !important;
+        box-shadow: none !important;
+    }
+
+    .auth-input:focus {
+        border-color: #df2d4d !important;
+        box-shadow: 0 0 0 3px rgba(223, 45, 77, 0.12) !important;
+    }
+}
+
