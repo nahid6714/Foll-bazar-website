@@ -4223,8 +4223,9 @@ button.btn-cart {
 @media (max-width: 767px) {
     .app-home {
         -webkit-tap-highlight-color: transparent;
-        touch-action: manipulation;
-        overscroll-behavior-y: contain;
+        /* Keep normal vertical page scrolling reliable on mobile. */
+        touch-action: pan-y;
+        overscroll-behavior-y: auto;
         overflow-x: hidden;
         background: #f2f2f7;
     }
@@ -4286,6 +4287,8 @@ button.btn-cart {
     .app-home .mobile-category-scroll {
         display: flex;
         gap: 8px;
+        /* Allow both horizontal chip scrolling and vertical page swipes. */
+        touch-action: pan-x pan-y;
         overflow-x: auto;
         padding: 10px 14px;
         background: var(--white);
@@ -5753,6 +5756,7 @@ html, body {
 .mobile-category-scroll {
     display: flex !important;
     align-items: center !important;
+    touch-action: pan-x pan-y !important;
     gap: 8px !important;
     overflow-x: auto !important;
     white-space: nowrap !important;
