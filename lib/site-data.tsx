@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabaseRest } from '@/lib/supabase';
 import {
   Product,
   categories as fallbackCategories,
@@ -73,48 +73,22 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const [productsResult, categoriesResult] = await Promise.all([
-        supabase
-          .from('products')
-          .select(`
-            id,
-            legacy_id,
-            name,
-            slug,
-            image_url,
-            old_price,
-            price,
-            sold_quantity,
-            discount_percent,
-            is_featured,
-            is_flash_sale,
-            is_hot_deal,
-            sort_order,
-            category_id,
-            categories (
-              name,
-              slug
-            )
-          `)
-          .eq('is_active', true)
-          .order('sort_order', { ascending: true }),
+        supabaseRest<any[]>(
+          'products?select=id,legacy_id,name,slug,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc'
+        ),
 
-        supabase
-          .from('categories')
-          .select('id, name, slug, image_url, sort_order')
-          .eq('is_active', true)
-          .order('sort_order', { ascending: true }),
+        supabaseRest<any[]>(
+          'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
+        ),
       ]);
 
-      if (productsResult.error) throw productsResult.error;
-      if (categoriesResult.error) throw categoriesResult.error;
-
-      const liveProducts = (productsResult.data ?? []).map(toProduct);
+      const liveProducts = (productsResult ?? []).map(toProduct);
 
       if (liveProducts.length > 0) {
         setProducts(liveProducts);
       }
 
-      const liveCategories = (categoriesResult.data ?? []).map((row: any) => ({
+      const liveCategories = (categoriesResult ?? []).map((row: any) => ({
         name: String(row.name ?? ''),
         slug: String(row.slug ?? ''),
         icon: String(row.image_url ?? ''),
