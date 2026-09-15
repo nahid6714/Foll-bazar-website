@@ -5,7 +5,6 @@ import { Product, allProductsList } from '@/lib/data';
 import ProductCard from './ProductCard';
 import {
   Star,
-  Check,
   ShoppingCart,
   Zap,
   Share2,
@@ -55,15 +54,10 @@ export default function ProductDetailsView({
   const [isVideoActive, setIsVideoActive] = useState<boolean>(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
 
-  // Variant and Color selection
+  // Package size / variant selection
   const variants = ['১ কেজি', '২ কেজি', '৫০০ গ্রাম'];
   const [selectedVariant, setSelectedVariant] = useState<string>('১ কেজি');
 
-  const colors = [
-    { id: 'pink-red', name: 'গোলাপি স্পেশাল', colorHex: '#e11d48' },
-    { id: 'fresh-red', name: 'প্রাকৃতিক লাল', colorHex: '#dc2626' },
-  ];
-  const [selectedColor, setSelectedColor] = useState<string>('pink-red');
 
   // Quantity selection
   const [quantity, setQuantity] = useState<number>(1);
@@ -357,33 +351,6 @@ export default function ProductDetailsView({
                 {Math.round(((currentOldPrice - currentPrice) / currentOldPrice) * 100)}% ছাড়
               </span>
             )}
-          </div>
-
-          {/* Color Selection (রং বেছে নিন - Screenshot 4) */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-gray-800">রং বেছে নিন</label>
-            <div className="flex items-center gap-3">
-              {colors.map((c) => {
-                const isSelected = selectedColor === c.id;
-                return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => setSelectedColor(c.id)}
-                    className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-                      isSelected
-                        ? 'ring-2 ring-offset-2 ring-[#df2d4d] scale-105 shadow-xs'
-                        : 'opacity-85 hover:opacity-100'
-                    }`}
-                    style={{ backgroundColor: c.colorHex }}
-                    title={c.name}
-                    aria-label={c.name}
-                  >
-                    {isSelected && <Check size={16} className="text-white stroke-[3]" />}
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           {/* Size / Variant Selection (সাইজ / ভ্যারিয়েন্ট নির্বাচন করুন - Screenshot 4) */}
