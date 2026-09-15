@@ -2602,6 +2602,25 @@ button.btn-cart {
         border-radius: 50%;
     }
 
+    /* Keep the mobile account icon visible: the button has no background on mobile. */
+    .app-home .header-actions .profile-btn {
+        display: flex !important;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 50%;
+        background: #fdf0f2 !important;
+        color: #df2d4d !important;
+        flex-shrink: 0;
+    }
+
+    .app-home .header-actions .profile-icon-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #df2d4d;
+    }
+
     .app-home .drawer-links a i {
         display: inline-block;
     }
@@ -4223,9 +4242,8 @@ button.btn-cart {
 @media (max-width: 767px) {
     .app-home {
         -webkit-tap-highlight-color: transparent;
-        /* Keep normal vertical page scrolling reliable on mobile. */
-        touch-action: pan-y;
-        overscroll-behavior-y: auto;
+        touch-action: manipulation;
+        overscroll-behavior-y: contain;
         overflow-x: hidden;
         background: #f2f2f7;
     }
@@ -4287,8 +4305,6 @@ button.btn-cart {
     .app-home .mobile-category-scroll {
         display: flex;
         gap: 8px;
-        /* Allow both horizontal chip scrolling and vertical page swipes. */
-        touch-action: pan-x pan-y;
         overflow-x: auto;
         padding: 10px 14px;
         background: var(--white);
@@ -5756,7 +5772,6 @@ html, body {
 .mobile-category-scroll {
     display: flex !important;
     align-items: center !important;
-    touch-action: pan-x pan-y !important;
     gap: 8px !important;
     overflow-x: auto !important;
     white-space: nowrap !important;
@@ -6231,6 +6246,11 @@ html, body {
     display: flex !important;
     align-items: center !important;
     width: 100% !important;
+    height: 48px !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 .auth-input-icon {

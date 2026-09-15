@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import NoticeTicker from '@/components/NoticeTicker';
 import SiteHeader from '@/components/SiteHeader';
 import MobileCategoryScroll from '@/components/MobileCategoryScroll';
@@ -34,6 +34,103 @@ export default function HomePage() {
   const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart' | 'track' | 'complaint'>('home');
   const [shopCategory, setShopCategory] = useState<string | null>(null);
   const [viewingProduct, setViewingProduct] = useState<Product | null>(null);
+
+  // Keep the SPA navigation inside the browser history so Android/Chrome
+  // back returns to the previous website view instead of leaving the site.
+  const productsRef = useRef(allProductsList);
+  const currentViewRef = useRef(currentView);
+  const historyReadyRef = useRef(false);
+  const skipNextHistoryPushRef = useRef(false);
+  const handlingPopStateRef = useRef(false);
+
+  useEffect(() => {
+    productsRef.current = allProductsList;
+  }, [allProductsList]);
+
+  useEffect(() => {
+    currentViewRef.current = currentView;
+  }, [currentView]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const initialState = {
+      __falBazar: true,
+      view: 'home',
+      shopCategory: null,
+      productId: null,
+      authMode: 'login',
+    };
+
+    if (!historyReadyRef.current) {
+      window.history.replaceState(initialState, '', window.location.href);
+      historyReadyRef.current = true;
+      skipNextHistoryPushRef.current = true;
+    }
+
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+
+      // A state created by this app restores the previous in-site view.
+      if (state?.__falBazar) {
+        handlingPopStateRef.current = true;
+        setShopCategory(state.shopCategory ?? null);
+        setAuthInitialMode(state.authMode === 'register' ? 'register' : 'login');
+
+        if (state.view === 'product-detail' && state.productId) {
+          const product = productsRef.current.find((item) => item.id === String(state.productId));
+          setViewingProduct(product ?? null);
+          setCurrentView(product ? 'product-detail' : 'home');
+        } else {
+          setViewingProduct(null);
+          setCurrentView(state.view || 'home');
+        }
+
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        return;
+      }
+
+      // If the user reaches a history entry from before the app was opened,
+      // keep navigation inside the site when currently viewing another page.
+      if (currentViewRef.current !== 'home') {
+        handlingPopStateRef.current = true;
+        setViewingProduct(null);
+        setShopCategory(null);
+        setCurrentView('home');
+        window.history.pushState(initialState, '', window.location.href);
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+    // The listener intentionally stays attached while this page is mounted.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !historyReadyRef.current) return;
+
+    if (skipNextHistoryPushRef.current) {
+      skipNextHistoryPushRef.current = false;
+      return;
+    }
+
+    if (handlingPopStateRef.current) {
+      handlingPopStateRef.current = false;
+      return;
+    }
+
+    const state = {
+      __falBazar: true,
+      view: currentView,
+      shopCategory,
+      productId: currentView === 'product-detail' ? viewingProduct?.id ?? null : null,
+      authMode: authInitialMode,
+    };
+
+    window.history.pushState(state, '', window.location.href);
+  }, [currentView, shopCategory, viewingProduct?.id, authInitialMode]);
 
   // Authentication state
   const [authInitialMode, setAuthInitialMode] = useState<'login' | 'register'>('login');
@@ -77,7 +174,9 @@ export default function HomePage() {
   const handleViewProductDetails = (product: Product) => {
     setViewingProduct(product);
     setCurrentView('product-detail');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Product details should appear as a fresh page from the very top,
+    // without a visible smooth scroll animation from the previous section.
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
   // Add to cart with support for optional quantity and variant

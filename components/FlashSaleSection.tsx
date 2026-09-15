@@ -59,8 +59,10 @@ export default function FlashSaleSection({
       <div className="container">
         <div className="flash-sale-head">
           <div className="flash-sale-heading">
-            <span className="flash-sale-bolt">
-              <i className="fas fa-bolt" aria-hidden="true"></i>
+            <span className="flash-sale-bolt" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.2 2.5 4.8 13.1c-.5.6-.1 1.5.7 1.5h5.1l-1 6.9c-.1.9 1 1.3 1.5.6l8.1-10.8c.5-.7 0-1.5-.8-1.5h-5l1.3-6.2c.2-.9-.9-1.7-1.5-1.1Z"/>
+              </svg>
             </span>
             <div className="flash-sale-heading-text">
               <h2>FLASH SALE</h2>
