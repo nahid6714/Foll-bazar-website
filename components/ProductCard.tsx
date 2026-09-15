@@ -7,6 +7,7 @@ interface ProductCardProps {
   product: Product;
   onOrderProduct: (product: Product) => void;
   onAddToCart: (product: Product) => void;
+  onViewDetails?: (product: Product) => void;
   showProgress?: boolean;
 }
 
@@ -14,6 +15,7 @@ export default function ProductCard({
   product,
   onOrderProduct,
   onAddToCart,
+  onViewDetails,
   showProgress = false,
 }: ProductCardProps) {
   // Determine discount badge
@@ -29,6 +31,15 @@ export default function ProductCard({
     }
   }
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onViewDetails) {
+      onViewDetails(product);
+    } else {
+      onOrderProduct(product);
+    }
+  };
+
   return (
     <article
       className="product-card vom-card"
@@ -43,10 +54,7 @@ export default function ProductCard({
         )}
         <a
           href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            onOrderProduct(product);
-          }}
+          onClick={handleCardClick}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -62,10 +70,7 @@ export default function ProductCard({
         <h3 className="product-title">
           <a
             href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onOrderProduct(product);
-            }}
+            onClick={handleCardClick}
           >
             {product.title}
           </a>

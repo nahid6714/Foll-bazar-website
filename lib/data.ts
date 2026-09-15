@@ -7,6 +7,8 @@ export interface Product {
   soldText?: string | null;
   progressWidth?: string | null;
   discount?: string | null;
+  category?: string;
+  categoryName?: string;
 }
 
 export interface CartItem {
@@ -366,6 +368,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783253731-6a4a4ae39287a-desi-licu-fres-pzak.webp',
     oldPrice: '150',
     price: '1300',
+    category: 'dinajpur-licu',
+    categoryName: 'দিনাজপুর লিচু',
   },
   {
     id: '247',
@@ -373,6 +377,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783258180-6a4a5c447e08c-dinajpur-licu-bajet-pzak.webp',
     oldPrice: '1400',
     price: '1300',
+    category: 'dinajpur-licu',
+    categoryName: 'দিনাজপুর লিচু',
   },
   {
     id: '245',
@@ -380,6 +386,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783258119-6a4a5c071f90b-golapi-licu-spesal.webp',
     oldPrice: '1200',
     price: '1300',
+    category: 'premium-licu',
+    categoryName: 'প্রিমিয়াম লিচু',
   },
   {
     id: '244',
@@ -387,6 +395,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783258072-6a4a5bd80bfda-organik-baganer-licu.webp',
     oldPrice: '130',
     price: '520',
+    category: 'dinajpur-licu',
+    categoryName: 'দিনাজপুর লিচু',
   },
   {
     id: '243',
@@ -394,6 +404,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783258031-6a4a5bafce02d-primiyam-lal-licu.webp',
     oldPrice: '250',
     price: '1250',
+    category: 'premium-licu',
+    categoryName: 'প্রিমিয়াম লিচু',
   },
   {
     id: '242',
@@ -401,6 +413,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783257985-6a4a5b8132a1d-bagan-theke-taja-licu.webp',
     oldPrice: '1250',
     price: '1300',
+    category: 'bombai-licu',
+    categoryName: 'বোম্বাই লিচু',
   },
   {
     id: '241',
@@ -408,6 +422,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783257937-6a4a5b5148647-bagan-theke-taja-licu.webp',
     oldPrice: '1900',
     price: '1300',
+    category: 'dinajpur-licu',
+    categoryName: 'দিনাজপুর লিচু',
   },
   {
     id: '240',
@@ -415,6 +431,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783257873-6a4a5b1133bdb-licu-kmbo-fzamili-bks.webp',
     oldPrice: '1900',
     price: '1300',
+    category: 'premium-licu',
+    categoryName: 'প্রিমিয়াম লিচু',
   },
   {
     id: '239',
@@ -422,6 +440,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783257785-6a4a5ab982dae-mishti-rsal-licu-pzak.webp',
     oldPrice: '1900',
     price: '1300',
+    category: 'bedana-licu',
+    categoryName: 'বেদানা লিচু',
   },
   {
     id: '238',
@@ -429,6 +449,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783257684-6a4a5a5450d49-golapi-licu-spesal.webp',
     oldPrice: '1500',
     price: '1200',
+    category: 'premium-licu',
+    categoryName: 'প্রিমিয়াম লিচু',
   },
   {
     id: '237',
@@ -436,6 +458,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783254773-6a4a4ef5c9a04-organik-baganer-licu.webp',
     oldPrice: '1500',
     price: '1200',
+    category: 'dinajpur-licu',
+    categoryName: 'দিনাজপুর লিচু',
   },
   {
     id: '236',
@@ -443,6 +467,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783254703-6a4a4eafcb512-primiyam-lal-licu.webp',
     oldPrice: '1500',
     price: '1200',
+    category: 'premium-licu',
+    categoryName: 'প্রিমিয়াম লিচু',
   },
   {
     id: '235',
@@ -450,6 +476,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783254656-6a4a4e804b3ac-hom-delivari-licu-pzak.webp',
     oldPrice: '1500',
     price: '1200',
+    category: 'rajshahi-licu',
+    categoryName: 'রাজশাহী লিচু',
   },
   {
     id: '234',
@@ -457,6 +485,8 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783254608-6a4a4e50e62d4-bachai-kra-br-licu.webp',
     oldPrice: '1500',
     price: '1200',
+    category: 'bombai-licu',
+    categoryName: 'বোম্বাই লিচু',
   },
   {
     id: '233',
@@ -464,6 +494,17 @@ export const allProductsList: Product[] = [
     image: 'https://demo.scaleuper.com/public/uploads/product/1783254529-6a4a4e017f4d2-dinajpur-primiyam-licu.webp',
     oldPrice: '1500',
     price: '1200',
+    category: 'china-3-licu',
+    categoryName: 'চায়না-৩ লিচু',
+  },
+  {
+    id: '232',
+    title: 'রাজশাহী স্পেশাল লিচু বক্স',
+    image: 'https://demo.scaleuper.com/public/uploads/product/1783253731-6a4a4ae39287a-desi-licu-fres-pzak.webp',
+    oldPrice: '1450',
+    price: '1250',
+    category: 'rajshahi-licu',
+    categoryName: 'রাজশাহী লিচু',
   },
 ];
 

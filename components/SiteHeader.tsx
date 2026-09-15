@@ -11,6 +11,12 @@ interface SiteHeaderProps {
   onOpenTrackModal: () => void;
   onOpenComplaintModal: () => void;
   allProducts: Product[];
+  onNavigateToHome?: () => void;
+  onNavigateToShop?: (categorySlug?: string | null) => void;
+  onViewProductDetails?: (product: Product) => void;
+  onOpenAuth?: (mode?: 'login' | 'register') => void;
+  currentUser?: { name: string; phone: string; email?: string } | null;
+  onOpenCartPage?: () => void;
 }
 
 export default function SiteHeader({
@@ -21,6 +27,12 @@ export default function SiteHeader({
   onOpenTrackModal,
   onOpenComplaintModal,
   allProducts,
+  onNavigateToHome,
+  onNavigateToShop,
+  onViewProductDetails,
+  onOpenAuth,
+  currentUser,
+  onOpenCartPage,
 }: SiteHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubCat, setOpenSubCat] = useState<string | null>(null);
@@ -78,7 +90,18 @@ export default function SiteHeader({
             </svg>
           </button>
 
-          <a href="#" className="logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          <a
+            href="#"
+            className="logo"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onNavigateToHome) {
+                onNavigateToHome();
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://demo.scaleuper.com/public/uploads/settings/1783100404-logo.webp"
@@ -133,7 +156,11 @@ export default function SiteHeader({
                       }}
                       onClick={() => {
                         setSearchQuery('');
-                        onOpenOrderModal(item);
+                        if (onViewProductDetails) {
+                          onViewProductDetails(item);
+                        } else {
+                          onOpenOrderModal(item);
+                        }
                       }}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -150,6 +177,11 @@ export default function SiteHeader({
                         type="button"
                         className="btn-order vom-btn"
                         style={{ padding: '6px 12px', fontSize: '12px' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSearchQuery('');
+                          onOpenOrderModal(item);
+                        }}
                       >
                         অর্ডার
                       </button>
@@ -189,7 +221,11 @@ export default function SiteHeader({
                 onClick={(e) => {
                   e.preventDefault();
                   setIsMenuOpen(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  if (onNavigateToHome) {
+                    onNavigateToHome();
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
                 }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -197,6 +233,28 @@ export default function SiteHeader({
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
                 <span>হোম</span>
+              </a>
+
+              <a
+                href="#shop"
+                className="drawer-only"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMenuOpen(false);
+                  if (onNavigateToShop) {
+                    onNavigateToShop(null);
+                  } else {
+                    const el = document.getElementById('allProducts');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+                  <path d="M3 6h18"/>
+                  <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                <span>শপ (ফিল্টারসহ সকল পণ্য)</span>
               </a>
 
               {/* Desktop Categories */}
@@ -208,8 +266,12 @@ export default function SiteHeader({
                       className="nav-cat-link"
                       onClick={(e) => {
                         e.preventDefault();
-                        const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        if (onNavigateToShop) {
+                          onNavigateToShop(cat.slug);
+                        } else {
+                          const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }
                       }}
                     >
                       {cat.name}
@@ -247,8 +309,12 @@ export default function SiteHeader({
                         onClick={(e) => {
                           e.preventDefault();
                           setIsMenuOpen(false);
-                          const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
-                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          if (onNavigateToShop) {
+                            onNavigateToShop(cat.slug);
+                          } else {
+                            const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          }
                         }}
                       >
                         <span>{cat.name}</span>
@@ -395,14 +461,18 @@ export default function SiteHeader({
                 onClick={(e) => {
                   e.preventDefault();
                   setIsMenuOpen(false);
-                  onOpenTrackModal();
+                  if (onOpenAuth) {
+                    onOpenAuth('login');
+                  } else {
+                    onOpenTrackModal();
+                  }
                 }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
                   <circle cx="12" cy="7" r="4"/>
                 </svg>
-                <span>আমার অ্যাকাউন্ট</span>
+                <span>{currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট (লগইন)'}</span>
               </a>
             </div>
           </nav>
@@ -426,7 +496,13 @@ export default function SiteHeader({
                 type="button"
                 className="cart-btn"
                 aria-label="কার্ট"
-                onClick={() => setIsCartOpen(!isCartOpen)}
+                onClick={() => {
+                  if (onOpenCartPage && window.innerWidth < 768) {
+                    onOpenCartPage();
+                  } else {
+                    setIsCartOpen(!isCartOpen);
+                  }
+                }}
               >
                 <span className="cart-amount">{cartTotal}৳</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
@@ -575,7 +651,11 @@ export default function SiteHeader({
                         className="mini-cart-view"
                         onClick={() => {
                           setIsCartOpen(false);
-                          onOpenOrderModal(null);
+                          if (onOpenCartPage) {
+                            onOpenCartPage();
+                          } else {
+                            onOpenOrderModal(null);
+                          }
                         }}
                       >
                         কার্ট দেখুন
@@ -585,7 +665,11 @@ export default function SiteHeader({
                         className="mini-cart-checkout"
                         onClick={() => {
                           setIsCartOpen(false);
-                          onOpenOrderModal(null);
+                          if (onOpenCartPage) {
+                            onOpenCartPage();
+                          } else {
+                            onOpenOrderModal(null);
+                          }
                         }}
                       >
                         অর্ডার করুন
@@ -600,10 +684,36 @@ export default function SiteHeader({
               type="button"
               className="profile-btn"
               aria-label="অ্যাকাউন্ট"
-              onClick={() => alert('স্বাগতম! ফল বাজার-এ আপনি অতিথি হিসেবে সরাসরি অর্ডার করতে পারেন।')}
-              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              onClick={() => {
+                if (onOpenAuth) {
+                  onOpenAuth('login');
+                } else {
+                  alert('স্বাগতম! ফল বাজার-এ আপনি অতিথি হিসেবে সরাসরি অর্ডার করতে পারেন।');
+                }
+              }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <i className="far fa-user"></i>
+              {currentUser ? (
+                <span
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    backgroundColor: '#df2d4d',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                  }}
+                  title={currentUser.name}
+                >
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </span>
+              ) : (
+                <i className="far fa-user"></i>
+              )}
             </button>
 
             <button

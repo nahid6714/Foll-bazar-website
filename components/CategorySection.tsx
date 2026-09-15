@@ -10,6 +10,7 @@ interface CategorySectionProps {
   products: Product[];
   onOrderProduct: (product: Product) => void;
   onAddToCart: (product: Product) => void;
+  onViewDetails?: (product: Product) => void;
 }
 
 export default function CategorySection({
@@ -18,6 +19,7 @@ export default function CategorySection({
   products,
   onOrderProduct,
   onAddToCart,
+  onViewDetails,
 }: CategorySectionProps) {
   return (
     <section className="product-section" id={id}>
@@ -45,6 +47,7 @@ export default function CategorySection({
               product={p}
               onOrderProduct={onOrderProduct}
               onAddToCart={onAddToCart}
+              onViewDetails={onViewDetails}
               showProgress={false}
             />
           ))}

@@ -7,9 +7,14 @@ import ProductCard from './ProductCard';
 interface AllProductsSectionProps {
   onOrderProduct: (product: Product) => void;
   onAddToCart: (product: Product) => void;
+  onViewDetails?: (product: Product) => void;
 }
 
-export default function AllProductsSection({ onOrderProduct, onAddToCart }: AllProductsSectionProps) {
+export default function AllProductsSection({
+  onOrderProduct,
+  onAddToCart,
+  onViewDetails,
+}: AllProductsSectionProps) {
   const [displayedCount, setDisplayedCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -44,6 +49,7 @@ export default function AllProductsSection({ onOrderProduct, onAddToCart }: AllP
               product={p}
               onOrderProduct={onOrderProduct}
               onAddToCart={onAddToCart}
+              onViewDetails={onViewDetails}
               showProgress={false}
             />
           ))}

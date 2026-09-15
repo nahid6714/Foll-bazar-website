@@ -5,10 +5,12 @@ import { categories } from '@/lib/data';
 
 interface MobileCategoryScrollProps {
   onSelectCategory?: (slug: string) => void;
+  activeCategory?: string | null;
 }
 
-export default function MobileCategoryScroll({ onSelectCategory }: MobileCategoryScrollProps) {
-  const [activeSlug, setActiveSlug] = useState<string>(categories[0]?.slug || '');
+export default function MobileCategoryScroll({ onSelectCategory, activeCategory }: MobileCategoryScrollProps) {
+  const [internalSlug, setInternalSlug] = useState<string>(categories[0]?.slug || '');
+  const activeSlug = activeCategory !== undefined ? (activeCategory || '') : internalSlug;
 
   return (
     <nav className="mobile-category-scroll" aria-label="ক্যাটাগরি">
@@ -21,7 +23,7 @@ export default function MobileCategoryScroll({ onSelectCategory }: MobileCategor
             className={`category-chip ${isActive ? 'active' : ''}`}
             onClick={(e) => {
               e.preventDefault();
-              setActiveSlug(cat.slug);
+              setInternalSlug(cat.slug);
               if (onSelectCategory) {
                 onSelectCategory(cat.slug);
               }

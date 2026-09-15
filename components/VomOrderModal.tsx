@@ -7,6 +7,7 @@ interface VomOrderModalProps {
   isOpen: boolean;
   product: Product | null;
   cartItems: CartItem[];
+  initialQuantity?: number;
   onClose: () => void;
   onSuccess: (orderData: {
     orderId: string;
@@ -25,10 +26,11 @@ export default function VomOrderModal({
   isOpen,
   product,
   cartItems,
+  initialQuantity = 1,
   onClose,
   onSuccess,
 }: VomOrderModalProps) {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(initialQuantity);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');

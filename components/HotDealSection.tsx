@@ -7,9 +7,14 @@ import ProductCard from './ProductCard';
 interface HotDealSectionProps {
   onOrderProduct: (product: Product) => void;
   onAddToCart: (product: Product) => void;
+  onViewDetails?: (product: Product) => void;
 }
 
-export default function HotDealSection({ onOrderProduct, onAddToCart }: HotDealSectionProps) {
+export default function HotDealSection({
+  onOrderProduct,
+  onAddToCart,
+  onViewDetails,
+}: HotDealSectionProps) {
   return (
     <section className="hot-deal-section">
       <div className="container">
@@ -43,6 +48,7 @@ export default function HotDealSection({ onOrderProduct, onAddToCart }: HotDealS
               product={p}
               onOrderProduct={onOrderProduct}
               onAddToCart={onAddToCart}
+              onViewDetails={onViewDetails}
               showProgress={true}
             />
           ))}

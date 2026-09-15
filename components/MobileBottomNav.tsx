@@ -6,10 +6,19 @@ interface MobileBottomNavProps {
   cartCount: number;
   onOpenCart: () => void;
   onOpenLogin: () => void;
+  activeTab?: 'home' | 'shop' | 'cart' | 'login' | 'product-detail' | 'auth';
+  onNavigate?: (tab: 'home' | 'shop' | 'cart' | 'auth') => void;
 }
 
-export default function MobileBottomNav({ cartCount, onOpenCart, onOpenLogin }: MobileBottomNavProps) {
-  const [activeTab, setActiveTab] = useState<'home' | 'shop' | 'cart' | 'login'>('home');
+export default function MobileBottomNav({
+  cartCount,
+  onOpenCart,
+  onOpenLogin,
+  activeTab: controlledActiveTab,
+  onNavigate,
+}: MobileBottomNavProps) {
+  const [internalTab, setInternalTab] = useState<'home' | 'shop' | 'cart' | 'login'>('home');
+  const activeTab = controlledActiveTab ?? internalTab;
 
   return (
     <nav className="mobile-bottom-nav" aria-label="মোবাইল নেভিগেশন">
@@ -18,8 +27,12 @@ export default function MobileBottomNav({ cartCount, onOpenCart, onOpenLogin }: 
         className={activeTab === 'home' ? 'active' : ''}
         onClick={(e) => {
           e.preventDefault();
-          setActiveTab('home');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setInternalTab('home');
+          if (onNavigate) {
+            onNavigate('home');
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
         }}
       >
         <svg
@@ -40,13 +53,17 @@ export default function MobileBottomNav({ cartCount, onOpenCart, onOpenLogin }: 
       </a>
 
       <a
-        href="#allProducts"
+        href="#shop"
         className={activeTab === 'shop' ? 'active' : ''}
         onClick={(e) => {
           e.preventDefault();
-          setActiveTab('shop');
-          const el = document.getElementById('allProducts');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          setInternalTab('shop');
+          if (onNavigate) {
+            onNavigate('shop');
+          } else {
+            const el = document.getElementById('allProducts');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }
         }}
       >
         <svg
@@ -73,7 +90,7 @@ export default function MobileBottomNav({ cartCount, onOpenCart, onOpenLogin }: 
         className={activeTab === 'cart' ? 'active' : ''}
         onClick={(e) => {
           e.preventDefault();
-          setActiveTab('cart');
+          setInternalTab('cart');
           onOpenCart();
         }}
       >
@@ -98,10 +115,10 @@ export default function MobileBottomNav({ cartCount, onOpenCart, onOpenLogin }: 
 
       <a
         href="#login"
-        className={activeTab === 'login' ? 'active' : ''}
+        className={activeTab === 'login' || activeTab === 'auth' ? 'active' : ''}
         onClick={(e) => {
           e.preventDefault();
-          setActiveTab('login');
+          setInternalTab('login');
           onOpenLogin();
         }}
       >

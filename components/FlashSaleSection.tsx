@@ -7,9 +7,14 @@ import ProductCard from './ProductCard';
 interface FlashSaleSectionProps {
   onOrderProduct: (product: Product) => void;
   onAddToCart: (product: Product) => void;
+  onViewDetails?: (product: Product) => void;
 }
 
-export default function FlashSaleSection({ onOrderProduct, onAddToCart }: FlashSaleSectionProps) {
+export default function FlashSaleSection({
+  onOrderProduct,
+  onAddToCart,
+  onViewDetails,
+}: FlashSaleSectionProps) {
   // Real countdown timer
   const [timeLeft, setTimeLeft] = useState({
     days: '02',
@@ -109,6 +114,7 @@ export default function FlashSaleSection({ onOrderProduct, onAddToCart }: FlashS
               product={p}
               onOrderProduct={onOrderProduct}
               onAddToCart={onAddToCart}
+              onViewDetails={onViewDetails}
               showProgress={true}
             />
           ))}
