@@ -154,7 +154,7 @@ export default function ShopView({
     <div className="shop-page-wrapper bg-[#f8f9fa] min-h-[85vh] pb-16 pt-2">
       <div className="container mx-auto px-3 sm:px-4 max-w-6xl">
         {/* Category Horizontal Scroll Pills */}
-        <div className="mb-3 pt-1 overflow-x-auto scrollbar-none flex items-center gap-2 py-1.5 -mx-1 px-1">
+        <div className="shop-category-pills mb-3 pt-1 overflow-x-auto scrollbar-none flex items-center gap-2 py-1.5 -mx-1 px-1">
           <button
             type="button"
             className={`whitespace-nowrap px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all shadow-xs border ${
