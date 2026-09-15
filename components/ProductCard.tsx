@@ -31,8 +31,7 @@ export default function ProductCard({
     }
   }
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleCardClick = () => {
     if (onViewDetails) {
       onViewDetails(product);
     } else {
@@ -42,7 +41,16 @@ export default function ProductCard({
 
   return (
     <article
-      className="product-card vom-card"
+      className="product-card vom-card cursor-pointer"
+      onClick={handleCardClick}
+      role="link"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
       data-id={product.id}
       data-title={product.title}
       data-price={product.price}
@@ -52,10 +60,7 @@ export default function ProductCard({
         {discountText && (
           <span className="deal-badge">{discountText}</span>
         )}
-        <a
-          href="#"
-          onClick={handleCardClick}
-        >
+        <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={product.image}
@@ -63,17 +68,12 @@ export default function ProductCard({
             className="product-thumb-img"
             loading="lazy"
           />
-        </a>
+        </div>
       </div>
 
       <div className="product-body">
         <h3 className="product-title">
-          <a
-            href="#"
-            onClick={handleCardClick}
-          >
-            {product.title}
-          </a>
+          <span>{product.title}</span>
         </h3>
 
         <p className="product-price">
@@ -114,7 +114,10 @@ export default function ProductCard({
             data-title={product.title}
             data-price={product.price}
             data-image={product.image}
-            onClick={() => onOrderProduct(product)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOrderProduct(product);
+            }}
           >
             <span>অর্ডার করুন</span>
           </button>
@@ -124,7 +127,10 @@ export default function ProductCard({
             className="btn-cart add-to-cart"
             aria-label="কার্টে যোগ করুন"
             data-id={product.id}
-            onClick={() => onAddToCart(product)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToCart(product);
+            }}
           >
             <svg
               width="18"

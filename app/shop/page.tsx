@@ -9,7 +9,6 @@ import SiteFooter from '@/components/SiteFooter';
 import VomOrderModal from '@/components/VomOrderModal';
 import OrderSuccessModal from '@/components/OrderSuccessModal';
 import OrderTrackModal from '@/components/OrderTrackModal';
-import GccLiveChat from '@/components/GccLiveChat';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import CartToast from '@/components/CartToast';
 import AddToCartModal from '@/components/AddToCartModal';
@@ -207,14 +206,6 @@ export default function ShopPage() {
       {/* 8. Order Track Modal */}
       <OrderTrackModal isOpen={isTrackModalOpen} onClose={() => setIsTrackModalOpen(false)} />
 
-      {/* 9. Live Shopping Assistant & Complaint Widget */}
-      <GccLiveChat
-        onOpenTrackModal={() => setIsTrackModalOpen(true)}
-        onOrderProduct={handleOrderProduct}
-        allProducts={allProductsList}
-        externalOpenComplaint={isComplaintOpen}
-        onCloseComplaint={() => setIsComplaintOpen(false)}
-      />
 
       {/* 10. Mobile Bottom Navigation */}
       <MobileBottomNav

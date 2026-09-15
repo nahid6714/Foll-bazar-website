@@ -16,7 +16,6 @@ import VomOrderModal from '@/components/VomOrderModal';
 import OrderSuccessModal from '@/components/OrderSuccessModal';
 import OrderTrackView from '@/components/OrderTrackView';
 import PromoPopup from '@/components/PromoPopup';
-import GccLiveChat from '@/components/GccLiveChat';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import CartToast from '@/components/CartToast';
 import ShopView from '@/components/ShopView';
@@ -466,16 +465,7 @@ export default function HomePage() {
       <OrderSuccessModal order={confirmedOrder} onClose={() => setConfirmedOrder(null)} />
 
       {/* 18. Order Track Modal */}
-      
 
-      {/* 19. Live Shopping Assistant & Complaint Widget */}
-      <GccLiveChat
-        onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-        onOrderProduct={handleOrderProduct}
-        allProducts={allProductsList}
-        externalOpenComplaint={isComplaintOpen}
-        onCloseComplaint={() => setIsComplaintOpen(false)}
-      />
 
       {/* 21. Promo Modal Popup on first load */}
       <PromoPopup />
