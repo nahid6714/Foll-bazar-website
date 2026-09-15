@@ -146,9 +146,7 @@ export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal }: S
         <div className="container footer-bottom-inner">
           <p className="copyright-text">
             &copy; 2026 সকল কিছুর স্বত্বাধিকারঃ <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>ফল বাজার</a> | সকল কারিগরি সহযোগিতায়{' '}
-            <a href="https://scaleuper.com" target="_blank" rel="noopener noreferrer">
-              Scale Uper
-            </a>
+            <span>Scale Uper</span>
           </p>
         </div>
       </div>

@@ -82,12 +82,9 @@ export default function PromoPopup() {
           &times;
         </button>
 
-        <a
-          href="https://scaleuper.com"
+        <div
           className="promo-popup-img-wrap"
           id="promoPopupImageLink"
-          target="_blank"
-          rel="noopener noreferrer"
           style={{ display: 'block' }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -96,7 +93,7 @@ export default function PromoPopup() {
             alt="Promo Popup"
             style={{ width: '100%', height: 'auto', display: 'block' }}
           />
-        </a>
+        </div>
       </div>
     </div>
   );
