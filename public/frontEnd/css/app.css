@@ -6961,3 +6961,40 @@ html, body {
         touch-action: pan-y;
     }
 }
+
+/* Mobile form width refinement: reduce only outer side whitespace around form controls. */
+@media (max-width: 767px) {
+    .cart-order-page-wrapper {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+    }
+
+    .checkout-main-container {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+
+    .checkout-card {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .auth-page-container {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .auth-card {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .auth-main {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .auth-shell {
+        width: 100% !important;
+    }
+}

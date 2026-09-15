@@ -473,3 +473,21 @@
         padding: 12px;
     }
 }
+
+/* Mobile forms: use more of the available screen width without changing controls. */
+@media (max-width: 767px) {
+    .complaint-hero,
+    .complaint-container {
+        width: calc(100% - 16px);
+    }
+
+    .complaint-form-card {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .complaint-contact-card {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
