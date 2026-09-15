@@ -6914,3 +6914,50 @@ html, body {
 
 /* --- Style Tag 4 --- */
 
+
+/* =============================================================
+   FINAL MOBILE SCROLL / TOUCH STABILITY FIX
+   Keep the page vertically scrollable while allowing horizontal
+   carousels/category rows to own horizontal gestures.
+   ============================================================= */
+@media (max-width: 767px) {
+    html,
+    body,
+    body.app-home {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+        overscroll-behavior-y: auto !important;
+        touch-action: pan-y !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Do not let the fixed mobile navigation participate in page scrolling. */
+    .app-home .mobile-bottom-nav {
+        touch-action: manipulation !important;
+    }
+
+    /* Horizontal rows explicitly accept horizontal swipes without stealing
+       normal vertical page scrolling. */
+    .app-home .mobile-category-scroll,
+    .app-home .shop-category-pills,
+    .app-home .gallery-thumbs.is-scrollable,
+    .app-home .thumbnails-row {
+        touch-action: pan-x !important;
+        overscroll-behavior-x: contain !important;
+        overscroll-behavior-y: auto !important;
+    }
+
+    /* Avoid scroll snapping fighting an interrupted finger swipe. */
+    .app-home .gallery-thumbs.is-scrollable {
+        scroll-snap-type: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Keep normal page content responsive to vertical touch gestures. */
+    .app-home .site-wrapper,
+    .app-home main,
+    .app-home section {
+        touch-action: pan-y;
+    }
+}
