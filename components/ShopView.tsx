@@ -70,11 +70,13 @@ export default function ShopView({
   // Keep the local filter state synchronized with navigation coming from the
   // header/mobile menu. This prevents the ShopView from retaining an older
   // category when the parent changes category while the component stays mounted.
-  useEffect(() => {
+  const [prevInitialCategory, setPrevInitialCategory] = useState<string | null>(initialCategory);
+  if (initialCategory !== prevInitialCategory) {
+    setPrevInitialCategory(initialCategory);
     const nextCategory = initialCategory || null;
     setSelectedCategory(nextCategory);
     setTempCategory(nextCategory);
-  }, [initialCategory]);
+  }
 
   const selectCategory = useCallback((categorySlug: string | null) => {
     const nextCategory = categorySlug || null;
@@ -106,7 +108,7 @@ export default function ShopView({
 
       return true;
     });
-  }, [selectedCategory, priceRange, onlyDiscount]);
+  }, [allProductsList, selectedCategory, priceRange, onlyDiscount]);
 
   // Sort products
   const sortedProducts = useMemo(() => {

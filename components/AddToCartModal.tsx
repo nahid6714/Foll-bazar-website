@@ -15,10 +15,16 @@ export default function AddToCartModal({ product, isOpen, onClose, onConfirm }: 
   const [quantity, setQuantity] = useState(1);
   const variants = ['৫০০ গ্রাম', '১ কেজি', '২ কেজি'];
   const [variant, setVariant] = useState('১ কেজি');
+  const [prevTrackedKey, setPrevTrackedKey] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isOpen) { setQuantity(1); setVariant('১ কেজি'); }
-  }, [isOpen, product?.id]);
+  const currentKey = isOpen ? (product?.id ?? 'open') : null;
+  if (currentKey !== prevTrackedKey) {
+    setPrevTrackedKey(currentKey);
+    if (isOpen) {
+      setQuantity(1);
+      setVariant('১ কেজি');
+    }
+  }
 
   useEffect(() => {
     if (!isOpen) return;

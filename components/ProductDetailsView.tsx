@@ -108,7 +108,7 @@ export default function ProductDetailsView({
   // Related products (exclude current product)
   const relatedProducts = useMemo(() => {
     return allProductsList.filter((p) => p.id !== product.id).slice(0, 4);
-  }, [product.id]);
+  }, [allProductsList, product.id]);
 
   // Handle Review Submission
   const handleSubmitReview = (e: React.FormEvent) => {

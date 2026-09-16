@@ -491,7 +491,7 @@ export default function CartOrderView({
   }
 
   return (
-    <div className="cart-order-page-wrapper bg-[#f8fafc] min-h-screen pb-28 pt-3 sm:pt-6">
+    <div className="cart-order-page-wrapper bg-[#f8fafc] min-h-screen pb-52 sm:pb-36 pt-3 sm:pt-6">
       <div className="checkout-main-container max-w-2xl mx-auto px-3 sm:px-4">
         {/* Top Back / Navigation link */}
         <div className="flex items-center justify-between mb-3 px-1">
@@ -522,9 +522,9 @@ export default function CartOrderView({
           <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-3.5">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-[#df2d4d]" />
-              <h2 className="text-base sm:text-lg font-bold text-gray-900">অর্ডার সামারি</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">অর্ডার সামারি</h2>
             </div>
-            <span className="bg-[#df2d4d] text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+            <span className="bg-[#df2d4d] text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-full">
               {totalItemCount} টি পণ্য
             </span>
           </div>
@@ -551,15 +551,15 @@ export default function CartOrderView({
 
                 {/* Info */}
                 <div className="flex-1 min-w-0 pr-6">
-                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 line-clamp-2">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 line-clamp-2">
                     {item.title}
                   </h3>
                   <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-sm sm:text-base font-bold text-gray-900">
+                    <span className="text-base sm:text-lg font-extrabold text-gray-900">
                       ৳ {item.price}
                     </span>
                     {item.oldPrice && item.oldPrice > item.price && (
-                      <span className="text-xs text-gray-400 line-through">
+                      <span className="text-xs sm:text-sm text-gray-400 line-through">
                         ৳ {item.oldPrice}
                       </span>
                     )}
@@ -589,18 +589,18 @@ export default function CartOrderView({
                   <button
                     type="button"
                     onClick={() => onUpdateQty(item.id, -1)}
-                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold active:bg-gray-200 transition text-sm"
+                    className="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold active:bg-gray-200 transition text-sm sm:text-base"
                     aria-label="কমান"
                   >
                     -
                   </button>
-                  <span className="px-2.5 sm:px-3 text-xs sm:text-sm font-bold text-gray-900 select-none">
+                  <span className="px-2.5 sm:px-3 text-sm sm:text-base font-bold text-gray-900 select-none">
                     {item.quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => onUpdateQty(item.id, 1)}
-                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold active:bg-gray-200 transition text-sm"
+                    className="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold active:bg-gray-200 transition text-sm sm:text-base"
                     aria-label="বাড়ান"
                   >
                     +
@@ -621,11 +621,11 @@ export default function CartOrderView({
                 value={couponInput}
                 onChange={(e) => setCouponInput(e.target.value)}
                 placeholder="কুপন কোড লিখুন..."
-                className="w-full px-3 py-2.5 text-xs sm:text-sm text-gray-800 placeholder-gray-400 outline-none bg-transparent"
+                className="w-full px-3.5 py-2.5 sm:py-3 text-sm sm:text-base text-gray-800 placeholder-gray-400 outline-none bg-transparent"
               />
               <button
                 type="submit"
-                className="bg-[#df2d4d] hover:bg-[#c82340] text-white font-bold text-xs sm:text-sm px-5 transition shrink-0"
+                className="bg-[#df2d4d] hover:bg-[#c82340] text-white font-bold text-sm sm:text-base px-6 transition shrink-0"
               >
                 প্রয়োগ
               </button>
@@ -633,7 +633,7 @@ export default function CartOrderView({
 
             {couponFeedback && (
               <p
-                className={`mt-2 text-xs font-medium ${
+                className={`mt-2 text-xs sm:text-sm font-medium ${
                   couponFeedback.type === 'success' ? 'text-emerald-600' : 'text-red-500'
                 }`}
               >
@@ -643,7 +643,7 @@ export default function CartOrderView({
           </form>
 
           {/* Pricing Breakdown (Screenshot 4) */}
-          <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 text-xs sm:text-sm">
+          <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 text-sm sm:text-base">
             <div className="flex justify-between items-center text-gray-600">
               <span>সাবটোটাল</span>
               <span className="font-semibold text-gray-900">৳ {subtotal.toFixed(2)}</span>
@@ -666,8 +666,8 @@ export default function CartOrderView({
             <div className="border-b border-dashed border-gray-200 pt-1"></div>
 
             <div className="flex justify-between items-center pt-1">
-              <span className="text-base sm:text-lg font-bold text-gray-900">সর্বমোট</span>
-              <span className="text-base sm:text-lg font-extrabold text-[#df2d4d]">
+              <span className="text-base sm:text-xl font-bold text-gray-900">সর্বমোট</span>
+              <span className="text-xl sm:text-2xl font-black text-[#df2d4d]">
                 ৳ {grandTotal.toFixed(2)}
               </span>
             </div>
@@ -684,10 +684,10 @@ export default function CartOrderView({
               1
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
                 ডেলিভারি তথ্য
               </h2>
-              <p className="text-xs text-gray-500">আপনার নাম, ফোন ও ঠিকানা দিন</p>
+              <p className="text-xs sm:text-sm text-gray-500">আপনার নাম, ফোন ও ঠিকানা দিন</p>
             </div>
           </div>
 
@@ -873,10 +873,10 @@ export default function CartOrderView({
               2
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
                 পেমেন্ট পদ্ধতি
               </h2>
-              <p className="text-xs text-gray-500">আপনার পছন্দের পেমেন্ট বেছে নিন</p>
+              <p className="text-xs sm:text-sm text-gray-500">আপনার পছন্দের পেমেন্ট বেছে নিন</p>
             </div>
           </div>
 
@@ -884,7 +884,7 @@ export default function CartOrderView({
             {/* 1. ক্যাশ অন ডেলিভারি (Screenshot 2) */}
             <div
               onClick={() => setSelectedPayment('cash')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
                 selectedPayment === 'cash'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -895,10 +895,10 @@ export default function CartOrderView({
                   <Truck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                  <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                     ক্যাশ অন ডেলিভারি
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                     পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন
                   </p>
                 </div>
@@ -923,7 +923,7 @@ export default function CartOrderView({
             {/* 2. bKash পেমেন্ট (Screenshot 2) */}
             <div
               onClick={() => setSelectedPayment('bkash_gateway')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
                 selectedPayment === 'bkash_gateway'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -940,10 +940,10 @@ export default function CartOrderView({
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                  <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                     bKash পেমেন্ট
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                     বিকাশ অ্যাপ বা গেটওয়ে দ্বারা পেমেন্ট
                   </p>
                 </div>
@@ -967,7 +967,7 @@ export default function CartOrderView({
             {/* 3. ShurjoPay (Screenshot 1 & 2) */}
             <div
               onClick={() => setSelectedPayment('shurjopay')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
                 selectedPayment === 'shurjopay'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -980,10 +980,10 @@ export default function CartOrderView({
                   </span>
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                  <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                     ShurjoPay
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                     Card / Mobile Banking
                   </p>
                 </div>
@@ -1007,7 +1007,7 @@ export default function CartOrderView({
             {/* 4. UddoktaPay (Screenshot 1) */}
             <div
               onClick={() => setSelectedPayment('uddoktapay')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
                 selectedPayment === 'uddoktapay'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -1018,10 +1018,10 @@ export default function CartOrderView({
                   <span className="text-[9px] font-bold text-[#0084ff]">UddoktaPay</span>
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                  <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                     UddoktaPay
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                     মোবাইল ব্যাংকিং পেমেন্ট গেটওয়ে
                   </p>
                 </div>
@@ -1045,7 +1045,7 @@ export default function CartOrderView({
             {/* 5. aamarPay (Screenshot 1) */}
             <div
               onClick={() => setSelectedPayment('aamarpay')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between select-none ${
                 selectedPayment === 'aamarpay'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -1056,10 +1056,10 @@ export default function CartOrderView({
                   <span className="text-[10px] font-bold text-[#f15a24]">aamarPay</span>
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                  <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                     aamarPay
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                     কার্ড ও মোবাইল ব্যাংকিং
                   </p>
                 </div>
@@ -1083,7 +1083,7 @@ export default function CartOrderView({
             {/* 6. Manual Bkash (Screenshot 1) */}
             <div
               onClick={() => setSelectedPayment('bkash_manual')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer select-none ${
                 selectedPayment === 'bkash_manual'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -1095,10 +1095,10 @@ export default function CartOrderView({
                     <span className="text-xs font-bold text-[#e2136e]">বিকাশ</span>
                   </div>
                   <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                    <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                       Manual Bkash
                     </h4>
-                    <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                       ম্যানুয়াল — ট্রানজেকশন আইডি দিয়ে কনফার্ম করুন
                     </p>
                   </div>
@@ -1121,11 +1121,11 @@ export default function CartOrderView({
 
               {/* Expandable info when selected */}
               {selectedPayment === 'bkash_manual' && (
-                <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-xs text-gray-700 animate-fadeIn">
-                  <div className="p-2.5 rounded-xl bg-pink-50/70 border border-pink-100 flex items-center justify-between">
+                <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-xs sm:text-sm text-gray-700 animate-fadeIn">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-pink-50/70 border border-pink-100 flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-gray-500 block">বিকাশ পার্সোনাল নম্বর (Send Money):</span>
-                      <span className="font-bold text-sm text-[#e2136e]">01711-223344</span>
+                      <span className="text-xs text-gray-500 block">বিকাশ পার্সোনাল নম্বর (Send Money):</span>
+                      <span className="font-bold text-base text-[#e2136e]">01711-223344</span>
                     </div>
                     <button
                       type="button"
@@ -1133,9 +1133,9 @@ export default function CartOrderView({
                         e.stopPropagation();
                         handleCopyNumber('01711223344');
                       }}
-                      className="px-2.5 py-1 bg-white border border-pink-200 text-[#e2136e] rounded-lg text-xs font-semibold flex items-center gap-1 hover:bg-pink-50"
+                      className="px-3 py-1.5 bg-white border border-pink-200 text-[#e2136e] rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1 hover:bg-pink-50"
                     >
-                      {copiedNumber ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                      {copiedNumber ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedNumber ? 'কপি হয়েছে' : 'কপি'}</span>
                     </button>
                   </div>
@@ -1146,14 +1146,14 @@ export default function CartOrderView({
                       value={manualPhone}
                       onChange={(e) => setManualPhone(e.target.value)}
                       placeholder="আপনার বিকাশ নম্বর"
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
                     />
                     <input
                       type="text"
                       value={manualTrxId}
                       onChange={(e) => setManualTrxId(e.target.value)}
                       placeholder="ট্রানজেকশন আইডি (TrxID) যেমন: 8J19K2LL9"
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
                     />
                   </div>
                 </div>
@@ -1163,7 +1163,7 @@ export default function CartOrderView({
             {/* 7. Nagad Manual (Screenshot 1) */}
             <div
               onClick={() => setSelectedPayment('nagad_manual')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer select-none ${
                 selectedPayment === 'nagad_manual'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -1175,10 +1175,10 @@ export default function CartOrderView({
                     <span className="text-xs font-bold text-[#f7931e]">নগদ</span>
                   </div>
                   <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                    <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                       Nagad Manual
                     </h4>
-                    <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                       ম্যানুয়াল — ট্রানজেকশন আইডি দিয়ে কনফার্ম করুন
                     </p>
                   </div>
@@ -1200,11 +1200,11 @@ export default function CartOrderView({
               </div>
 
               {selectedPayment === 'nagad_manual' && (
-                <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-xs text-gray-700 animate-fadeIn">
-                  <div className="p-2.5 rounded-xl bg-orange-50/70 border border-orange-100 flex items-center justify-between">
+                <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-xs sm:text-sm text-gray-700 animate-fadeIn">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-orange-50/70 border border-orange-100 flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-gray-500 block">নগদ পার্সোনাল নম্বর (Send Money):</span>
-                      <span className="font-bold text-sm text-[#f7931e]">01822-334455</span>
+                      <span className="text-xs text-gray-500 block">নগদ পার্সোনাল নম্বর (Send Money):</span>
+                      <span className="font-bold text-base text-[#f7931e]">01822-334455</span>
                     </div>
                     <button
                       type="button"
@@ -1212,9 +1212,9 @@ export default function CartOrderView({
                         e.stopPropagation();
                         handleCopyNumber('01822334455');
                       }}
-                      className="px-2.5 py-1 bg-white border border-orange-200 text-[#f7931e] rounded-lg text-xs font-semibold flex items-center gap-1 hover:bg-orange-50"
+                      className="px-3 py-1.5 bg-white border border-orange-200 text-[#f7931e] rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1 hover:bg-orange-50"
                     >
-                      {copiedNumber ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                      {copiedNumber ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedNumber ? 'কপি হয়েছে' : 'কপি'}</span>
                     </button>
                   </div>
@@ -1225,14 +1225,14 @@ export default function CartOrderView({
                       value={manualPhone}
                       onChange={(e) => setManualPhone(e.target.value)}
                       placeholder="আপনার নগদ নম্বর"
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
                     />
                     <input
                       type="text"
                       value={manualTrxId}
                       onChange={(e) => setManualTrxId(e.target.value)}
                       placeholder="ট্রানজেকশন আইডি (TrxID) যেমন: 7HG82LL1P"
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
                     />
                   </div>
                 </div>
@@ -1242,7 +1242,7 @@ export default function CartOrderView({
             {/* 8. Rocket Personal (Screenshot 1) */}
             <div
               onClick={() => setSelectedPayment('rocket_manual')}
-              className={`p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer select-none ${
                 selectedPayment === 'rocket_manual'
                   ? 'border-[#df2d4d] ring-1 ring-[#df2d4d] bg-white shadow-xs'
                   : 'border-gray-200 bg-white hover:border-gray-300'
@@ -1254,10 +1254,10 @@ export default function CartOrderView({
                     <span className="text-[10px] font-bold text-[#8c3494]">রকেট</span>
                   </div>
                   <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">
+                    <h4 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
                       Rocket Personal
                     </h4>
-                    <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+                    <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                       ম্যানুয়াল — ট্রানজেকশন আইডি দিয়ে কনফার্ম করুন
                     </p>
                   </div>
@@ -1279,11 +1279,11 @@ export default function CartOrderView({
               </div>
 
               {selectedPayment === 'rocket_manual' && (
-                <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-xs text-gray-700 animate-fadeIn">
-                  <div className="p-2.5 rounded-xl bg-purple-50/70 border border-purple-100 flex items-center justify-between">
+                <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-xs sm:text-sm text-gray-700 animate-fadeIn">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-purple-50/70 border border-purple-100 flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-gray-500 block">রকেট নম্বর (১২ ডিজিট):</span>
-                      <span className="font-bold text-sm text-[#8c3494]">01911-223344-8</span>
+                      <span className="text-xs text-gray-500 block">রকেট নম্বর (১২ ডিজিট):</span>
+                      <span className="font-bold text-base text-[#8c3494]">01911-223344-8</span>
                     </div>
                     <button
                       type="button"
@@ -1291,9 +1291,9 @@ export default function CartOrderView({
                         e.stopPropagation();
                         handleCopyNumber('019112233448');
                       }}
-                      className="px-2.5 py-1 bg-white border border-purple-200 text-[#8c3494] rounded-lg text-xs font-semibold flex items-center gap-1 hover:bg-purple-50"
+                      className="px-3 py-1.5 bg-white border border-purple-200 text-[#8c3494] rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1 hover:bg-purple-50"
                     >
-                      {copiedNumber ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                      {copiedNumber ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedNumber ? 'কপি হয়েছে' : 'কপি'}</span>
                     </button>
                   </div>
@@ -1304,14 +1304,14 @@ export default function CartOrderView({
                       value={manualPhone}
                       onChange={(e) => setManualPhone(e.target.value)}
                       placeholder="আপনার রকেট নম্বর"
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
                     />
                     <input
                       type="text"
                       value={manualTrxId}
                       onChange={(e) => setManualTrxId(e.target.value)}
                       placeholder="রকেট ট্রানজেকশন আইডি (TrxID)"
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
                     />
                   </div>
                 </div>
@@ -1319,18 +1319,40 @@ export default function CartOrderView({
             </div>
           </div>
         </div>
+
+        {/* ========================================================================= */}
+        {/* IN-PAGE BIG ORDER BUTTON                                                 */}
+        {/* ========================================================================= */}
+        <div className="mt-5 mb-8">
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={() => handleOrderSubmit()}
+            className="w-full py-4 px-6 bg-[#df2d4d] hover:bg-[#c82340] active:scale-[0.98] text-white font-extrabold text-base sm:text-xl rounded-2xl shadow-lg shadow-red-500/25 flex items-center justify-center gap-3 transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isSubmitting ? (
+              <span className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></span>
+            ) : (
+              <CheckCircle2 className="w-6 h-6" />
+            )}
+            <span>অর্ডার কনফার্ম করুন (৳ {grandTotal.toFixed(2)})</span>
+          </button>
+          <p className="text-center text-xs sm:text-sm text-gray-500 mt-2.5 font-medium">
+            🔒 আপনার তথ্য নিরাপদ ও সুরক্ষিত। ক্যাশ অন ডেলিভারিতে পণ্য দেখে মূল্য পরিশোধ করুন।
+          </p>
+        </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 4. STICKY BOTTOM ACTION BAR - EXACT MATCH SCREENSHOTS 1, 2, 3, 4          */}
+      {/* 4. STICKY BOTTOM ACTION BAR - POSITIONED ABOVE MOBILE BOTTOM NAV          */}
       {/* ========================================================================= */}
-      <div className="checkout-sticky-bar fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-2.5 sm:py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
+      <div className="checkout-sticky-bar fixed bottom-[60px] md:bottom-0 left-0 right-0 z-[9995] bg-white border-t border-gray-200 px-4 py-3 sm:py-3.5 shadow-[0_-6px_22px_rgba(0,0,0,0.12)]">
         <div className="max-w-2xl mx-auto w-full flex items-center justify-between gap-4">
           <div>
-            <span className="text-[11px] sm:text-xs text-gray-500 block leading-tight font-medium">
+            <span className="text-xs sm:text-sm text-gray-500 block leading-tight font-semibold">
               সর্বমোট
             </span>
-            <span className="text-base sm:text-xl font-extrabold text-[#df2d4d] leading-tight">
+            <span className="text-xl sm:text-2xl font-black text-[#df2d4d] leading-tight">
               ৳ {grandTotal.toFixed(2)}
             </span>
           </div>
@@ -1339,14 +1361,14 @@ export default function CartOrderView({
             type="button"
             disabled={isSubmitting}
             onClick={() => handleOrderSubmit()}
-            className="checkout-sticky-btn flex items-center justify-center gap-2 py-3 px-6 sm:px-8 bg-[#df2d4d] hover:bg-[#c82340] active:scale-[0.98] text-white font-bold text-sm sm:text-base rounded-xl shadow-md transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+            className="checkout-sticky-btn flex items-center justify-center gap-2.5 py-3 px-6 sm:px-9 bg-[#df2d4d] hover:bg-[#c82340] active:scale-[0.98] text-white font-bold text-base sm:text-lg rounded-xl shadow-md transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
           >
             {isSubmitting ? (
               <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             ) : (
-              <CheckCircle2 className="w-5 h-5" />
+              <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
             )}
-            <span>অর্ডার করুন</span>
+            <span className="text-base sm:text-lg font-bold">অর্ডার করুন</span>
           </button>
         </div>
       </div>
