@@ -491,45 +491,6 @@ export default function SiteHeader({
           </button>
         </div>
 
-        {/* Mobile Drawer Account / Profile Section */}
-        <div className="drawer-only-block bg-gradient-to-r from-red-50 to-pink-50/50 p-4 border-b border-red-100/70">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-full bg-[#df2d4d] text-white flex items-center justify-center shrink-0 shadow-xs">
-                {currentUser ? (
-                  <span className="font-bold text-sm uppercase">
-                    {currentUser.name.slice(0, 2)}
-                  </span>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 21a8 8 0 0 1 16 0" />
-                  </svg>
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-gray-800 truncate">
-                  {currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {currentUser ? (currentUser.phone || currentUser.email || 'লগইন সম্পন্ন') : 'লগইন বা রেজিস্টার করুন'}
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsMenuOpen(false);
-                if (onOpenAuth) onOpenAuth('login');
-              }}
-              className="shrink-0 px-3.5 py-1.5 rounded-md bg-[#df2d4d] text-white text-xs font-semibold hover:bg-[#c8233f] transition shadow-xs cursor-pointer"
-            >
-              {currentUser ? 'প্রোফাইল' : 'লগইন'}
-            </button>
-          </div>
-        </div>
-
         <div className="drawer-links">
           <a
             href="#"

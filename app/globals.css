@@ -1608,3 +1608,114 @@ textarea {
     .fal-mobile-drawer .mobile-cat-icon-wrap,
     .fal-mobile-drawer .mobile-cat-icon { width: 30px !important; height: 30px !important; }
 }
+
+
+/* ================================================================
+   MOBILE DRAWER — DETERMINISTIC FINAL FIX
+   The drawer is a simple 2-row viewport sheet: fixed header + scroll list.
+   This overrides legacy .main-nav flex/justify rules from app.css.
+   ================================================================ */
+@media (max-width: 900px) {
+  html body .fal-mobile-drawer.main-nav.md\:hidden {
+    position: fixed !important;
+    top: 0 !important;
+    right: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: min(528px, 76.5vw) !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-rows: 117px minmax(0, 1fr) !important;
+    align-content: start !important;
+    justify-content: start !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    background: #fff !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    transform: translate3d(-110%, 0, 0) !important;
+    visibility: hidden !important;
+    opacity: 1 !important;
+    pointer-events: none !important;
+    z-index: 2147483647 !important;
+    isolation: isolate !important;
+  }
+
+  html body .fal-mobile-drawer.main-nav.md\:hidden.open {
+    transform: translate3d(0, 0, 0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-head {
+    position: relative !important;
+    inset: auto !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    height: 117px !important;
+    min-height: 117px !important;
+    max-height: 117px !important;
+    margin: 0 !important;
+    padding: 0 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    align-self: stretch !important;
+    background: #df2d4d !important;
+    color: #fff !important;
+    box-sizing: border-box !important;
+    z-index: 3 !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-links {
+    position: relative !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-links > .drawer-only,
+  html body .fal-mobile-drawer .mobile-cat-group {
+    box-sizing: border-box !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-links > .drawer-only:first-child {
+    margin-top: 0 !important;
+  }
+
+  html body.menu-open .fal-mobile-drawer {
+    z-index: 2147483647 !important;
+  }
+
+  html body.menu-open .nav-overlay.md\:hidden {
+    z-index: 2147483646 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  html body .fal-mobile-drawer.main-nav.md\:hidden {
+    width: 88vw !important;
+    max-width: 360px !important;
+    grid-template-rows: 76px minmax(0, 1fr) !important;
+  }
+  html body .fal-mobile-drawer .drawer-head {
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    padding: 0 20px !important;
+  }
+}
