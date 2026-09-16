@@ -558,10 +558,44 @@ body.notice-closed {
     padding: 4px;
 }
 
-/* Mobile search — hidden on desktop */
+/* Header Search Bar - Responsive for both mobile and desktop */
 .mobile-search {
-    display: none;
     position: relative;
+}
+
+@media (min-width: 768px) {
+    .mobile-search {
+        display: flex !important;
+        align-items: center;
+        flex: 1;
+        max-width: 520px;
+        margin: 0 16px;
+        background: #ffffff;
+        border: 1.5px solid var(--primary);
+        border-radius: 8px;
+        height: 42px;
+        padding: 0 14px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        position: relative;
+    }
+
+    .mobile-search input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 14px;
+        color: var(--text);
+        min-width: 0;
+    }
+
+    .mobile-search .search-icon {
+        color: var(--primary);
+        font-size: 16px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
 }
 
 /* Live search results dropdown */
