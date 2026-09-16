@@ -206,6 +206,7 @@ export default function HomePage() {
         return [
           ...prev,
           {
+            productId: product.id,
             id: cartItemId,
             title: titleWithVariant,
             image: product.image,

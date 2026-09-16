@@ -15,6 +15,8 @@ export interface Product {
 }
 
 export interface CartItem {
+  /** Canonical Supabase product id; id may include a variant suffix. */
+  productId?: string;
   id: string;
   title: string;
   image: string;

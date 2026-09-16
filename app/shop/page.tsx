@@ -64,6 +64,7 @@ export default function ShopPage() {
         return [
           ...prev,
           {
+            productId: product.id,
             id: itemId,
             title: itemTitle,
             image: product.image,

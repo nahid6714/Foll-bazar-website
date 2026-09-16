@@ -294,7 +294,8 @@ export default function CartOrderView({
       deliveryFee: orderData.deliveryFee,
       grandTotal: orderData.grandTotal,
       items: cartItems.map((item) => ({
-        productId: item.id,
+        // Keep the canonical product UUID separate from the cart/variant id.
+        productId: item.productId || item.id.split('-')[0],
         title: item.title,
         price: item.price,
         quantity: item.quantity,

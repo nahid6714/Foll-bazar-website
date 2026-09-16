@@ -58,6 +58,7 @@ begin
   v_note := nullif(trim(payload->>'order_note'), '');
   v_shipping := lower(coalesce(payload->>'shipping_method', 'dhaka'));
   v_payment := lower(coalesce(payload->>'payment_method', 'cod'));
+  if v_payment = 'cash' then v_payment := 'cod'; end if;
   v_payment_title := nullif(trim(payload->>'payment_title'), '');
   v_sender := nullif(trim(payload->>'sender_phone'), '');
   v_trx := nullif(trim(payload->>'trx_id'), '');
