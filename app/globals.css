@@ -715,16 +715,16 @@ textarea {
 
 /* =========================================================
    MOBILE DRAWER FINAL OVERRIDE
-   The drawer must sit above the notice bar, header, page content,
-   sticky elements and bottom navigation when it is open.
+   The drawer is viewport-fixed and always above notice/header/content/bottom-nav.
    ========================================================= */
 @media (max-width: 900px) {
-    body.app-home.menu-open {
+    body.menu-open {
         overflow: hidden !important;
-        touch-action: none;
+        touch-action: none !important;
     }
 
-    body.app-home .main-nav.md\:hidden {
+    /* IMPORTANT: do not depend on the legacy `body.app-home` class. */
+    body .main-nav.md\:hidden {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -748,24 +748,23 @@ textarea {
         pointer-events: none !important;
         overflow: hidden !important;
         transition: transform .28s ease, visibility .28s ease !important;
-        isolation: isolate;
+        isolation: isolate !important;
     }
 
-    body.app-home .main-nav.md\:hidden.open {
+    body .main-nav.md\:hidden.open {
         transform: translate3d(0, 0, 0) !important;
         visibility: visible !important;
         pointer-events: auto !important;
     }
 
-    /* Drawer header stays at the top while the menu list scrolls. */
-    body.app-home .main-nav .drawer-head {
+    body .main-nav .drawer-head {
         position: relative !important;
         top: auto !important;
         flex: 0 0 auto !important;
         z-index: 2 !important;
     }
 
-    body.app-home .main-nav .drawer-links {
+    body .main-nav .drawer-links {
         flex: 1 1 auto !important;
         min-height: 0 !important;
         overflow-x: hidden !important;
@@ -774,8 +773,7 @@ textarea {
         overscroll-behavior: contain !important;
     }
 
-    /* Overlay is below the drawer but above everything else. */
-    body.app-home .nav-overlay.md\:hidden {
+    body .nav-overlay.md\:hidden {
         position: fixed !important;
         inset: 0 !important;
         width: 100vw !important;
@@ -789,29 +787,57 @@ textarea {
         transition: opacity .28s ease, visibility .28s ease !important;
     }
 
-    body.app-home .nav-overlay.md\:hidden.show {
+    body .nav-overlay.md\:hidden.show {
         opacity: 1 !important;
         visibility: visible !important;
         pointer-events: auto !important;
     }
 
-    /* Keep normal page chrome below the open drawer. */
-    body.app-home.menu-open .notice-ticker,
-    body.app-home.menu-open .site-header,
-    body.app-home.menu-open .mobile-category-scroll,
-    body.app-home.menu-open .mobile-bottom-nav {
+    /* Lower every sticky/fixed page element while the drawer is open. */
+    body.menu-open .notice-ticker,
+    body.menu-open .site-header,
+    body.menu-open .mobile-category-scroll,
+    body.menu-open .mobile-bottom-nav {
         z-index: 1 !important;
     }
 
-    /* Never allow the menu content to create horizontal overflow. */
-    body.app-home .main-nav * {
+    body .main-nav * {
         max-width: 100%;
         box-sizing: border-box;
+    }
+
+    /* Shop-page category pills: clean background and no visible scrollbar line. */
+    .shop-category-pills {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+        background: transparent !important;
+        border: 0 !important;
+    }
+
+    .shop-category-pills::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+
+    .shop-category-pills > button {
+        flex-shrink: 0 !important;
+        border-width: 1px !important;
+        border-style: solid !important;
+        border-color: #e5e7eb !important;
+        background: #ffffff !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, .08) !important;
+    }
+
+    .shop-category-pills > button[class*="bg-[#df2d4d"] {
+        border-color: #df2d4d !important;
+        background: #df2d4d !important;
+        color: #ffffff !important;
     }
 }
 
 @media (max-width: 380px) {
-    body.app-home .main-nav.md\:hidden {
+    body .main-nav.md\:hidden {
         width: 88vw !important;
     }
 }

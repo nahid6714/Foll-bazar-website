@@ -231,13 +231,17 @@ export default function HomePage() {
 
   // Product-card add-to-cart behavior: desktop opens the selection modal;
   // mobile adds directly so the mobile cart/checkout remains uninterrupted.
-  const handleProductAddToCart = (product: Product) => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+  const handleProductAddToCart = (product: Product, quantity = 1, variant?: string) => {
+    // Product details passes the user's selected quantity/variant. Preserve them
+    // instead of dropping them when this wrapper is called. Product cards still
+    // open the desktop selection modal because they call this with only `product`.
+    const hasExplicitSelection = quantity !== 1 || Boolean(variant);
+    if (typeof window !== 'undefined' && window.innerWidth >= 768 && !hasExplicitSelection) {
       setAddCartProduct(product);
       setIsAddCartModalOpen(true);
       return;
     }
-    handleAddToCart(product);
+    handleAddToCart(product, quantity, variant);
   };
 
   // Update cart qty
