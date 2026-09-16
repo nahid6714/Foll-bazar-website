@@ -15,7 +15,7 @@ export default function MobileCategoryScroll({ onSelectCategory, activeCategory 
   const activeSlug = activeCategory !== undefined ? (activeCategory || '') : internalSlug;
 
   return (
-    <nav className="mobile-category-scroll" aria-label="ক্যাটাগরি">
+    <nav className="mobile-category-scroll md:hidden" aria-label="ক্যাটাগরি">
       {categories.map((cat) => {
         const isActive = activeSlug === cat.slug;
         return (

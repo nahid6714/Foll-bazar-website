@@ -111,28 +111,6 @@ export default function AuthView({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Ensure any active currentUser is safely retained in stored accounts
-  React.useEffect(() => {
-    if (currentUser && typeof window !== 'undefined') {
-      const accounts = getStoredAccounts();
-      const cleanPhone = normalizePhone(currentUser.phone);
-      const exists = accounts.some(
-        (acc) => normalizePhone(acc.phone) === cleanPhone || (currentUser.email && acc.email === currentUser.email)
-      );
-      if (!exists) {
-        accounts.push({
-          name: currentUser.name,
-          phone: currentUser.phone,
-          email: currentUser.email,
-          password: 'customer123',
-          role: 'customer',
-          createdAt: currentUser.createdAt || new Date().toLocaleDateString('bn-BD'),
-        });
-        saveStoredAccounts(accounts);
-      }
-    }
-  }, [currentUser]);
-
   // Handle Login Submit - STRICT REGISTRATION CHECK
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();

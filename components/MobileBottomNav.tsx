@@ -21,7 +21,7 @@ export default function MobileBottomNav({
   const activeTab = controlledActiveTab ?? internalTab;
 
   return (
-    <nav className="mobile-bottom-nav" aria-label="মোবাইল নেভিগেশন">
+    <nav className="mobile-bottom-nav md:hidden" aria-label="মোবাইল নেভিগেশন">
       <a
         href="#"
         className={activeTab === 'home' ? 'active' : ''}

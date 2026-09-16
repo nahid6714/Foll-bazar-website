@@ -81,7 +81,7 @@ export default function SiteHeader({
       <header className="site-header">
         <div className="container header-inner">
           <button
-            className="menu-toggle"
+            className="menu-toggle md:hidden"
             id="menuToggle"
             aria-label="মেনু খুলুন"
             aria-expanded={isMenuOpen}
@@ -197,334 +197,6 @@ export default function SiteHeader({
               </div>
             )}
           </div>
-
-          {/* Desktop & Mobile Main Navigation */}
-          <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`} id="mainNav" aria-label="প্রধান মেনু">
-            <div className="drawer-head">
-              <span className="drawer-title">মোবাইল মেন্যু</span>
-              <button
-                type="button"
-                className="drawer-close"
-                id="menuClose"
-                aria-label="মেনু বন্ধ করুন"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-
-            {/* Mobile Drawer Account / Profile Section */}
-            <div className="drawer-only-block bg-gradient-to-r from-red-50 to-pink-50/50 p-4 border-b border-red-100/70">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-[#df2d4d] text-white flex items-center justify-center shrink-0 shadow-xs">
-                    {currentUser ? (
-                      <span className="font-bold text-sm uppercase">
-                        {currentUser.name.slice(0, 2)}
-                      </span>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="8" r="4" />
-                        <path d="M4 21a8 8 0 0 1 16 0" />
-                      </svg>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-gray-800 truncate">
-                      {currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {currentUser ? (currentUser.phone || currentUser.email || 'লগইন সম্পন্ন') : 'লগইন বা রেজিস্টার করুন'}
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    if (onOpenAuth) onOpenAuth('login');
-                  }}
-                  className="shrink-0 px-3.5 py-1.5 rounded-md bg-[#df2d4d] text-white text-xs font-semibold hover:bg-[#c8233f] transition shadow-xs cursor-pointer"
-                >
-                  {currentUser ? 'প্রোফাইল' : 'লগইন'}
-                </button>
-              </div>
-            </div>
-
-            <div className="drawer-links">
-              <a
-                href="#"
-                className="drawer-only"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsMenuOpen(false);
-                  if (onNavigateToHome) {
-                    onNavigateToHome();
-                  } else {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <span>হোম</span>
-              </a>
-
-              <a
-                href="#shop"
-                className="drawer-only"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsMenuOpen(false);
-                  if (onNavigateToShop) {
-                    onNavigateToShop(null);
-                  } else {
-                    const el = document.getElementById('allProducts');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
-                  <path d="M3 6h18"/>
-                  <path d="M16 10a4 4 0 0 1-8 0"/>
-                </svg>
-                <span>শপ (ফিল্টারসহ সকল পণ্য)</span>
-              </a>
-
-              {/* Desktop Categories */}
-              <div className="nav-cat-desktop">
-                {categories.map((cat) => (
-                  <div key={cat.slug} className={`nav-cat-item ${cat.hasSubmenu ? 'has-dropdown' : ''}`}>
-                    <a
-                      href={`#${cat.slug}`}
-                      className="nav-cat-link"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (onNavigateToShop) {
-                          onNavigateToShop(cat.slug);
-                        } else {
-                          const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
-                          if (el) el.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                    >
-                      {cat.name}
-                      {cat.hasSubmenu && <i className="fas fa-chevron-down" style={{ fontSize: '10px', marginLeft: '5px' }}></i>}
-                    </a>
-                    {cat.hasSubmenu && (
-                      <div className="nav-sub-dropdown">
-                        <div className="nav-sub-item has-child">
-                          <a href="#demo" onClick={(e) => e.preventDefault()} className="nav-sub-link">
-                            demo <i className="fas fa-chevron-right" style={{ fontSize: '10px', float: 'right', marginTop: '4px' }}></i>
-                          </a>
-                          <div className="nav-child-dropdown">
-                            <a href="#demo" onClick={(e) => e.preventDefault()} className="nav-child-link">
-                              demo
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Mobile Categories in Drawer - No images, pure clean text */}
-              <div className="nav-cat-mobile drawer-only-block">
-                {categories.map((cat) => (
-                  <div
-                    key={cat.slug}
-                    className={`mobile-cat-group ${cat.hasSubmenu ? 'has-children' : ''} ${openSubCat === cat.slug ? 'is-open' : ''}`}
-                  >
-                    <div className="mobile-cat-row">
-                      <a
-                        href={`#${cat.slug}`}
-                        className="mobile-cat-parent"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setIsMenuOpen(false);
-                          if (onNavigateToShop) {
-                            onNavigateToShop(cat.slug);
-                          } else {
-                            const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
-                            if (el) el.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }}
-                      >
-                        <span>{cat.name}</span>
-                      </a>
-                      {cat.hasSubmenu && (
-                        <button
-                          type="button"
-                          className="mobile-sub-toggle"
-                          aria-expanded={openSubCat === cat.slug}
-                          aria-label={`${cat.name} সাব ক্যাটাগরি`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setOpenSubCat(openSubCat === cat.slug ? null : cat.slug);
-                          }}
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#df2d4d"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            style={{
-                              transform: openSubCat === cat.slug ? 'rotate(180deg)' : 'rotate(0deg)',
-                              transition: 'transform 0.2s ease',
-                            }}
-                            aria-hidden="true"
-                          >
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                    {cat.hasSubmenu && openSubCat === cat.slug && (
-                      <div className="drawer-sub-links">
-                        <div className={`drawer-sub-group ${openChildCat === 'demo' ? 'has-children is-open' : 'has-children'}`}>
-                          <div
-                            className="drawer-sub-row"
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              padding: '12px 20px 12px 24px',
-                            }}
-                          >
-                            <a
-                              href="#demo"
-                              onClick={(e) => e.preventDefault()}
-                              className="drawer-sub-parent"
-                              style={{ color: '#1f2937', fontSize: '14px', fontWeight: 600 }}
-                            >
-                              demo
-                            </a>
-                            <button
-                              type="button"
-                              className="drawer-child-toggle"
-                              onClick={() => setOpenChildCat(openChildCat === 'demo' ? null : 'demo')}
-                              style={{ background: 'none', border: 'none', color: '#df2d4d', padding: '6px 12px', cursor: 'pointer' }}
-                            >
-                              <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#df2d4d"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                style={{
-                                  transform: openChildCat === 'demo' ? 'rotate(180deg)' : 'rotate(0deg)',
-                                  transition: 'transform 0.2s ease',
-                                }}
-                                aria-hidden="true"
-                              >
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                              </svg>
-                            </button>
-                          </div>
-                          {openChildCat === 'demo' && (
-                            <div className="drawer-child-links" style={{ padding: '4px 0 10px 44px' }}>
-                              <a
-                                href="#demo"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setIsMenuOpen(false);
-                                }}
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '6px',
-                                  padding: '8px 0',
-                                  fontSize: '13px',
-                                  color: '#4b5563',
-                                }}
-                              >
-                                <span>&minus; demo</span>
-                              </a>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <a
-                href="#track-order"
-                className="drawer-only"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsMenuOpen(false);
-                  onOpenTrackModal();
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M10 17h4V5H2v12h3"/>
-                  <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h2"/>
-                  <circle cx="7.5" cy="17.5" r="2.5"/>
-                  <circle cx="17.5" cy="17.5" r="2.5"/>
-                </svg>
-                <span>Track Order</span>
-              </a>
-              <a
-                href="#complaint"
-                className="drawer-only"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsMenuOpen(false);
-                  onOpenComplaintModal();
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5a9 9 0 0 1 18 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>
-                  <path d="M21 16v2a3 3 0 0 1-3 3h-5"/>
-                </svg>
-                <span>কমপ্লেইন</span>
-              </a>
-              <a
-                href="#account"
-                className="drawer-only"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsMenuOpen(false);
-                  if (onOpenAuth) {
-                    onOpenAuth('login');
-                  } else {
-                    onOpenTrackModal();
-                  }
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-                <span>{currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট (লগইন)'}</span>
-              </a>
-            </div>
-          </nav>
-
-          {/* Nav Overlay for mobile drawer */}
-          <div
-            className={`nav-overlay ${isMenuOpen ? 'show' : ''}`}
-            id="navOverlay"
-            aria-hidden={!isMenuOpen}
-            onClick={() => setIsMenuOpen(false)}
-          ></div>
 
           {/* Header Actions */}
           <div className="header-actions">
@@ -760,7 +432,7 @@ export default function SiteHeader({
 
             <button
               type="button"
-              className="btn-track"
+              className="btn-track hidden md:inline-flex"
               onClick={onOpenTrackModal}
               style={{ border: 'none', cursor: 'pointer' }}
             >
@@ -863,6 +535,300 @@ export default function SiteHeader({
           </div>
         </div>
       </header>
+
+      {/* Mobile Off-Canvas Drawer (Shown only on mobile <= 768px/900px) */}
+      <nav
+        className={`main-nav md:hidden ${isMenuOpen ? 'open' : ''}`}
+        id="mainNav"
+        aria-label="মোবাইল প্রধান মেনু"
+      >
+        <div className="drawer-head">
+          <span className="drawer-title">মোবাইল মেন্যু</span>
+          <button
+            type="button"
+            className="drawer-close"
+            id="menuClose"
+            aria-label="মেনু বন্ধ করুন"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile Drawer Account / Profile Section */}
+        <div className="drawer-only-block bg-gradient-to-r from-red-50 to-pink-50/50 p-4 border-b border-red-100/70">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-full bg-[#df2d4d] text-white flex items-center justify-center shrink-0 shadow-xs">
+                {currentUser ? (
+                  <span className="font-bold text-sm uppercase">
+                    {currentUser.name.slice(0, 2)}
+                  </span>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                  </svg>
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-gray-800 truncate">
+                  {currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {currentUser ? (currentUser.phone || currentUser.email || 'লগইন সম্পন্ন') : 'লগইন বা রেজিস্টার করুন'}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen(false);
+                if (onOpenAuth) onOpenAuth('login');
+              }}
+              className="shrink-0 px-3.5 py-1.5 rounded-md bg-[#df2d4d] text-white text-xs font-semibold hover:bg-[#c8233f] transition shadow-xs cursor-pointer"
+            >
+              {currentUser ? 'প্রোফাইল' : 'লগইন'}
+            </button>
+          </div>
+        </div>
+
+        <div className="drawer-links">
+          <a
+            href="#"
+            className="drawer-only"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              if (onNavigateToHome) {
+                onNavigateToHome();
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>হোম</span>
+          </a>
+
+          <a
+            href="#shop"
+            className="drawer-only"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              if (onNavigateToShop) {
+                onNavigateToShop(null);
+              } else {
+                const el = document.getElementById('allProducts');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+              <path d="M3 6h18"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span>শপ (ফিল্টারসহ সকল পণ্য)</span>
+          </a>
+
+          {/* Mobile Categories in Drawer - No images, pure clean text */}
+          <div className="nav-cat-mobile drawer-only-block">
+            {categories.map((cat) => (
+              <div
+                key={cat.slug}
+                className={`mobile-cat-group ${cat.hasSubmenu ? 'has-children' : ''} ${openSubCat === cat.slug ? 'is-open' : ''}`}
+              >
+                <div className="mobile-cat-row">
+                  <a
+                    href={`#${cat.slug}`}
+                    className="mobile-cat-parent"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsMenuOpen(false);
+                      if (onNavigateToShop) {
+                        onNavigateToShop(cat.slug);
+                      } else {
+                        const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    <span>{cat.name}</span>
+                  </a>
+                  {cat.hasSubmenu && (
+                    <button
+                      type="button"
+                      className="mobile-sub-toggle"
+                      aria-expanded={openSubCat === cat.slug}
+                      aria-label={`${cat.name} সাব ক্যাটাগরি`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setOpenSubCat(openSubCat === cat.slug ? null : cat.slug);
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#df2d4d"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{
+                          transform: openSubCat === cat.slug ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.2s ease',
+                        }}
+                        aria-hidden="true"
+                      >
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                {cat.hasSubmenu && openSubCat === cat.slug && (
+                  <div className="drawer-sub-links">
+                    <div className={`drawer-sub-group ${openChildCat === 'demo' ? 'has-children is-open' : 'has-children'}`}>
+                      <div
+                        className="drawer-sub-row"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '12px 20px 12px 24px',
+                        }}
+                      >
+                        <a
+                          href="#demo"
+                          onClick={(e) => e.preventDefault()}
+                          className="drawer-sub-parent"
+                          style={{ color: '#1f2937', fontSize: '14px', fontWeight: 600 }}
+                        >
+                          demo
+                        </a>
+                        <button
+                          type="button"
+                          className="drawer-child-toggle"
+                          onClick={() => setOpenChildCat(openChildCat === 'demo' ? null : 'demo')}
+                          style={{ background: 'none', border: 'none', color: '#df2d4d', padding: '6px 12px', cursor: 'pointer' }}
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#df2d4d"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            style={{
+                              transform: openChildCat === 'demo' ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.2s ease',
+                            }}
+                            aria-hidden="true"
+                          >
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </button>
+                      </div>
+                      {openChildCat === 'demo' && (
+                        <div className="drawer-child-links" style={{ padding: '4px 0 10px 44px' }}>
+                          <a
+                            href="#demo"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setIsMenuOpen(false);
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '8px 0',
+                              fontSize: '13px',
+                              color: '#4b5563',
+                            }}
+                          >
+                            <span>&minus; demo</span>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <a
+            href="#track-order"
+            className="drawer-only"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              onOpenTrackModal();
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M10 17h4V5H2v12h3"/>
+              <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h2"/>
+              <circle cx="7.5" cy="17.5" r="2.5"/>
+              <circle cx="17.5" cy="17.5" r="2.5"/>
+            </svg>
+            <span>Track Order</span>
+          </a>
+          <a
+            href="#complaint"
+            className="drawer-only"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              onOpenComplaintModal();
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5a9 9 0 0 1 18 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>
+              <path d="M21 16v2a3 3 0 0 1-3 3h-5"/>
+            </svg>
+            <span>কমপ্লেইন</span>
+          </a>
+          <a
+            href="#account"
+            className="drawer-only"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              if (onOpenAuth) {
+                onOpenAuth('login');
+              } else {
+                onOpenTrackModal();
+              }
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#df2d4d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>{currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট (লগইন)'}</span>
+          </a>
+        </div>
+      </nav>
+
+      {/* Nav Overlay for mobile drawer */}
+      <div
+        className={`nav-overlay md:hidden ${isMenuOpen ? 'show' : ''}`}
+        id="navOverlay"
+        aria-hidden={!isMenuOpen}
+        onClick={() => setIsMenuOpen(false)}
+      ></div>
     </>
   );
 }
