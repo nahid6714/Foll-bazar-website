@@ -534,141 +534,48 @@ export default function SiteHeader({
             <span>শপ (ফিল্টারসহ সকল পণ্য)</span>
           </a>
 
-          {/* Mobile Categories in Drawer - No images, pure clean text */}
-          <div className="nav-cat-mobile drawer-only-block">
-            {categories.map((cat) => (
-              <div
-                key={cat.slug}
-                className={`mobile-cat-group ${cat.hasSubmenu ? 'has-children' : ''} ${openSubCat === cat.slug ? 'is-open' : ''}`}
-              >
-                <div className="mobile-cat-row">
-                  <a
-                    href={`#${cat.slug}`}
-                    className="mobile-cat-parent"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsMenuOpen(false);
-                      if (onNavigateToShop) {
-                        onNavigateToShop(cat.slug);
-                      } else {
-                        const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }}
-                  >
-                    <span className="mobile-cat-icon-wrap" aria-hidden="true">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={cat.icon || ''}
-                        alt=""
-                        className="mobile-cat-icon"
-                        onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
-                      />
-                    </span>
-                    <span>{cat.name}</span>
-                  </a>
-                  {cat.hasSubmenu && (
-                    <button
-                      type="button"
-                      className="mobile-sub-toggle"
-                      aria-expanded={openSubCat === cat.slug}
-                      aria-label={`${cat.name} সাব ক্যাটাগরি`}
+          {/* Mobile Categories — always visible and scrollable. */}
+          <div className="nav-cat-mobile drawer-only-block mobile-category-menu" aria-label="পণ্য ক্যাটাগরি">
+            <div className="mobile-category-menu-title">ক্যাটাগরি</div>
+            {categories.length > 0 ? (
+              categories.map((cat) => (
+                <div key={cat.slug} className="mobile-cat-group">
+                  <div className="mobile-cat-row">
+                    <a
+                      href={`#${cat.slug}`}
+                      className="mobile-cat-parent"
                       onClick={(e) => {
                         e.preventDefault();
-                        setOpenSubCat(openSubCat === cat.slug ? null : cat.slug);
+                        setIsMenuOpen(false);
+                        if (onNavigateToShop) {
+                          onNavigateToShop(cat.slug);
+                        } else {
+                          const el = document.getElementById(cat.slug) || document.getElementById('allProducts');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }
                       }}
                     >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#df2d4d"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        style={{
-                          transform: openSubCat === cat.slug ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: 'transform 0.2s ease',
-                        }}
-                        aria-hidden="true"
-                      >
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </button>
-                  )}
-                </div>
-                {cat.hasSubmenu && openSubCat === cat.slug && (
-                  <div className="drawer-sub-links">
-                    <div className={`drawer-sub-group ${openChildCat === 'demo' ? 'has-children is-open' : 'has-children'}`}>
-                      <div
-                        className="drawer-sub-row"
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '12px 20px 12px 24px',
-                        }}
-                      >
-                        <a
-                          href="#demo"
-                          onClick={(e) => e.preventDefault()}
-                          className="drawer-sub-parent"
-                          style={{ color: '#1f2937', fontSize: '14px', fontWeight: 600 }}
-                        >
-                          demo
-                        </a>
-                        <button
-                          type="button"
-                          className="drawer-child-toggle"
-                          onClick={() => setOpenChildCat(openChildCat === 'demo' ? null : 'demo')}
-                          style={{ background: 'none', border: 'none', color: '#df2d4d', padding: '6px 12px', cursor: 'pointer' }}
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#df2d4d"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            style={{
-                              transform: openChildCat === 'demo' ? 'rotate(180deg)' : 'rotate(0deg)',
-                              transition: 'transform 0.2s ease',
-                            }}
-                            aria-hidden="true"
-                          >
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                          </svg>
-                        </button>
-                      </div>
-                      {openChildCat === 'demo' && (
-                        <div className="drawer-child-links" style={{ padding: '4px 0 10px 44px' }}>
-                          <a
-                            href="#demo"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setIsMenuOpen(false);
-                            }}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              padding: '8px 0',
-                              fontSize: '13px',
-                              color: '#4b5563',
-                            }}
-                          >
-                            <span>&minus; demo</span>
-                          </a>
-                        </div>
-                      )}
-                    </div>
+                      <span className="mobile-cat-icon-wrap" aria-hidden="true">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        {cat.icon ? (
+                          <img
+                            src={cat.icon}
+                            alt=""
+                            className="mobile-cat-icon"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <span className="mobile-cat-icon-fallback">•</span>
+                        )}
+                      </span>
+                      <span>{cat.name}</span>
+                    </a>
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
+              ))
+            ) : (
+              <div className="mobile-category-empty">কোনো ক্যাটাগরি পাওয়া যায়নি</div>
+            )}
           </div>
 
           <a
