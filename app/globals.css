@@ -1776,3 +1776,99 @@ textarea {
     font-size: 15px !important;
   }
 }
+
+
+/* =========================================================
+   FINAL MOBILE SIDEBAR VISIBILITY FIX
+   The legacy app.css contains an older global rule that hides
+   .drawer-only links. The current React drawer is rendered via
+   createPortal(), so force the actual drawer content visible
+   only on mobile. Desktop behavior remains unchanged.
+   ========================================================= */
+@media (max-width: 900px) {
+  html body .fal-mobile-drawer.main-nav.md\:hidden.open {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-links {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    flex: 1 1 auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-links > a.drawer-only {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    width: 100% !important;
+    min-height: 56px !important;
+    height: auto !important;
+    padding: 14px 20px !important;
+    align-items: center !important;
+    gap: 12px !important;
+    color: #1f2937 !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-links > .drawer-only-block,
+  html body .fal-mobile-drawer .drawer-links > .mobile-category-menu,
+  html body .fal-mobile-drawer .drawer-links > .nav-cat-mobile {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+
+  html body .fal-mobile-drawer .mobile-category-menu-title {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  html body .fal-mobile-drawer .mobile-cat-group,
+  html body .fal-mobile-drawer .mobile-cat-row,
+  html body .fal-mobile-drawer .mobile-cat-parent {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  html body .fal-mobile-drawer .mobile-cat-group {
+    width: 100% !important;
+  }
+
+  html body .fal-mobile-drawer .mobile-cat-parent {
+    flex: 1 1 auto !important;
+    color: #1f2937 !important;
+    background: #ffffff !important;
+    text-decoration: none !important;
+  }
+
+  html body .fal-mobile-drawer .mobile-cat-parent > span:last-child {
+    display: inline !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  html body .fal-mobile-drawer .drawer-links svg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex-shrink: 0 !important;
+  }
+}
