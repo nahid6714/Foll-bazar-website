@@ -192,6 +192,8 @@ export default function CartOrderView({
     const code = couponInput.trim().toUpperCase();
     if (!code) return;
 
+    // Keep the existing instant UI feedback, but the server RPC is authoritative
+    // and re-validates the coupon before creating the order.
     if (code === 'LICHOO50' || code === 'LITCHI50' || code === 'FRUIT50') {
       const discount = 50;
       setDiscountAmount(discount);
@@ -304,16 +306,24 @@ export default function CartOrderView({
       deliveryFee: orderData.deliveryFee,
       grandTotal: orderData.grandTotal,
       items: cartItems.map((item) => ({
-        // Keep the canonical product UUID separate from the cart/variant id.
-        productId: item.productId || item.id.split('-')[0],
+        // Keep the canonical product UUID/legacy id separate from the cart id.
+        productId: item.productId || item.id.split('::')[0] || item.id,
         title: item.title,
         price: item.price,
         quantity: item.quantity,
         variant: item.variant,
       })),
-    }).then(() => {
+    }).then((saved) => {
       setIsSubmitting(false);
-      onOrderSuccess(orderData);
+      // The database is authoritative. Show the values actually committed.
+      onOrderSuccess({
+        ...orderData,
+        orderId: saved.order_number,
+        subtotal: Number(saved.subtotal),
+        discount: Number(saved.discount_amount),
+        deliveryFee: Number(saved.delivery_charge),
+        grandTotal: Number(saved.total_amount),
+      });
     }).catch((error) => {
       setIsSubmitting(false);
       setErrorMessage(error instanceof Error ? error.message : 'অর্ডার সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।');

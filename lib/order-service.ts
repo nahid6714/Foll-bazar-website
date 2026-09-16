@@ -21,10 +21,10 @@ export type CreateOrderInput = {
   senderPhone?: string;
   trxId?: string;
   couponCode?: string;
-  subtotal: number;
-  discount: number;
-  deliveryFee: number;
-  grandTotal: number;
+  subtotal?: number;
+  discount?: number;
+  deliveryFee?: number;
+  grandTotal?: number;
   items: CreateOrderItem[];
   userId?: string | null;
 };
@@ -54,11 +54,12 @@ export async function createOrderInSupabase(input: CreateOrderInput) {
     sender_phone: input.senderPhone?.trim().replace(/[^0-9+]/g, '') || null,
     trx_id: input.trxId?.trim() || null,
     coupon_code: input.couponCode?.trim().toUpperCase() || null,
-    subtotal: Number(input.subtotal),
-    discount_amount: Number(input.discount),
-    delivery_charge: Number(input.deliveryFee),
-    total_amount: Number(input.grandTotal),
-    user_id: input.userId || null,
+    // These totals are retained for backward compatibility only. The secure
+    // RPC recalculates subtotal, discount, delivery and total from DB data.
+    subtotal: Number(input.subtotal ?? 0),
+    discount_amount: Number(input.discount ?? 0),
+    delivery_charge: Number(input.deliveryFee ?? 0),
+    total_amount: Number(input.grandTotal ?? 0),
     items: input.items.map((item) => ({
       product_id: item.productId,
       product_name: item.title,
@@ -68,7 +69,7 @@ export async function createOrderInSupabase(input: CreateOrderInput) {
     })),
   };
 
-  return supabaseRest<{ order_id: string; order_number: string }>(
+  return supabaseRest<{ order_id: string; order_number: string; subtotal: number; discount_amount: number; delivery_charge: number; total_amount: number }>(
     'rpc/create_public_order',
     {
       method: 'POST',
