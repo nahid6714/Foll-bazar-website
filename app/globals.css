@@ -1184,3 +1184,427 @@ textarea {
         z-index: 1 !important;
     }
 }
+
+/* ================================================================
+   REFERENCE HEADER + DRAWER — FINAL SCOPED OVERRIDE
+   Matches the supplied reference screenshots.
+   Only SiteHeader / mobile drawer styles are affected.
+   ================================================================ */
+
+/* Keep the header children in the intended order on every size. */
+.site-header .header-inner {
+    flex-wrap: nowrap !important;
+}
+.site-header .desktop-category-nav { order: 2 !important; }
+.site-header .header-actions { order: 3 !important; }
+.site-header .logo { order: 1 !important; }
+.site-header .mobile-search { display: none !important; }
+
+@media (min-width: 901px) {
+    .site-header .container.header-inner {
+        width: min(1180px, 94vw) !important;
+        min-height: 78px !important;
+        height: 78px !important;
+        padding: 6px 0 !important;
+        gap: 18px !important;
+        align-items: center !important;
+        overflow: visible !important;
+    }
+    .site-header .logo {
+        flex: 0 0 225px !important;
+        width: 225px !important;
+    }
+    .site-header .logo img {
+        width: 225px !important;
+        height: 62px !important;
+        object-fit: contain !important;
+    }
+    .site-header .desktop-category-nav {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: clamp(12px, 1.5vw, 24px) !important;
+        overflow: hidden !important;
+    }
+    .site-header .desktop-category-link {
+        flex: 0 0 auto !important;
+        font-size: clamp(14px, 1.08vw, 17px) !important;
+        padding: 8px 0 !important;
+        white-space: nowrap !important;
+    }
+    .site-header .header-actions {
+        flex: 0 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+}
+
+/* The supplied reference is a compact desktop-style header at phone/tablet
+   browser widths around 690px: logo + categories + actions in one header. */
+@media (min-width: 481px) and (max-width: 900px) {
+    .site-header {
+        position: relative !important;
+        top: auto !important;
+        z-index: 500 !important;
+        overflow: visible !important;
+    }
+    .site-header .container.header-inner {
+        width: 100% !important;
+        min-height: 76px !important;
+        height: 76px !important;
+        padding: 4px 20px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        overflow: visible !important;
+    }
+    .site-header .logo {
+        flex: 0 0 116px !important;
+        width: 116px !important;
+        height: 58px !important;
+        justify-content: flex-start !important;
+        order: 1 !important;
+    }
+    .site-header .logo img {
+        width: 116px !important;
+        height: 56px !important;
+        object-fit: contain !important;
+        object-position: left center !important;
+    }
+    .site-header .desktop-category-nav {
+        order: 2 !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        height: 62px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-content: center !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0 14px !important;
+        overflow: hidden !important;
+        white-space: normal !important;
+    }
+    .site-header .desktop-category-link {
+        flex: 0 0 auto !important;
+        padding: 3px 0 !important;
+        font-size: 11px !important;
+        line-height: 1.15 !important;
+        white-space: nowrap !important;
+    }
+    .site-header .header-actions {
+        order: 3 !important;
+        flex: 0 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+    .site-header .header-actions .profile-btn {
+        display: inline-flex !important;
+        width: 36px !important;
+        height: 36px !important;
+        flex: 0 0 36px !important;
+    }
+    .site-header .header-actions .btn-track {
+        display: inline-flex !important;
+        height: 36px !important;
+        padding: 0 9px !important;
+        font-size: 10px !important;
+        border-radius: 5px !important;
+    }
+    .site-header .header-actions .cart-btn {
+        width: 60px !important;
+        min-width: 60px !important;
+        height: 36px !important;
+        padding: 0 5px !important;
+        border-radius: 5px !important;
+        font-size: 10px !important;
+    }
+    .site-header .header-actions .cart-amount {
+        display: inline !important;
+        font-size: 10px !important;
+    }
+    .site-header .menu-toggle {
+        display: none !important;
+    }
+}
+
+/* Mobile drawer: one complete sheet, matching the supplied reference. */
+@media (max-width: 900px) {
+    body.menu-open {
+        overflow: hidden !important;
+        touch-action: none !important;
+    }
+
+    .fal-mobile-drawer.main-nav.md\:hidden,
+    body .fal-mobile-drawer.main-nav.md\:hidden {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: auto !important;
+        bottom: 0 !important;
+        width: min(528px, 76.5vw) !important;
+        max-width: 528px !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: #fff !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        overflow: hidden !important;
+        box-shadow: 10px 0 30px rgba(0,0,0,.22) !important;
+        z-index: 2147483647 !important;
+        transform: translate3d(-105%,0,0) !important;
+        visibility: hidden !important;
+        opacity: 1 !important;
+        pointer-events: none !important;
+        isolation: isolate !important;
+        transition: transform .28s ease, visibility 0s linear .28s !important;
+    }
+
+    .fal-mobile-drawer.main-nav.md\:hidden.open,
+    body .fal-mobile-drawer.main-nav.md\:hidden.open {
+        transform: translate3d(0,0,0) !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+
+    /* Hide only the top account/profile block. The final account menu item
+       remains visible, exactly as in the reference. */
+    .fal-mobile-drawer > .drawer-only-block {
+        display: none !important;
+    }
+
+    .fal-mobile-drawer .drawer-head {
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 117px !important;
+        min-height: 117px !important;
+        flex: 0 0 117px !important;
+        padding: 0 32px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background: #df2d4d !important;
+        color: #fff !important;
+        z-index: 3 !important;
+        box-sizing: border-box !important;
+    }
+    .fal-mobile-drawer .drawer-title {
+        display: block !important;
+        margin: 0 !important;
+        color: #fff !important;
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+    }
+    .fal-mobile-drawer .drawer-close {
+        position: relative !important;
+        inset: auto !important;
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 0 !important;
+        border-radius: 12px !important;
+        background: rgba(255,255,255,.18) !important;
+    }
+    .fal-mobile-drawer .drawer-close svg {
+        width: 30px !important;
+        height: 30px !important;
+    }
+    .fal-mobile-drawer .drawer-links {
+        position: relative !important;
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        min-height: 0 !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior: contain !important;
+        box-sizing: border-box !important;
+    }
+
+    .fal-mobile-drawer .drawer-links > .drawer-only {
+        display: flex !important;
+        align-items: center !important;
+        gap: 24px !important;
+        width: 100% !important;
+        min-height: 94px !important;
+        height: 94px !important;
+        padding: 0 38px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        border-bottom: 1px solid #eeeeee !important;
+        color: #202733 !important;
+        font-size: 24px !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+    }
+    .fal-mobile-drawer .drawer-links > .drawer-only:first-child {
+        min-height: 145px !important;
+        height: 145px !important;
+        padding-top: 34px !important;
+        align-items: center !important;
+    }
+    .fal-mobile-drawer .drawer-links > .drawer-only svg {
+        width: 28px !important;
+        height: 28px !important;
+        flex: 0 0 28px !important;
+        stroke-width: 2.6 !important;
+    }
+
+    .fal-mobile-drawer .mobile-cat-group {
+        width: 100% !important;
+        min-height: 94px !important;
+        border-bottom: 1px solid #eeeeee !important;
+        box-sizing: border-box !important;
+    }
+    .fal-mobile-drawer .mobile-cat-row {
+        width: 100% !important;
+        min-height: 94px !important;
+        height: 94px !important;
+        padding: 0 34px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        box-sizing: border-box !important;
+    }
+    .fal-mobile-drawer .mobile-cat-parent {
+        display: flex !important;
+        align-items: center !important;
+        gap: 20px !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: #202733 !important;
+        font-size: 24px !important;
+        font-weight: 500 !important;
+        line-height: 1.2 !important;
+        text-decoration: none !important;
+    }
+    .fal-mobile-drawer .mobile-cat-icon-wrap {
+        width: 36px !important;
+        height: 36px !important;
+        flex: 0 0 36px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+    }
+    .fal-mobile-drawer .mobile-cat-icon {
+        width: 36px !important;
+        height: 36px !important;
+        object-fit: cover !important;
+        display: block !important;
+    }
+    .fal-mobile-drawer .mobile-sub-toggle {
+        width: 54px !important;
+        height: 54px !important;
+        flex: 0 0 54px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+    }
+    .fal-mobile-drawer .mobile-sub-toggle svg {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .fal-mobile-drawer .drawer-sub-links,
+    .fal-mobile-drawer .drawer-child-links {
+        background: #fafafa !important;
+    }
+
+    .nav-overlay.md\:hidden,
+    body .nav-overlay.md\:hidden {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: rgba(15,23,42,.48) !important;
+        z-index: 2147483646 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transition: opacity .28s ease, visibility 0s linear .28s !important;
+    }
+    .nav-overlay.md\:hidden.show,
+    body .nav-overlay.md\:hidden.show {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+
+    body.menu-open .notice-ticker,
+    body.menu-open .site-header,
+    body.menu-open .mobile-category-scroll,
+    body.menu-open .mobile-bottom-nav {
+        z-index: 1 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .fal-mobile-drawer.main-nav.md\:hidden,
+    body .fal-mobile-drawer.main-nav.md\:hidden {
+        width: 88vw !important;
+        max-width: 360px !important;
+    }
+    .fal-mobile-drawer .drawer-head {
+        height: 76px !important;
+        min-height: 76px !important;
+        flex-basis: 76px !important;
+        padding: 0 20px !important;
+    }
+    .fal-mobile-drawer .drawer-title { font-size: 21px !important; }
+    .fal-mobile-drawer .drawer-close {
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+    }
+    .fal-mobile-drawer .drawer-links > .drawer-only {
+        min-height: 72px !important;
+        height: 72px !important;
+        padding: 0 24px !important;
+        gap: 16px !important;
+        font-size: 19px !important;
+    }
+    .fal-mobile-drawer .drawer-links > .drawer-only:first-child {
+        min-height: 92px !important;
+        height: 92px !important;
+        padding-top: 10px !important;
+    }
+    .fal-mobile-drawer .mobile-cat-group,
+    .fal-mobile-drawer .mobile-cat-row {
+        min-height: 72px !important;
+        height: 72px !important;
+    }
+    .fal-mobile-drawer .mobile-cat-row { padding: 0 22px !important; }
+    .fal-mobile-drawer .mobile-cat-parent { font-size: 19px !important; gap: 14px !important; }
+    .fal-mobile-drawer .mobile-cat-icon-wrap,
+    .fal-mobile-drawer .mobile-cat-icon { width: 30px !important; height: 30px !important; }
+}

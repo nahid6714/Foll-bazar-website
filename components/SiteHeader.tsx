@@ -209,6 +209,20 @@ export default function SiteHeader({
             )}
           </div>
 
+          {/* Desktop category links stay INSIDE the same header row. */}
+          <nav className="desktop-category-nav" aria-label="পণ্য ক্যাটাগরি">
+            {categories.slice(0, 6).map((cat) => (
+              <button
+                key={`header-cat-${cat.slug}`}
+                type="button"
+                onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
+                className="desktop-category-link"
+              >
+                {cat.name}
+              </button>
+            ))}
+          </nav>
+
           {/* Header Actions */}
           <div className="header-actions">
             <div
@@ -450,19 +464,6 @@ export default function SiteHeader({
               Track Order
             </button>
           </div>
-          {/* Desktop category links stay INSIDE the same header row. */}
-          <nav className="desktop-category-nav" aria-label="পণ্য ক্যাটাগরি">
-            {categories.slice(0, 6).map((cat) => (
-              <button
-                key={`header-cat-${cat.slug}`}
-                type="button"
-                onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
-                className="desktop-category-link"
-              >
-                {cat.name}
-              </button>
-            ))}
-          </nav>
         </div>
       </header>
 
@@ -594,6 +595,15 @@ export default function SiteHeader({
                       }
                     }}
                   >
+                    <span className="mobile-cat-icon-wrap" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={cat.icon || ''}
+                        alt=""
+                        className="mobile-cat-icon"
+                        onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
+                      />
+                    </span>
                     <span>{cat.name}</span>
                   </a>
                   {cat.hasSubmenu && (
