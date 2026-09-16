@@ -1,3 +1,5 @@
+create extension if not exists pgcrypto;
+
 -- ফল বাজার: website -> Supabase -> Admin App order pipeline
 -- Run once in Supabase SQL Editor.
 

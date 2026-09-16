@@ -5,6 +5,59 @@
 
 
 /* =========================================================
+   GLOBAL RESPONSIVE SAFETY
+   Prevent accidental horizontal overflow on phones/tablets while preserving
+   the existing desktop layout.
+   ========================================================= */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    min-width: 0;
+}
+
+img,
+video,
+svg {
+    max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+    min-width: 0;
+}
+
+.app-main {
+    min-width: 0;
+    width: 100%;
+}
+
+.cart-order-page-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: clip;
+}
+
+@media (max-width: 380px) {
+    .cart-order-page-wrapper {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .checkout-main-container {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* =========================================================
    Complaint page — dedicated responsive design
    Scoped only to .complaint-page so existing pages stay unchanged.
    ========================================================= */

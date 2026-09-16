@@ -29,34 +29,50 @@ export type CreateOrderInput = {
   userId?: string | null;
 };
 
+/**
+ * Creates an order through the single public RPC defined in
+ * supabase/ORDER_SETUP.sql. Keeping the client payload and SQL function
+ * signature aligned prevents silent checkout failures after deployment.
+ */
 export async function createOrderInSupabase(input: CreateOrderInput) {
-  return supabaseRest<{ order_id: string; order_number: string }>('rpc/create_public_order', {
-    method: 'POST',
-    body: JSON.stringify({
-      order_number: input.orderNumber,
-      customer_name: input.name,
-      customer_phone: input.phone,
-      customer_email: input.email || null,
-      address: input.address,
-      order_note: input.note || null,
-      shipping_method: input.shippingMethod,
-      payment_method: input.paymentMethod,
-      payment_title: input.paymentTitle,
-      sender_phone: input.senderPhone || null,
-      trx_id: input.trxId || null,
-      coupon_code: input.couponCode || null,
-      subtotal: input.subtotal,
-      discount_amount: input.discount,
-      delivery_charge: input.deliveryFee,
-      total_amount: input.grandTotal,
-      user_id: input.userId || null,
-      items: input.items.map((item) => ({
-        product_id: item.productId,
-        product_name: item.title,
-        variant_label: item.variant || null,
-        unit_price: item.price,
-        quantity: item.quantity,
-      })),
-    }),
-  });
+  if (!input.items.length) {
+    throw new Error('অর্ডারে কোনো পণ্য নেই।');
+  }
+
+  const paymentMethod = input.paymentMethod === 'cash' ? 'cod' : input.paymentMethod;
+
+  const payload = {
+    order_number: input.orderNumber,
+    customer_name: input.name.trim(),
+    customer_phone: input.phone.trim().replace(/[^0-9+]/g, ''),
+    customer_email: input.email?.trim() || null,
+    address: input.address.trim(),
+    order_note: input.note?.trim() || null,
+    shipping_method: input.shippingMethod,
+    payment_method: paymentMethod,
+    payment_title: input.paymentTitle,
+    sender_phone: input.senderPhone?.trim().replace(/[^0-9+]/g, '') || null,
+    trx_id: input.trxId?.trim() || null,
+    coupon_code: input.couponCode?.trim().toUpperCase() || null,
+    subtotal: Number(input.subtotal),
+    discount_amount: Number(input.discount),
+    delivery_charge: Number(input.deliveryFee),
+    total_amount: Number(input.grandTotal),
+    user_id: input.userId || null,
+    items: input.items.map((item) => ({
+      product_id: item.productId,
+      product_name: item.title,
+      variant_label: item.variant || null,
+      unit_price: Number(item.price),
+      quantity: Number(item.quantity),
+    })),
+  };
+
+  return supabaseRest<{ order_id: string; order_number: string }>(
+    'rpc/create_public_order',
+    {
+      method: 'POST',
+      body: JSON.stringify({ payload }),
+    },
+  );
 }

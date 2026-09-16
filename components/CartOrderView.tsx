@@ -25,7 +25,13 @@ import { createOrderInSupabase } from '@/lib/order-service';
 
 export interface OrderSubmittedData {
   orderId: string;
-  items: { title: string; price: number; quantity: number }[];
+  items: {
+    title: string;
+    price: number;
+    quantity: number;
+    productId?: string;
+    variant?: string;
+  }[];
   name: string;
   phone: string;
   email?: string;
@@ -255,9 +261,13 @@ export default function CartOrderView({
     const orderData: OrderSubmittedData = {
       orderId: randomId,
       items: cartItems.map((item) => ({
+        // Keep the canonical product UUID/legacy id so Supabase order_items
+        // can be linked reliably even when the cart id contains a variant suffix.
+        productId: item.productId || item.id.split('-')[0],
         title: item.title,
         price: item.price,
         quantity: item.quantity,
+        variant: item.variant,
       })),
       name: fullName.trim(),
       phone: phone.trim(),
