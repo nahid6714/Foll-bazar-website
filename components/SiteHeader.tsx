@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { CartItem, Product } from '@/lib/data';
 import { useSiteData } from '@/lib/site-data';
 
@@ -449,28 +450,27 @@ export default function SiteHeader({
               Track Order
             </button>
           </div>
+          {/* Desktop category links stay INSIDE the same header row. */}
+          <nav className="desktop-category-nav" aria-label="পণ্য ক্যাটাগরি">
+            {categories.slice(0, 6).map((cat) => (
+              <button
+                key={`header-cat-${cat.slug}`}
+                type="button"
+                onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
+                className="desktop-category-link"
+              >
+                {cat.name}
+              </button>
+            ))}
+          </nav>
         </div>
-
-        {/* Desktop category links are kept in the main header so the desktop layout
-            matches the reference design: logo -> categories -> cart/account/order. */}
-        <nav className="desktop-category-nav" aria-label="পণ্য ক্যাটাগরি">
-          {categories.slice(0, 6).map((cat) => (
-            <button
-              key={`header-cat-${cat.slug}`}
-              type="button"
-              onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
-              className="desktop-category-link"
-            >
-              {cat.name}
-            </button>
-          ))}
-        </nav>
-
       </header>
 
+      {typeof document !== 'undefined' && createPortal(
+        <>
       {/* Mobile Off-Canvas Drawer (Shown only on mobile <= 768px/900px) */}
       <nav
-        className={`main-nav md:hidden ${isMenuOpen ? 'open' : ''}`}
+        className={`main-nav md:hidden fal-mobile-drawer ${isMenuOpen ? 'open' : ''}`}
         id="mainNav"
         aria-label="মোবাইল প্রধান মেনু"
       >
@@ -761,6 +761,10 @@ export default function SiteHeader({
         aria-hidden={!isMenuOpen}
         onClick={() => setIsMenuOpen(false)}
       ></div>
+
+        </>,
+        document.body
+      )}
     </>
   );
 }

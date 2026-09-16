@@ -187,39 +187,59 @@ export default function HomePage() {
       ? parseInt(product.oldPrice.replace(/[^0-9]/g, ''), 10)
       : null;
 
+    // A product + package size is one cart line. Always use a stable key so
+    // adding 2/3/4 units from the product-details page increments that exact
+    // line instead of creating a second line or losing the selected quantity.
+    const normalizedVariant = variant || '১ কেজি';
     let itemPrice = numericPrice;
-    let titleWithVariant = product.title;
-    if (variant) {
-      if (variant === '৫০০ গ্রাম') itemPrice = Math.round(numericPrice * 0.5);
-      else if (variant === '২ কেজি') itemPrice = Math.round(numericPrice * 2.0);
-      titleWithVariant = `${product.title} (${variant})`;
-    }
+    if (normalizedVariant === '৫০০ গ্রাম') itemPrice = Math.round(numericPrice * 0.5);
+    else if (normalizedVariant === '২ কেজি') itemPrice = Math.round(numericPrice * 2.0);
+    const titleWithVariant = `${product.title} (${normalizedVariant})`;
+    const cartItemId = `${product.id}::${normalizedVariant}`;
+    const safeQuantity = Math.max(1, Math.min(50, Number(quantity) || 1));
 
     setCart((prev) => {
-      const cartItemId = variant ? `${product.id}-${variant}` : product.id;
-      const existing = prev.find((item) => item.id === cartItemId);
+      const existing = prev.find((item) => {
+        const itemProductId = item.productId || item.id.split('::')[0] || item.id;
+        const itemVariant = item.variant || (item.id.includes('::') ? item.id.split('::').slice(1).join('::') : '১ কেজি');
+        return itemProductId === product.id && itemVariant === normalizedVariant;
+      });
+
       if (existing) {
         return prev.map((item) =>
-          item.id === cartItemId ? { ...item, quantity: item.quantity + quantity } : item
+          item.id === existing.id
+            ? {
+                ...item,
+                productId: product.id,
+                id: cartItemId,
+                title: titleWithVariant,
+                image: product.image,
+                price: itemPrice,
+                oldPrice: numericOldPrice,
+                basePrice: numericPrice,
+                baseOldPrice: numericOldPrice,
+                variant: normalizedVariant,
+                quantity: Math.min(50, item.quantity + safeQuantity),
+              }
+            : item
         );
-      } else {
-        return [
-          ...prev,
-          {
-            productId: product.id,
-            id: cartItemId,
-            title: titleWithVariant,
-            image: product.image,
-            price: itemPrice,
-            oldPrice: numericOldPrice,
-            quantity: quantity,
-            basePrice: numericPrice,
-            baseOldPrice: numericOldPrice,
-            variant,
-
-          },
-        ];
       }
+
+      return [
+        ...prev,
+        {
+          productId: product.id,
+          id: cartItemId,
+          title: titleWithVariant,
+          image: product.image,
+          price: itemPrice,
+          oldPrice: numericOldPrice,
+          quantity: safeQuantity,
+          basePrice: numericPrice,
+          baseOldPrice: numericOldPrice,
+          variant: normalizedVariant,
+        },
+      ];
     });
 
     // Show toast
@@ -231,17 +251,13 @@ export default function HomePage() {
 
   // Product-card add-to-cart behavior: desktop opens the selection modal;
   // mobile adds directly so the mobile cart/checkout remains uninterrupted.
-  const handleProductAddToCart = (product: Product, quantity = 1, variant?: string) => {
-    // Product details passes the user's selected quantity/variant. Preserve them
-    // instead of dropping them when this wrapper is called. Product cards still
-    // open the desktop selection modal because they call this with only `product`.
-    const hasExplicitSelection = quantity !== 1 || Boolean(variant);
-    if (typeof window !== 'undefined' && window.innerWidth >= 768 && !hasExplicitSelection) {
+  const handleProductAddToCart = (product: Product) => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
       setAddCartProduct(product);
       setIsAddCartModalOpen(true);
       return;
     }
-    handleAddToCart(product, quantity, variant);
+    handleAddToCart(product);
   };
 
   // Update cart qty
@@ -261,22 +277,36 @@ export default function HomePage() {
 
   // Change package size/variant from cart without losing the selected product.
   const handleChangeCartVariant = (id: string, variant: string) => {
-    setCart((prev) => prev.map((item) => {
-      if (item.id !== id) return item;
-      const basePrice = item.basePrice ?? item.price;
-      const baseOldPrice = item.baseOldPrice ?? item.oldPrice ?? null;
-      const multiplier = variant === '৫০০ গ্রাম' ? 0.5 : variant === '২ কেজি' ? 2 : 1;
-      return {
-        ...item,
-        id: item.id.split('-').slice(0, -1).join('-') || item.id,
-        title: `${item.title.replace(/ \(১ কেজি\)| \(২ কেজি\)| \(৫০০ গ্রাম\)/g, '')} (${variant})`,
-        price: Math.round(basePrice * multiplier),
-        oldPrice: baseOldPrice == null ? null : Math.round(baseOldPrice * multiplier),
-        basePrice,
-        baseOldPrice,
-        variant,
-      };
-    }));
+    const normalizedVariant = variant || '১ কেজি';
+    setCart((prev) => {
+      const current = prev.find((item) => item.id === id);
+      if (!current) return prev;
+
+      const productId = current.productId || current.id.split('::')[0] || current.id;
+      const nextId = `${productId}::${normalizedVariant}`;
+      const basePrice = current.basePrice ?? current.price;
+      const baseOldPrice = current.baseOldPrice ?? current.oldPrice ?? null;
+      const multiplier = normalizedVariant === '৫০০ গ্রাম' ? 0.5 : normalizedVariant === '২ কেজি' ? 2 : 1;
+      const baseTitle = current.title.replace(/ \(১ কেজি\)| \(২ কেজি\)| \(৫০০ গ্রাম\)/g, '');
+      const duplicate = prev.find((item) => item.id === nextId && item.id !== id);
+
+      return prev
+        .filter((item) => item.id !== id)
+        .map((item) => item.id === duplicate?.id
+          ? { ...item, quantity: Math.min(50, item.quantity + current.quantity) }
+          : item)
+        .concat(duplicate ? [] : [{
+          ...current,
+          productId,
+          id: nextId,
+          title: `${baseTitle} (${normalizedVariant})`,
+          price: Math.round(basePrice * multiplier),
+          oldPrice: baseOldPrice == null ? null : Math.round(baseOldPrice * multiplier),
+          basePrice,
+          baseOldPrice,
+          variant: normalizedVariant,
+        }]);
+    });
   };
 
   // Remove from cart

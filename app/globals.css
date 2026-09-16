@@ -715,16 +715,16 @@ textarea {
 
 /* =========================================================
    MOBILE DRAWER FINAL OVERRIDE
-   The drawer is viewport-fixed and always above notice/header/content/bottom-nav.
+   The drawer must sit above the notice bar, header, page content,
+   sticky elements and bottom navigation when it is open.
    ========================================================= */
 @media (max-width: 900px) {
-    body.menu-open {
+    body.app-home.menu-open {
         overflow: hidden !important;
-        touch-action: none !important;
+        touch-action: none;
     }
 
-    /* IMPORTANT: do not depend on the legacy `body.app-home` class. */
-    body .main-nav.md\:hidden {
+    body.app-home .main-nav.md\:hidden {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -748,23 +748,24 @@ textarea {
         pointer-events: none !important;
         overflow: hidden !important;
         transition: transform .28s ease, visibility .28s ease !important;
-        isolation: isolate !important;
+        isolation: isolate;
     }
 
-    body .main-nav.md\:hidden.open {
+    body.app-home .main-nav.md\:hidden.open {
         transform: translate3d(0, 0, 0) !important;
         visibility: visible !important;
         pointer-events: auto !important;
     }
 
-    body .main-nav .drawer-head {
+    /* Drawer header stays at the top while the menu list scrolls. */
+    body.app-home .main-nav .drawer-head {
         position: relative !important;
         top: auto !important;
         flex: 0 0 auto !important;
         z-index: 2 !important;
     }
 
-    body .main-nav .drawer-links {
+    body.app-home .main-nav .drawer-links {
         flex: 1 1 auto !important;
         min-height: 0 !important;
         overflow-x: hidden !important;
@@ -773,7 +774,8 @@ textarea {
         overscroll-behavior: contain !important;
     }
 
-    body .nav-overlay.md\:hidden {
+    /* Overlay is below the drawer but above everything else. */
+    body.app-home .nav-overlay.md\:hidden {
         position: fixed !important;
         inset: 0 !important;
         width: 100vw !important;
@@ -787,57 +789,398 @@ textarea {
         transition: opacity .28s ease, visibility .28s ease !important;
     }
 
-    body .nav-overlay.md\:hidden.show {
+    body.app-home .nav-overlay.md\:hidden.show {
         opacity: 1 !important;
         visibility: visible !important;
         pointer-events: auto !important;
     }
 
-    /* Lower every sticky/fixed page element while the drawer is open. */
-    body.menu-open .notice-ticker,
-    body.menu-open .site-header,
-    body.menu-open .mobile-category-scroll,
-    body.menu-open .mobile-bottom-nav {
+    /* Keep normal page chrome below the open drawer. */
+    body.app-home.menu-open .notice-ticker,
+    body.app-home.menu-open .site-header,
+    body.app-home.menu-open .mobile-category-scroll,
+    body.app-home.menu-open .mobile-bottom-nav {
         z-index: 1 !important;
     }
 
-    body .main-nav * {
+    /* Never allow the menu content to create horizontal overflow. */
+    body.app-home .main-nav * {
         max-width: 100%;
         box-sizing: border-box;
     }
+}
 
-    /* Shop-page category pills: clean background and no visible scrollbar line. */
-    .shop-category-pills {
-        scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
-        background: transparent !important;
-        border: 0 !important;
+@media (max-width: 380px) {
+    body.app-home .main-nav.md\:hidden {
+        width: 88vw !important;
+    }
+}
+
+/* =========================================================
+   MOBILE DRAWER + SHOP CATEGORY POLISH
+   Scoped to the existing components; no product/card styling changes.
+   ========================================================= */
+@media (max-width: 900px) {
+    /* Rendered through a body-level portal: this removes ancestor stacking
+       contexts and guarantees the drawer covers the complete viewport. */
+    body.app-home .fal-mobile-drawer.main-nav.md\:hidden {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: min(360px, 88vw) !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: #fff !important;
+        transform: translate3d(-105%, 0, 0) !important;
+        visibility: hidden !important;
+        opacity: 1 !important;
+        pointer-events: none !important;
+        overflow: hidden !important;
+        z-index: 2147483647 !important;
+        isolation: isolate !important;
+        box-sizing: border-box !important;
+        transition: transform .28s ease, visibility .28s ease !important;
     }
 
-    .shop-category-pills::-webkit-scrollbar {
+    body.app-home .fal-mobile-drawer.main-nav.md\:hidden.open {
+        transform: translate3d(0, 0, 0) !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+
+    body.app-home .fal-mobile-drawer .drawer-head {
+        flex: 0 0 auto !important;
+        min-height: 64px !important;
+    }
+
+    body.app-home .fal-mobile-drawer .drawer-links {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior: contain !important;
+        padding-bottom: max(24px, env(safe-area-inset-bottom)) !important;
+    }
+
+    body.app-home .nav-overlay.md\:hidden {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        z-index: 2147483646 !important;
+        margin: 0 !important;
+    }
+
+    body.app-home.menu-open .notice-ticker,
+    body.app-home.menu-open .site-header,
+    body.app-home.menu-open .mobile-category-scroll,
+    body.app-home.menu-open .mobile-bottom-nav {
+        z-index: 1 !important;
+    }
+
+    /* Category pills: clean card background, border and hidden scrollbar. */
+    .shop-page-wrapper .shop-category-pills {
+        position: relative;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        width: calc(100% + 2px) !important;
+        min-height: 58px !important;
+        margin: 0 -1px 12px !important;
+        padding: 8px 6px !important;
+        background: #f8f9fa !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 14px !important;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, .05) !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+        overscroll-behavior-x: contain !important;
+    }
+
+    .shop-page-wrapper .shop-category-pills::-webkit-scrollbar {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
     }
 
-    .shop-category-pills > button {
-        flex-shrink: 0 !important;
+    .shop-page-wrapper .shop-category-pills > button {
+        flex: 0 0 auto !important;
+        min-height: 40px !important;
         border-width: 1px !important;
         border-style: solid !important;
-        border-color: #e5e7eb !important;
-        background: #ffffff !important;
+        border-radius: 999px !important;
         box-shadow: 0 1px 3px rgba(15, 23, 42, .08) !important;
-    }
-
-    .shop-category-pills > button[class*="bg-[#df2d4d"] {
-        border-color: #df2d4d !important;
-        background: #df2d4d !important;
-        color: #ffffff !important;
     }
 }
 
-@media (max-width: 380px) {
-    body .main-nav.md\:hidden {
-        width: 88vw !important;
+/* =========================================================
+   EXACT HEADER + MOBILE MENU CORRECTION
+   Only affects SiteHeader. Keep all other page styling untouched.
+   ========================================================= */
+
+/* Desktop: one true header row — logo, categories, actions. */
+@media (min-width: 901px) {
+    .site-header {
+        position: sticky !important;
+        top: var(--notice-height, 0px) !important;
+        z-index: 500 !important;
+        overflow: visible !important;
+    }
+
+    .site-header .container.header-inner {
+        min-height: 94px !important;
+        height: 94px !important;
+        padding: 10px 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 22px !important;
+    }
+
+    .site-header .logo {
+        flex: 0 0 235px !important;
+        width: 235px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
+
+    .site-header .logo img {
+        width: 235px !important;
+        height: 68px !important;
+        object-fit: contain !important;
+        object-position: left center !important;
+    }
+
+    .site-header .desktop-category-nav {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: clamp(13px, 1.55vw, 26px) !important;
+        overflow: hidden !important;
+        white-space: nowrap !important;
+    }
+
+    .site-header .desktop-category-link {
+        flex: 0 0 auto !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: #303030 !important;
+        font-family: inherit !important;
+        font-size: clamp(14px, 1.12vw, 17px) !important;
+        font-weight: 500 !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+        padding: 8px 0 !important;
+    }
+
+    .site-header .header-actions {
+        flex: 0 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .site-header .cart-btn {
+        min-width: 82px !important;
+        height: 50px !important;
+        border-radius: 8px !important;
+    }
+
+    .site-header .profile-btn {
+        width: 50px !important;
+        height: 50px !important;
+        flex: 0 0 50px !important;
+    }
+
+    .site-header .btn-track {
+        height: 50px !important;
+        padding: 0 18px !important;
+        white-space: nowrap !important;
+        border-radius: 8px !important;
+    }
+
+    /* The desktop header intentionally has no second category row. */
+    .site-header > .desktop-category-nav {
+        display: none !important;
+    }
+}
+
+/* Medium desktop: keep the same single-row structure without overflow. */
+@media (min-width: 901px) and (max-width: 1180px) {
+    .site-header .container.header-inner {
+        gap: 12px !important;
+    }
+    .site-header .logo {
+        flex-basis: 190px !important;
+        width: 190px !important;
+    }
+    .site-header .logo img {
+        width: 190px !important;
+        height: 58px !important;
+    }
+    .site-header .desktop-category-nav {
+        gap: 11px !important;
+    }
+    .site-header .desktop-category-link {
+        font-size: 13px !important;
+    }
+    .site-header .header-actions {
+        gap: 6px !important;
+    }
+    .site-header .cart-btn {
+        min-width: 68px !important;
+        padding: 0 8px !important;
+    }
+    .site-header .btn-track {
+        padding: 0 11px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* Mobile drawer: the entire menu is one left-side sheet. */
+@media (max-width: 900px) {
+    body.app-home .fal-mobile-drawer.main-nav.md\:hidden {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: auto !important;
+        bottom: 0 !important;
+        width: min(360px, 88vw) !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: #ffffff !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: 10px 0 35px rgba(0,0,0,.22) !important;
+        overflow: hidden !important;
+        transform: translate3d(-105%, 0, 0) !important;
+        visibility: hidden !important;
+        opacity: 1 !important;
+        pointer-events: none !important;
+        z-index: 2147483647 !important;
+        isolation: isolate !important;
+        box-sizing: border-box !important;
+        transition: transform .28s ease, visibility 0s linear .28s !important;
+    }
+
+    body.app-home .fal-mobile-drawer.main-nav.md\:hidden.open {
+        transform: translate3d(0, 0, 0) !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        transition: transform .28s ease, visibility 0s linear 0s !important;
+    }
+
+    /* Header MUST be the first element of the sheet, never fixed/bottom-positioned. */
+    body.app-home .fal-mobile-drawer .drawer-head {
+        position: relative !important;
+        inset: auto !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        min-height: 64px !important;
+        height: 64px !important;
+        flex: 0 0 64px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 14px 18px !important;
+        margin: 0 !important;
+        background: #df2d4d !important;
+        color: #fff !important;
+        z-index: 2 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.app-home .fal-mobile-drawer .drawer-title {
+        display: block !important;
+        color: #fff !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+    }
+
+    body.app-home .fal-mobile-drawer .drawer-close {
+        position: relative !important;
+        inset: auto !important;
+        width: 36px !important;
+        height: 36px !important;
+        flex: 0 0 36px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(255,255,255,.18) !important;
+        border: 0 !important;
+        border-radius: 8px !important;
+    }
+
+    body.app-home .fal-mobile-drawer .drawer-links {
+        position: relative !important;
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        min-height: 0 !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 0 max(24px, env(safe-area-inset-bottom)) !important;
+        display: block !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior: contain !important;
+        box-sizing: border-box !important;
+    }
+
+    body.app-home .fal-mobile-drawer .drawer-only,
+    body.app-home .fal-mobile-drawer .mobile-cat-group {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Overlay is behind the sheet and above the whole site. */
+    body.app-home .nav-overlay.md\:hidden {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: rgba(15,23,42,.48) !important;
+        z-index: 2147483646 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transition: opacity .28s ease, visibility 0s linear .28s !important;
+    }
+
+    body.app-home .nav-overlay.md\:hidden.show {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+        transition: opacity .28s ease, visibility 0s linear 0s !important;
+    }
+
+    body.app-home.menu-open .notice-ticker,
+    body.app-home.menu-open .site-header,
+    body.app-home.menu-open .mobile-category-scroll,
+    body.app-home.menu-open .mobile-bottom-nav {
+        z-index: 1 !important;
     }
 }
