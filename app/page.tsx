@@ -24,8 +24,6 @@ import AuthView, { UserProfile } from '@/components/AuthView';
 import CartOrderView from '@/components/CartOrderView';
 import AddToCartModal from '@/components/AddToCartModal';
 import ComplaintView from '@/components/ComplaintView';
-import { createOrderInSupabase } from '@/lib/orders';
-import type { OrderSubmittedData } from '@/components/CartOrderView';
 
 import { Product, CartItem, promoBanners } from '@/lib/data';
 import { useSiteData } from '@/lib/site-data';
@@ -163,7 +161,7 @@ export default function HomePage() {
   const [isComplaintOpen, setIsComplaintOpen] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<{
     orderId: string;
-    items: { title: string; price: number; quantity: number; productId?: string; variant?: string }[];
+    items: { title: string; price: number; quantity: number }[];
     name: string;
     phone: string;
     address: string;
@@ -209,7 +207,6 @@ export default function HomePage() {
           ...prev,
           {
             id: cartItemId,
-            productId: product.supabaseId ?? product.id,
             title: titleWithVariant,
             image: product.image,
             price: itemPrice,
@@ -298,20 +295,22 @@ export default function HomePage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Order Confirmed handler: persist the order first, then show success.
-  const handleOrderSuccess = async (orderData: OrderSubmittedData) => {
-    try {
-      const saved = await createOrderInSupabase(orderData, currentUser, allProductsList);
-      setConfirmedOrder({ ...orderData, orderId: saved.orderNumber });
-      setCart([]);
-      setSelectedProduct(null);
-      setIsOrderModalOpen(false);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'অর্ডার সংরক্ষণ করা যায়নি।';
-      setToastMessage(message);
-      setTimeout(() => setToastMessage(null), 4500);
-      throw new Error(message);
-    }
+  // Order Confirmed handler
+  const handleOrderSuccess = (orderData: {
+    orderId: string;
+    items: { title: string; price: number; quantity: number }[];
+    name: string;
+    phone: string;
+    address: string;
+    deliveryArea: string;
+    deliveryFee: number;
+    subtotal: number;
+    grandTotal: number;
+  }) => {
+    setConfirmedOrder(orderData);
+    setCart([]);
+    setSelectedProduct(null);
+    setIsOrderModalOpen(false);
   };
 
   // Auth Handlers

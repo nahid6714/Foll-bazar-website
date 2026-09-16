@@ -1,7 +1,5 @@
 export interface Product {
   id: string;
-  /** Canonical public.products.id; id may remain a legacy display id. */
-  supabaseId?: string;
   title: string;
   image: string;
   price: string;
@@ -18,8 +16,6 @@ export interface Product {
 
 export interface CartItem {
   id: string;
-  /** Canonical Supabase products.id used when creating an order. */
-  productId?: string;
   title: string;
   image: string;
   price: number;

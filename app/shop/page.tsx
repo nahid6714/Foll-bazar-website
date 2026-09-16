@@ -65,7 +65,6 @@ export default function ShopPage() {
           ...prev,
           {
             id: itemId,
-            productId: product.supabaseId ?? product.id,
             title: itemTitle,
             image: product.image,
             price: itemPrice,

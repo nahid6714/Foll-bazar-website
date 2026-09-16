@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Product, CartItem } from '@/lib/data';
-import type { OrderSubmittedData } from '@/components/CartOrderView';
 
 interface VomOrderModalProps {
   isOpen: boolean;
@@ -10,7 +9,17 @@ interface VomOrderModalProps {
   cartItems: CartItem[];
   initialQuantity?: number;
   onClose: () => void;
-  onSuccess: (orderData: OrderSubmittedData) => void | Promise<void>;
+  onSuccess: (orderData: {
+    orderId: string;
+    items: { title: string; price: number; quantity: number }[];
+    name: string;
+    phone: string;
+    address: string;
+    deliveryArea: string;
+    deliveryFee: number;
+    subtotal: number;
+    grandTotal: number;
+  }) => void;
 }
 
 export default function VomOrderModal({
@@ -41,7 +50,7 @@ export default function VomOrderModal({
   const deliveryFee = deliveryArea === 'dhaka' ? 80 : 150;
   const grandTotal = subtotal + deliveryFee;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       setErrorMsg('অনুগ্রহ করে আপনার নাম প্রদান করুন।');
@@ -62,18 +71,18 @@ export default function VomOrderModal({
     const randomId = 'FB-' + Math.floor(10000 + Math.random() * 90000);
 
     const itemsSummary = isCartCheckout
-      ? cartItems.map((c) => ({ title: c.title, price: c.price, quantity: c.quantity, productId: c.productId, variant: c.variant }))
+      ? cartItems.map((c) => ({ title: c.title, price: c.price, quantity: c.quantity }))
       : [
           {
             title: product?.title || 'লিচু',
             price: singlePrice,
             quantity: quantity,
-            productId: product?.supabaseId ?? product?.id,
           },
         ];
 
-    try {
-      await onSuccess({
+    setTimeout(() => {
+      setIsSubmitting(false);
+      onSuccess({
         orderId: randomId,
         items: itemsSummary,
         name: name.trim(),
@@ -83,17 +92,9 @@ export default function VomOrderModal({
         deliveryFee,
         subtotal,
         grandTotal,
-        paymentMethod: 'cash',
-        paymentTitle: 'ক্যাশ অন ডেলিভারি (Cash on Delivery)',
-        discount: 0,
-        note: note.trim() || undefined,
       });
       onClose();
-    } catch (error) {
-      setErrorMsg(error instanceof Error ? error.message : 'অর্ডার সংরক্ষণ করা যায়নি।');
-    } finally {
-      setIsSubmitting(false);
-    }
+    }, 800);
   };
 
   return (

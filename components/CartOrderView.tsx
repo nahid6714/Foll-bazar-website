@@ -21,12 +21,14 @@ import {
   Zap,
 } from 'lucide-react';
 import { CartItem } from '@/lib/data';
+import { createOrderInSupabase } from '@/lib/order-service';
 
 export interface OrderSubmittedData {
   orderId: string;
-  items: { title: string; price: number; quantity: number; productId?: string; variant?: string }[];
+  items: { title: string; price: number; quantity: number }[];
   name: string;
   phone: string;
+  email?: string;
   address: string;
   division?: string;
   district?: string;
@@ -37,11 +39,11 @@ export interface OrderSubmittedData {
   trxId?: string;
   senderPhone?: string;
   deliveryArea: string;
-  couponCode?: string;
   deliveryFee: number;
   subtotal: number;
   discount: number;
   grandTotal: number;
+  couponCode?: string;
 }
 
 interface CartOrderViewProps {
@@ -50,7 +52,7 @@ interface CartOrderViewProps {
   onRemoveItem: (id: string) => void;
   onChangeVariant: (id: string, variant: string) => void;
   onNavigateToShop: () => void;
-  onOrderSuccess: (orderData: OrderSubmittedData) => void | Promise<void>;
+  onOrderSuccess: (orderData: OrderSubmittedData) => void;
   currentUser?: { name: string; phone: string; email?: string } | null;
 }
 
@@ -207,7 +209,7 @@ export default function CartOrderView({
   };
 
   // Order submission
-  const handleOrderSubmit = async () => {
+  const handleOrderSubmit = () => {
     setErrorMessage('');
 
     if (cartItems.length === 0) {
@@ -256,15 +258,11 @@ export default function CartOrderView({
         title: item.title,
         price: item.price,
         quantity: item.quantity,
-        productId: item.productId,
-        variant: item.variant,
       })),
       name: fullName.trim(),
       phone: phone.trim(),
+      email: currentUser?.email || undefined,
       address: address.trim(),
-      division: 'বাংলাদেশ',
-      district: 'ঢাকা / কুরিয়ার',
-      upazila: 'সদর',
       note: orderNote.trim() || undefined,
       paymentMethod: selectedPayment,
       paymentTitle: selectedOpt?.title || 'ক্যাশ অন ডেলিভারি',
@@ -274,18 +272,41 @@ export default function CartOrderView({
       deliveryFee,
       subtotal,
       discount: discountAmount,
-      couponCode: appliedCoupon || undefined,
       grandTotal,
+      couponCode: appliedCoupon || undefined,
     };
 
-    try {
-      await onOrderSuccess(orderData);
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'অর্ডার সংরক্ষণ করা যায়নি।');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } finally {
+    void createOrderInSupabase({
+      orderNumber: randomId,
+      name: orderData.name,
+      phone: orderData.phone,
+      email: orderData.email,
+      address: orderData.address,
+      note: orderData.note,
+      shippingMethod,
+      paymentMethod: orderData.paymentMethod,
+      paymentTitle: orderData.paymentTitle,
+      senderPhone: orderData.senderPhone,
+      trxId: orderData.trxId,
+      couponCode: orderData.couponCode,
+      subtotal: orderData.subtotal,
+      discount: orderData.discount,
+      deliveryFee: orderData.deliveryFee,
+      grandTotal: orderData.grandTotal,
+      items: cartItems.map((item) => ({
+        productId: item.id,
+        title: item.title,
+        price: item.price,
+        quantity: item.quantity,
+        variant: item.variant,
+      })),
+    }).then(() => {
       setIsSubmitting(false);
-    }
+      onOrderSuccess(orderData);
+    }).catch((error) => {
+      setIsSubmitting(false);
+      setErrorMessage(error instanceof Error ? error.message : 'অর্ডার সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।');
+    });
   };
 
   const currentPaymentConfig = PAYMENT_OPTIONS.find((p) => p.id === selectedPayment);
