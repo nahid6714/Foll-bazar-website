@@ -130,3 +130,7 @@ $$;
 
 revoke all on function public.create_public_order(jsonb) from public;
 grant execute on function public.create_public_order(jsonb) to anon, authenticated;
+
+
+-- Tell PostgREST to refresh its schema cache immediately after the function is created.
+notify pgrst, 'reload schema';

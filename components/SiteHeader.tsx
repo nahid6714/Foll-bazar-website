@@ -64,6 +64,16 @@ export default function SiteHeader({
     };
   }, [isMenuOpen]);
 
+  // Close the mobile drawer with the Escape key.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMenuOpen(false);
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMenuOpen]);
+
   // Click outside to close search
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -112,7 +122,7 @@ export default function SiteHeader({
           </a>
 
           {/* Search Bar */}
-          <div className="mobile-search relative" ref={searchRef}>
+          <div className="mobile-search relative header-search" ref={searchRef}>
             <input
               type="search"
               name="keyword"
@@ -441,99 +451,21 @@ export default function SiteHeader({
           </div>
         </div>
 
-        {/* Desktop Category Navigation Bar - Matching demo.scaleuper.com */}
-        <div className="hidden md:block border-t border-gray-100 bg-white shadow-xs">
-          <div className="container flex items-center justify-between py-2 text-sm font-medium">
-            <div className="flex items-center gap-6">
-              {/* All Categories Dropdown Button */}
-              <div className="relative group">
-                <button
-                  type="button"
-                  onClick={() => onNavigateToShop ? onNavigateToShop(null) : undefined}
-                  className="flex items-center gap-2 bg-[#df2d4d] text-white px-4 py-2 rounded-lg font-semibold text-xs tracking-wide hover:bg-[#c8233f] transition shadow-xs cursor-pointer"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="4" x2="20" y1="12" y2="12"/>
-                    <line x1="4" x2="20" y1="6" y2="6"/>
-                    <line x1="4" x2="20" y1="18" y2="18"/>
-                  </svg>
-                  <span>সকল ক্যাটাগরি</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="m6 9 6 6 6-6"/>
-                  </svg>
-                </button>
-                <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 hidden group-hover:block z-50">
-                  <button
-                    type="button"
-                    onClick={() => onNavigateToShop ? onNavigateToShop(null) : undefined}
-                    className="w-full text-left px-4 py-2 text-xs font-semibold text-gray-800 hover:bg-red-50 hover:text-[#df2d4d] flex items-center justify-between cursor-pointer"
-                  >
-                    <span>সকল পণ্য</span>
-                    <span className="text-gray-400">→</span>
-                  </button>
-                  {categories.map((cat) => (
-                    <button
-                      key={`cat-drop-${cat.slug}`}
-                      type="button"
-                      onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
-                      className="w-full text-left px-4 py-2 text-xs font-medium text-gray-700 hover:bg-red-50 hover:text-[#df2d4d] flex items-center justify-between cursor-pointer transition-colors"
-                    >
-                      <span>{cat.name}</span>
-                      <span className="text-gray-300">→</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+        {/* Desktop category links are kept in the main header so the desktop layout
+            matches the reference design: logo -> categories -> cart/account/order. */}
+        <nav className="desktop-category-nav" aria-label="পণ্য ক্যাটাগরি">
+          {categories.slice(0, 6).map((cat) => (
+            <button
+              key={`header-cat-${cat.slug}`}
+              type="button"
+              onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
+              className="desktop-category-link"
+            >
+              {cat.name}
+            </button>
+          ))}
+        </nav>
 
-              {/* Desktop Nav Links */}
-              <nav className="flex items-center gap-5 text-gray-700 text-sm">
-                <button
-                  type="button"
-                  onClick={onNavigateToHome}
-                  className="hover:text-[#df2d4d] transition font-medium cursor-pointer"
-                >
-                  হোম
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigateToShop ? onNavigateToShop(null) : undefined}
-                  className="hover:text-[#df2d4d] transition font-medium cursor-pointer"
-                >
-                  শপ
-                </button>
-                {categories.slice(0, 5).map((cat) => (
-                  <button
-                    key={`nav-link-${cat.slug}`}
-                    type="button"
-                    onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
-                    className="hover:text-[#df2d4d] transition font-medium whitespace-nowrap cursor-pointer text-gray-700"
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById('flashSale');
-                    if (el) {
-                      el.scrollIntoView({ behavior: 'smooth' });
-                    } else if (onNavigateToShop) {
-                      onNavigateToShop(null);
-                    }
-                  }}
-                  className="text-[#df2d4d] hover:text-[#c8233f] transition font-bold flex items-center gap-1 cursor-pointer"
-                >
-                  <span>🔥 অফার / হট ডিল</span>
-                </button>
-              </nav>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span>সারা দেশে ক্যাশ অন ডেলিভারি</span>
-            </div>
-          </div>
-        </div>
       </header>
 
       {/* Mobile Off-Canvas Drawer (Shown only on mobile <= 768px/900px) */}
