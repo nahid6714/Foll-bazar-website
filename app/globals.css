@@ -738,6 +738,8 @@ textarea {
         padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
         background: #ffffff !important;
         border: 0 !important;
         box-shadow: 12px 0 40px rgba(0, 0, 0, .24) !important;
@@ -833,6 +835,8 @@ textarea {
         padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
         background: #fff !important;
         transform: translate3d(-105%, 0, 0) !important;
         visibility: hidden !important;
@@ -1060,6 +1064,8 @@ textarea {
         padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
         background: #ffffff !important;
         border: 0 !important;
         border-radius: 0 !important;
@@ -1355,6 +1361,8 @@ textarea {
         padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
         background: #fff !important;
         border: 0 !important;
         border-radius: 0 !important;
@@ -1789,6 +1797,8 @@ textarea {
   html body .fal-mobile-drawer.main-nav.md\:hidden.open {
     display: flex !important;
     flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
