@@ -538,11 +538,16 @@ body.notice-closed {
     background: var(--primary);
     color: var(--white);
     font-size: 17px;
-    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px rgba(223, 45, 77, 0.25);
 }
 
 .profile-btn:hover {
     background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(223, 45, 77, 0.35);
 }
 
 .btn-track {
@@ -2602,23 +2607,9 @@ button.btn-cart {
         border-radius: 50%;
     }
 
-    /* Keep the mobile account icon visible: the button has no background on mobile. */
+    /* On mobile, profile button is hidden from top header actions and is accessible inside mobile drawer menu */
     .app-home .header-actions .profile-btn {
-        display: flex !important;
-        width: 40px;
-        height: 40px;
-        padding: 0;
-        border-radius: 50%;
-        background: #fdf0f2 !important;
-        color: #df2d4d !important;
-        flex-shrink: 0;
-    }
-
-    .app-home .header-actions .profile-icon-circle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #df2d4d;
+        display: none !important;
     }
 
     .app-home .drawer-links a i {
@@ -6422,11 +6413,11 @@ html, body {
 
 .checkout-label {
     display: block !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
-    margin-bottom: 6px !important;
-    line-height: 1.3 !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    margin-bottom: 7px !important;
+    line-height: 1.35 !important;
 }
 
 .checkout-input-wrap {
@@ -6438,7 +6429,7 @@ html, body {
 
 .checkout-input-icon {
     position: absolute !important;
-    left: 13px !important;
+    left: 14px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     color: #94a3b8 !important;
@@ -6451,14 +6442,14 @@ html, body {
 
 .checkout-input {
     width: 100% !important;
-    height: 46px !important;
-    min-height: 46px !important;
-    padding: 0 14px 0 42px !important;
-    font-size: 13.5px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 14px 0 44px !important;
+    font-size: 15px !important;
     color: #1e293b !important;
     background-color: #ffffff !important;
     border: 1.5px solid #cbd5e1 !important;
-    border-radius: 11px !important;
+    border-radius: 12px !important;
     transition: all 0.2s ease !important;
     outline: none !important;
     box-sizing: border-box !important;
@@ -6476,14 +6467,14 @@ html, body {
 
 .checkout-select {
     width: 100% !important;
-    height: 46px !important;
-    min-height: 46px !important;
-    padding: 0 36px 0 14px !important;
-    font-size: 13.5px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 38px 0 14px !important;
+    font-size: 15px !important;
     color: #1e293b !important;
     background-color: #ffffff !important;
     border: 1.5px solid #cbd5e1 !important;
-    border-radius: 11px !important;
+    border-radius: 12px !important;
     transition: all 0.2s ease !important;
     outline: none !important;
     cursor: pointer !important;
@@ -6499,7 +6490,7 @@ html, body {
 
 .checkout-select-arrow {
     position: absolute !important;
-    right: 12px !important;
+    right: 14px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     pointer-events: none !important;
@@ -6508,13 +6499,13 @@ html, body {
 
 .checkout-textarea {
     width: 100% !important;
-    min-height: 74px !important;
-    padding: 10px 14px !important;
-    font-size: 13.5px !important;
+    min-height: 80px !important;
+    padding: 12px 14px !important;
+    font-size: 15px !important;
     color: #1e293b !important;
     background-color: #ffffff !important;
     border: 1.5px solid #cbd5e1 !important;
-    border-radius: 11px !important;
+    border-radius: 12px !important;
     outline: none !important;
     resize: vertical !important;
     box-sizing: border-box !important;
@@ -6531,7 +6522,7 @@ html, body {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 12px 14px !important;
+    padding: 14px 16px !important;
     border-radius: 14px !important;
     border: 1.5px solid #e2e8f0 !important;
     background-color: #ffffff !important;
@@ -6546,37 +6537,44 @@ html, body {
     box-shadow: 0 0 0 1px #df2d4d !important;
 }
 
-/* Sticky Bottom Checkout Action Bar */
+/* Sticky Bottom Checkout Action Bar - positioned cleanly above mobile bottom nav */
 .checkout-sticky-bar {
     position: fixed !important;
-    bottom: 0 !important;
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
     left: 0 !important;
     right: 0 !important;
-    z-index: 9999 !important;
+    z-index: 9995 !important;
     background: #ffffff !important;
-    border-top: 1px solid #e2e8f0 !important;
-    padding: 10px 16px !important;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+    border-top: 1.5px solid #e2e8f0 !important;
+    padding: 12px 16px !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
 }
 
+@media (min-width: 901px) {
+    .checkout-sticky-bar {
+        bottom: 0 !important;
+    }
+}
+
 .checkout-sticky-btn {
-    height: 46px !important;
-    padding: 0 24px !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    padding: 0 28px !important;
     background: #df2d4d !important;
     color: #ffffff !important;
     font-weight: 700 !important;
-    font-size: 15px !important;
-    border-radius: 12px !important;
+    font-size: 17px !important;
+    border-radius: 14px !important;
     border: none !important;
     cursor: pointer !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
-    box-shadow: 0 3px 12px rgba(223, 45, 77, 0.3) !important;
+    gap: 10px !important;
+    box-shadow: 0 4px 14px rgba(223, 45, 77, 0.35) !important;
     transition: all 0.15s ease !important;
 }
 

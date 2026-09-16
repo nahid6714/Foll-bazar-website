@@ -12,6 +12,8 @@ interface OrderSuccessData {
   deliveryFee: number;
   subtotal: number;
   grandTotal: number;
+  paymentTitle?: string;
+  trxId?: string;
 }
 
 interface OrderSuccessModalProps {
@@ -95,6 +97,18 @@ export default function OrderSuccessModal({ order, onClose }: OrderSuccessModalP
             <span style={{ color: '#6b7280' }}>এলাকা:</span>
             <span>{order.deliveryArea} (৳{order.deliveryFee})</span>
           </div>
+          {order.paymentTitle && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ color: '#6b7280' }}>পেমেন্ট পদ্ধতি:</span>
+              <span style={{ fontWeight: 600, color: '#111827' }}>{order.paymentTitle}</span>
+            </div>
+          )}
+          {order.trxId && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ color: '#6b7280' }}>TrxID:</span>
+              <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#df2d4d' }}>{order.trxId}</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid #e5e7eb', fontSize: '15px', fontWeight: 700 }}>
             <span>সর্বমোট মূল্য:</span>
             <span style={{ color: '#df2d4d' }}>৳{order.grandTotal}</span>

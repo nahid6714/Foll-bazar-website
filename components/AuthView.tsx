@@ -20,8 +20,49 @@ export interface UserProfile {
   name: string;
   phone: string;
   email?: string;
-  role: 'customer' | 'reseller' | 'seller';
+  role: 'customer';
   createdAt: string;
+}
+
+export interface RegisteredAccount {
+  name: string;
+  phone: string;
+  email?: string;
+  password: string;
+  role: 'customer';
+  createdAt: string;
+}
+
+const REGISTERED_ACCOUNTS_KEY = 'falbazar_registered_accounts';
+
+// Normalize phone to digits for reliable comparison across formats
+function normalizePhone(phoneStr: string): string {
+  if (!phoneStr) return '';
+  const cleaned = phoneStr.replace(/\D/g, '');
+  if (cleaned.length > 11 && cleaned.startsWith('88')) {
+    return cleaned.slice(2);
+  }
+  return cleaned;
+}
+
+function getStoredAccounts(): RegisteredAccount[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(REGISTERED_ACCOUNTS_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as RegisteredAccount[];
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredAccounts(accounts: RegisteredAccount[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(REGISTERED_ACCOUNTS_KEY, JSON.stringify(accounts));
+  } catch {
+    // Ignore
+  }
 }
 
 interface AuthViewProps {
@@ -53,8 +94,6 @@ export default function AuthView({
   const [regName, setRegName] = useState('');
   const [regPhone, setRegPhone] = useState('');
   const [regEmail, setRegEmail] = useState('');
-  const [isReseller, setIsReseller] = useState(false);
-  const [isSeller, setIsSeller] = useState(false);
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
   const [regShowPassword, setRegShowPassword] = useState(false);
@@ -65,16 +104,40 @@ export default function AuthView({
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotPhone, setForgotPhone] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
+  const [forgotError, setForgotError] = useState<string | null>(null);
 
   // Error & Status feedback
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handle Login Submit
+  // Ensure any active currentUser is safely retained in stored accounts
+  React.useEffect(() => {
+    if (currentUser && typeof window !== 'undefined') {
+      const accounts = getStoredAccounts();
+      const cleanPhone = normalizePhone(currentUser.phone);
+      const exists = accounts.some(
+        (acc) => normalizePhone(acc.phone) === cleanPhone || (currentUser.email && acc.email === currentUser.email)
+      );
+      if (!exists) {
+        accounts.push({
+          name: currentUser.name,
+          phone: currentUser.phone,
+          email: currentUser.email,
+          password: 'customer123',
+          role: 'customer',
+          createdAt: currentUser.createdAt || new Date().toLocaleDateString('bn-BD'),
+        });
+        saveStoredAccounts(accounts);
+      }
+    }
+  }, [currentUser]);
+
+  // Handle Login Submit - STRICT REGISTRATION CHECK
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     const identifier = loginIdentifier.trim();
     const password = loginPassword.trim();
@@ -91,25 +154,56 @@ export default function AuthView({
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      // Construct user profile
+
+      const accounts = getStoredAccounts();
+      const inputCleanPhone = normalizePhone(identifier);
       const isEmail = identifier.includes('@');
+      const inputEmail = identifier.toLowerCase();
+
+      // Find registered account
+      const matchedAccount = accounts.find((acc) => {
+        if (isEmail && acc.email && acc.email.toLowerCase() === inputEmail) {
+          return true;
+        }
+        if (inputCleanPhone.length >= 10 && normalizePhone(acc.phone) === inputCleanPhone) {
+          return true;
+        }
+        return false;
+      });
+
+      // 1. If NO registered account found: PREVENT LOGIN STRICTLY
+      if (!matchedAccount) {
+        setErrorMessage(
+          'এই মোবাইল নম্বর বা ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি! রেজিস্ট্রেশন করা ছাড়া লগইন করা সম্ভব নয়। অনুগ্রহ করে প্রথমে নতুন অ্যাকাউন্ট রেজিস্ট্রেশন করুন।'
+        );
+        return;
+      }
+
+      // 2. Validate Password
+      if (matchedAccount.password !== password) {
+        setErrorMessage('পাসওয়ার্ড সঠিক নয়! অনুগ্রহ করে সঠিক পাসওয়ার্ড দিন অথবা "পাসওয়ার্ড ভুলে গেছেন?" চাপুন।');
+        return;
+      }
+
+      // 3. Login Success
       const user: UserProfile = {
-        name: isEmail ? identifier.split('@')[0] : 'সম্মানিত গ্রাহক',
-        phone: isEmail ? '01711223344' : identifier,
-        email: isEmail ? identifier : undefined,
+        name: matchedAccount.name,
+        phone: matchedAccount.phone,
+        email: matchedAccount.email,
         role: 'customer',
-        createdAt: new Date().toLocaleDateString('bn-BD'),
+        createdAt: matchedAccount.createdAt,
       };
 
       onLoginSuccess(user);
-      setSuccessMessage('সফলভাবে লগইন সম্পন্ন হয়েছে!');
-    }, 600);
+      setSuccessMessage(`সফলভাবে লগইন সম্পন্ন হয়েছে! স্বাগতম, ${user.name}`);
+    }, 450);
   };
 
   // Handle Register Submit
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     const name = regName.trim();
     const phone = regPhone.trim();
@@ -120,12 +214,17 @@ export default function AuthView({
       setErrorMessage('অনুগ্রহ করে আপনার পুরো নাম লিখুন।');
       return;
     }
+    if (name.length < 2) {
+      setErrorMessage('অনুগ্রহ করে আপনার সঠিক নাম লিখুন।');
+      return;
+    }
     if (!phone) {
       setErrorMessage('অনুগ্রহ করে আপনার মোবাইল নম্বর লিখুন।');
       return;
     }
-    if (phone.length < 10) {
-      setErrorMessage('অনুগ্রহ করে সঠিক মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
+    const cleanPhone = normalizePhone(phone);
+    if (cleanPhone.length < 10) {
+      setErrorMessage('অনুগ্রহ করে সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
       return;
     }
     if (!password) {
@@ -148,21 +247,44 @@ export default function AuthView({
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      let role: 'customer' | 'reseller' | 'seller' = 'customer';
-      if (isReseller) role = 'reseller';
-      else if (isSeller) role = 'seller';
 
-      const user: UserProfile = {
+      const accounts = getStoredAccounts();
+      const duplicate = accounts.find((acc) => {
+        if (normalizePhone(acc.phone) === cleanPhone) return true;
+        if (regEmail.trim() && acc.email && acc.email.toLowerCase() === regEmail.trim().toLowerCase()) return true;
+        return false;
+      });
+
+      if (duplicate) {
+        setErrorMessage(
+          'এই মোবাইল নম্বর বা ইমেইল দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট তৈরি করা হয়েছে! অনুগ্রহ করে লগইন করুন।'
+        );
+        return;
+      }
+
+      const newAccount: RegisteredAccount = {
         name,
         phone,
         email: regEmail.trim() || undefined,
-        role,
+        password,
+        role: 'customer',
         createdAt: new Date().toLocaleDateString('bn-BD'),
       };
 
+      accounts.push(newAccount);
+      saveStoredAccounts(accounts);
+
+      const user: UserProfile = {
+        name: newAccount.name,
+        phone: newAccount.phone,
+        email: newAccount.email,
+        role: 'customer',
+        createdAt: newAccount.createdAt,
+      };
+
       onLoginSuccess(user);
-      setSuccessMessage('আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!');
-    }, 700);
+      setSuccessMessage('আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে এবং আপনি স্বয়ংক্রিয়ভাবে লগইন হয়েছেন!');
+    }, 550);
   };
 
   // If user is already logged in, show their account details & dashboard options
@@ -177,11 +299,7 @@ export default function AuthView({
             <h2 className="text-xl font-bold text-gray-900">{currentUser.name}</h2>
             <div className="flex items-center justify-center gap-2 mt-1">
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
-                {currentUser.role === 'reseller'
-                  ? 'রিসেলার অ্যাকাউন্ট'
-                  : currentUser.role === 'seller'
-                  ? 'সেলার অ্যাকাউন্ট'
-                  : 'সাধারণ গ্রাহক'}
+                কাস্টমার অ্যাকাউন্ট
               </span>
               <span className="text-xs text-gray-500">ভেরিফাইড</span>
             </div>
@@ -257,9 +375,31 @@ export default function AuthView({
       >
         {/* Error Notification */}
         {errorMessage && (
-          <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm rounded-xl flex items-start gap-2 animate-fadeIn">
-            <span className="font-bold">⚠️</span>
-            <span>{errorMessage}</span>
+          <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm rounded-xl flex items-start gap-2.5 animate-fadeIn">
+            <span className="font-bold text-base leading-none">⚠️</span>
+            <div className="flex-1">
+              <p className="leading-snug">{errorMessage}</p>
+              {mode === 'login' && errorMessage.includes('রেজিস্ট্রেশন') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (loginIdentifier.trim()) {
+                      if (loginIdentifier.includes('@')) {
+                        setRegEmail(loginIdentifier.trim());
+                      } else {
+                        setRegPhone(loginIdentifier.trim());
+                      }
+                    }
+                    setErrorMessage(null);
+                    setMode('register');
+                  }}
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#df2d4d] bg-white px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition shadow-xs cursor-pointer"
+                >
+                  <span>এখনই অ্যাকাউন্ট রেজিস্ট্রেশন করুন</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
         )}
 
@@ -282,6 +422,10 @@ export default function AuthView({
               <p className="text-sm text-[#6b7280] mt-1.5">
                 আপনার অ্যাকাউন্টে প্রবেশ করতে তথ্য দিন
               </p>
+              <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 text-[11px] sm:text-xs font-medium rounded-full border border-amber-200/80">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <span>লগইন করতে পূর্বে রেজিস্ট্রেশন থাকা বাধ্যতামূলক</span>
+              </div>
             </div>
 
             <form onSubmit={handleLoginSubmit}>
@@ -460,58 +604,6 @@ export default function AuthView({
                 </div>
               </div>
 
-              {/* Special Box 1: আমি রিসেলার একাউন্ট তৈরি করতে চাই */}
-              <div
-                onClick={() => {
-                  setIsReseller(!isReseller);
-                  if (!isReseller) setIsSeller(false);
-                }}
-                className={`p-3 rounded-xl border cursor-pointer transition flex items-center gap-3 select-none mb-3 ${
-                  isReseller
-                    ? 'border-[#df2d4d] bg-red-50/40'
-                    : 'border-gray-200 bg-white hover:bg-gray-50'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={isReseller}
-                  onChange={(e) => {
-                    setIsReseller(e.target.checked);
-                    if (e.target.checked) setIsSeller(false);
-                  }}
-                  className="w-4 h-4 rounded accent-[#df2d4d] cursor-pointer"
-                />
-                <span className="text-xs sm:text-sm font-medium text-gray-800">
-                  আমি রিসেলার একাউন্ট তৈরি করতে চাই
-                </span>
-              </div>
-
-              {/* Special Box 2: আমি সেলার একাউন্ট তৈরি করতে চাই */}
-              <div
-                onClick={() => {
-                  setIsSeller(!isSeller);
-                  if (!isSeller) setIsReseller(false);
-                }}
-                className={`p-3 rounded-xl border cursor-pointer transition flex items-center gap-3 select-none mb-3 ${
-                  isSeller
-                    ? 'border-[#df2d4d] bg-red-50/40'
-                    : 'border-gray-200 bg-white hover:bg-gray-50'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={isSeller}
-                  onChange={(e) => {
-                    setIsSeller(e.target.checked);
-                    if (e.target.checked) setIsReseller(false);
-                  }}
-                  className="w-4 h-4 rounded accent-[#df2d4d] cursor-pointer"
-                />
-                <span className="text-xs sm:text-sm font-medium text-gray-800">
-                  আমি সেলার একাউন্ট তৈরি করতে চাই
-                </span>
-              </div>
-
               {/* Field 4: পাসওয়ার্ড */}
               <div className="auth-form-group">
                 <label className="auth-label">
@@ -633,6 +725,13 @@ export default function AuthView({
               আপনার অ্যাকাউন্টের মোবাইল নম্বর দিন। আমরা পাসওয়ার্ড রিসেটের ওটিপি পাঠিয়ে দেব।
             </p>
 
+            {forgotError && (
+              <div className="mb-3 p-2.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-start gap-1.5 animate-fadeIn">
+                <span>⚠️</span>
+                <span>{forgotError}</span>
+              </div>
+            )}
+
             {forgotSent ? (
               <div className="text-center py-4">
                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -654,7 +753,15 @@ export default function AuthView({
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (!forgotPhone.trim()) return;
+                  setForgotError(null);
+                  const clean = normalizePhone(forgotPhone);
+                  if (!clean) return;
+                  const accounts = getStoredAccounts();
+                  const found = accounts.find((acc) => normalizePhone(acc.phone) === clean);
+                  if (!found) {
+                    setForgotError('এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি! পাসওয়ার্ড পুনরুদ্ধার করতে আগে রেজিস্ট্রেশন করুন।');
+                    return;
+                  }
                   setForgotSent(true);
                 }}
                 className="space-y-3"

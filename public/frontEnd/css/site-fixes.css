@@ -849,13 +849,12 @@
     background: #c42440 !important;
 }
 
-/* Reposition Floating Live Chat safely above mobile bars */
-@media (max-width: 900px) {
-    #gcc-toggle {
-        bottom: 84px !important;
-        right: 16px !important;
-        z-index: 900 !important;
-    }
+/* Hide any floating live chat or message toggles completely */
+#gcc-toggle,
+#gcc-widget {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 

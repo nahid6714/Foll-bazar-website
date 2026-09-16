@@ -37,6 +37,7 @@ function toProduct(row: any): Product {
 
   return {
     id: String(row.legacy_id ?? row.id),
+    supabaseId: String(row.id),
     title: String(row.name ?? ''),
     image: String(row.image_url ?? ''),
     price: String(price),
@@ -107,7 +108,50 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    refresh();
+    let ignore = false;
+    const fetchInitial = async () => {
+      try {
+        const [productsResult, categoriesResult] = await Promise.all([
+          supabaseRest<any[]>(
+            'products?select=id,legacy_id,name,slug,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc'
+          ),
+          supabaseRest<any[]>(
+            'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
+          ),
+        ]);
+
+        if (ignore) return;
+        const liveProducts = (productsResult ?? []).map(toProduct);
+        if (liveProducts.length > 0) {
+          setProducts(liveProducts);
+        }
+
+        const liveCategories = (categoriesResult ?? []).map((row: any) => ({
+          name: String(row.name ?? ''),
+          slug: String(row.slug ?? ''),
+          icon: String(row.image_url ?? ''),
+          hasSubmenu: false,
+        }));
+
+        if (liveCategories.length > 0) {
+          setCategories(liveCategories);
+        }
+      } catch (err) {
+        if (!ignore) {
+          console.warn('Supabase catalogue load failed; using local fallback data.', err);
+          setError(err instanceof Error ? err.message : 'Supabase data load failed');
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchInitial();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const value = useMemo<SiteDataContextValue>(() => {

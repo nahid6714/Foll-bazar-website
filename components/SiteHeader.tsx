@@ -216,6 +216,45 @@ export default function SiteHeader({
               </button>
             </div>
 
+            {/* Mobile Drawer Account / Profile Section */}
+            <div className="drawer-only-block bg-gradient-to-r from-red-50 to-pink-50/50 p-4 border-b border-red-100/70">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#df2d4d] text-white flex items-center justify-center shrink-0 shadow-xs">
+                    {currentUser ? (
+                      <span className="font-bold text-sm uppercase">
+                        {currentUser.name.slice(0, 2)}
+                      </span>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21a8 8 0 0 1 16 0" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-gray-800 truncate">
+                      {currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {currentUser ? (currentUser.phone || currentUser.email || 'লগইন সম্পন্ন') : 'লগইন বা রেজিস্টার করুন'}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    if (onOpenAuth) onOpenAuth('login');
+                  }}
+                  className="shrink-0 px-3.5 py-1.5 rounded-md bg-[#df2d4d] text-white text-xs font-semibold hover:bg-[#c8233f] transition shadow-xs cursor-pointer"
+                >
+                  {currentUser ? 'প্রোফাইল' : 'লগইন'}
+                </button>
+              </div>
+            </div>
+
             <div className="drawer-links">
               <a
                 href="#"
@@ -683,10 +722,22 @@ export default function SiteHeader({
               </div>
             </div>
 
+            <a
+              href="tel:01810502120"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 text-[#df2d4d] text-xs font-semibold hover:bg-red-100 transition border border-red-100"
+              title="হটলাইন"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span>01810502120</span>
+            </a>
+
             <button
               type="button"
-              className="profile-btn"
-              aria-label="অ্যাকাউন্ট"
+              className="profile-btn hidden md:inline-flex"
+              aria-label={currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}
+              title={currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}
               onClick={() => {
                 if (onOpenAuth) {
                   onOpenAuth('login');
@@ -694,14 +745,17 @@ export default function SiteHeader({
                   alert('স্বাগতম! ফল বাজার-এ আপনি অতিথি হিসেবে সরাসরি অর্ডার করতে পারেন।');
                 }
               }}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <span className="profile-icon-circle" title={currentUser ? currentUser.name : 'আমার অ্যাকাউন্ট'}>
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              {currentUser ? (
+                <span className="font-bold text-xs uppercase select-none">
+                  {currentUser.name.slice(0, 2)}
+                </span>
+              ) : (
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="12" cy="8" r="4" />
                   <path d="M4 21a8 8 0 0 1 16 0" />
                 </svg>
-              </span>
+              )}
             </button>
 
             <button
@@ -712,6 +766,100 @@ export default function SiteHeader({
             >
               Track Order
             </button>
+          </div>
+        </div>
+
+        {/* Desktop Category Navigation Bar - Matching demo.scaleuper.com */}
+        <div className="hidden md:block border-t border-gray-100 bg-white shadow-xs">
+          <div className="container flex items-center justify-between py-2 text-sm font-medium">
+            <div className="flex items-center gap-6">
+              {/* All Categories Dropdown Button */}
+              <div className="relative group">
+                <button
+                  type="button"
+                  onClick={() => onNavigateToShop ? onNavigateToShop(null) : undefined}
+                  className="flex items-center gap-2 bg-[#df2d4d] text-white px-4 py-2 rounded-lg font-semibold text-xs tracking-wide hover:bg-[#c8233f] transition shadow-xs cursor-pointer"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="4" x2="20" y1="12" y2="12"/>
+                    <line x1="4" x2="20" y1="6" y2="6"/>
+                    <line x1="4" x2="20" y1="18" y2="18"/>
+                  </svg>
+                  <span>সকল ক্যাটাগরি</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
+                <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 hidden group-hover:block z-50">
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToShop ? onNavigateToShop(null) : undefined}
+                    className="w-full text-left px-4 py-2 text-xs font-semibold text-gray-800 hover:bg-red-50 hover:text-[#df2d4d] flex items-center justify-between cursor-pointer"
+                  >
+                    <span>সকল পণ্য</span>
+                    <span className="text-gray-400">→</span>
+                  </button>
+                  {categories.map((cat) => (
+                    <button
+                      key={`cat-drop-${cat.slug}`}
+                      type="button"
+                      onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
+                      className="w-full text-left px-4 py-2 text-xs font-medium text-gray-700 hover:bg-red-50 hover:text-[#df2d4d] flex items-center justify-between cursor-pointer transition-colors"
+                    >
+                      <span>{cat.name}</span>
+                      <span className="text-gray-300">→</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Desktop Nav Links */}
+              <nav className="flex items-center gap-5 text-gray-700 text-sm">
+                <button
+                  type="button"
+                  onClick={onNavigateToHome}
+                  className="hover:text-[#df2d4d] transition font-medium cursor-pointer"
+                >
+                  হোম
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigateToShop ? onNavigateToShop(null) : undefined}
+                  className="hover:text-[#df2d4d] transition font-medium cursor-pointer"
+                >
+                  শপ
+                </button>
+                {categories.slice(0, 5).map((cat) => (
+                  <button
+                    key={`nav-link-${cat.slug}`}
+                    type="button"
+                    onClick={() => onNavigateToShop ? onNavigateToShop(cat.slug) : undefined}
+                    className="hover:text-[#df2d4d] transition font-medium whitespace-nowrap cursor-pointer text-gray-700"
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('flashSale');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    } else if (onNavigateToShop) {
+                      onNavigateToShop(null);
+                    }
+                  }}
+                  className="text-[#df2d4d] hover:text-[#c8233f] transition font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <span>🔥 অফার / হট ডিল</span>
+                </button>
+              </nav>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              <span>সারা দেশে ক্যাশ অন ডেলিভারি</span>
+            </div>
           </div>
         </div>
       </header>

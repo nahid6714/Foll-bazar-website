@@ -65,6 +65,7 @@ export default function ShopPage() {
           ...prev,
           {
             id: itemId,
+            productId: product.supabaseId ?? product.id,
             title: itemTitle,
             image: product.image,
             price: itemPrice,
@@ -212,7 +213,9 @@ export default function ShopPage() {
         cartCount={totalCartCount}
         activeTab="shop"
         onOpenCart={() => handleOpenOrderModal(null)}
-        onOpenLogin={() => alert('অতিথি হিসেবে আপনি সরাসরি অর্ডার করতে পারেন!')}
+        onOpenLogin={() => {
+          window.location.href = '/?auth=login';
+        }}
         onNavigate={(tab) => {
           if (tab === 'home') {
             window.location.href = '/';

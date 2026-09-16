@@ -40,9 +40,6 @@ export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal }: S
             <a href="https://twitter.com/scaleuper" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
               <i className="fab fa-twitter"></i>
             </a>
-            <a href="https://wa.me/+8801810502120" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-              <i className="fab fa-whatsapp"></i>
-            </a>
             <a href="https://youtube.com/@scaleuper" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
               <i className="fab fa-youtube"></i>
             </a>
