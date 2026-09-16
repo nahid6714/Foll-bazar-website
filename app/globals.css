@@ -1376,10 +1376,14 @@ textarea {
         pointer-events: auto !important;
     }
 
-    /* Hide only the top account/profile block. The final account menu item
-       remains visible, exactly as in the reference. */
+    /* Keep the category wrapper visible: it contains the actual mobile
+       category menu. Do not hide .drawer-only-block because the category
+       list lives inside it. */
     .fal-mobile-drawer > .drawer-only-block {
-        display: none !important;
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     .fal-mobile-drawer .drawer-head {
