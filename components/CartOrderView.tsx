@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { CartItem } from '@/lib/data';
 import { createOrderInSupabase } from '@/lib/order-service';
+import { supabaseRest } from '@/lib/supabase';
 
 export interface OrderSubmittedData {
   orderId: string;
@@ -190,26 +191,40 @@ export default function CartOrderView({
     }
   };
 
-  // Coupon apply handler
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  // Coupon codes are validated against Supabase instead of a hardcoded list.
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     const code = couponInput.trim().toUpperCase();
     if (!code) return;
 
-    // Keep the existing instant UI feedback, but the server RPC is authoritative
-    // and re-validates the coupon before creating the order.
-    if (code === 'LICHOO50' || code === 'LITCHI50' || code === 'FRUIT50') {
-      const discount = 50;
+    setCouponFeedback(null);
+    try {
+      const rows = await supabaseRest<any[]>(`coupons?select=*&code=eq.${encodeURIComponent(code)}&limit=1`);
+      const coupon = rows?.[0];
+      if (!coupon) {
+        setCouponFeedback({ msg: 'অকার্যকর বা মেয়াদ শেষ কুপন কোড।', type: 'error' });
+        return;
+      }
+      const active = coupon.is_active ?? coupon.active ?? true;
+      if (active === false) throw new Error('inactive');
+      const now = Date.now();
+      const start = coupon.starts_at || coupon.valid_from || coupon.start_date;
+      const end = coupon.expires_at || coupon.valid_until || coupon.end_date;
+      if ((start && now < Date.parse(start)) || (end && now > Date.parse(end))) throw new Error('expired');
+
+      const type = String(coupon.discount_type ?? coupon.type ?? 'fixed').toLowerCase();
+      const value = Number(coupon.discount_value ?? coupon.value ?? coupon.amount ?? coupon.discount ?? 0);
+      let discount = type.includes('percent') || type.includes('%') ? Math.round(subtotal * value / 100) : Math.round(value);
+      const maxDiscount = Number(coupon.max_discount ?? coupon.maximum_discount ?? 0);
+      if (maxDiscount > 0) discount = Math.min(discount, maxDiscount);
+      discount = Math.max(0, Math.min(discount, subtotal));
+      if (!discount) throw new Error('invalid');
+
       setDiscountAmount(discount);
       setAppliedCoupon(code);
-      setCouponFeedback({ msg: `কুপন "${code}" প্রয়োগ হয়েছে! ৫০ টাকা ছাড় পেয়েছেন।`, type: 'success' });
-    } else if (code === 'SUMMER10' || code === 'DISCOUNT10') {
-      const discount = Math.round(subtotal * 0.1);
-      setDiscountAmount(discount);
-      setAppliedCoupon(code);
-      setCouponFeedback({ msg: `কুপন "${code}" প্রয়োগ হয়েছে! ১০% ছাড় পেয়েছেন।`, type: 'success' });
-    } else {
-      setCouponFeedback({ msg: 'অকার্যকর কুপন কোড! অনুগ্রহ করে সঠিক কোড দিন।', type: 'error' });
+      setCouponFeedback({ msg: `কুপন "${code}" প্রয়োগ হয়েছে! ৳${discount} ছাড় পেয়েছেন।`, type: 'success' });
+    } catch {
+      setCouponFeedback({ msg: 'কুপন যাচাই করা যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।', type: 'error' });
     }
   };
 
@@ -275,7 +290,7 @@ export default function CartOrderView({
       items: cartItems.map((item) => ({
         // Keep the canonical product UUID/legacy id so Supabase order_items
         // can be linked reliably even when the cart id contains a variant suffix.
-        productId: item.productId || item.id.split('-')[0],
+        productId: item.productId || item.id.split('::')[0],
         title: item.title,
         price: item.price,
         quantity: item.quantity,

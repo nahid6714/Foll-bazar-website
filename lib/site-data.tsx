@@ -64,7 +64,23 @@ function toProduct(row: any): Product {
     isHotDeal: Boolean(row.is_hot_deal),
     category,
     categoryName,
+    slug: String(row.slug ?? '').trim() || undefined,
+    stock: Math.max(0, Number(row.stock_quantity ?? 0)),
   };
+}
+
+
+const PRODUCTS_SELECT_WITH_STOCK = 'products?select=id,legacy_id,name,slug,image_url,old_price,price,stock_quantity,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
+const PRODUCTS_SELECT_LEGACY = 'products?select=id,legacy_id,name,slug,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
+
+async function fetchProductsWithStock() {
+  try {
+    return await supabaseRest<any[]>(PRODUCTS_SELECT_WITH_STOCK);
+  } catch (error) {
+    // Keep the storefront usable if an older Supabase schema has not added stock_quantity yet.
+    console.warn('stock_quantity is unavailable; loading products without stock data.', error);
+    return await supabaseRest<any[]>(PRODUCTS_SELECT_LEGACY);
+  }
 }
 
 export function SiteDataProvider({ children }: { children: React.ReactNode }) {
@@ -88,9 +104,7 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const [productsResult, categoriesResult] = await Promise.all([
-        supabaseRest<any[]>(
-          'products?select=id,legacy_id,name,slug,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc'
-        ),
+        fetchProductsWithStock(),
         supabaseRest<any[]>(
           'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
         ),
@@ -148,9 +162,7 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
     const fetchInitial = async () => {
       try {
         const [productsResult, categoriesResult] = await Promise.all([
-          supabaseRest<any[]>(
-            'products?select=id,legacy_id,name,slug,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc'
-          ),
+          fetchProductsWithStock(),
           supabaseRest<any[]>(
             'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
           ),

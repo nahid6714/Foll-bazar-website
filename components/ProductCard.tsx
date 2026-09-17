@@ -18,6 +18,10 @@ export default function ProductCard({
   onViewDetails,
   showProgress = false,
 }: ProductCardProps) {
+  const stock = Number(product.stock ?? 0);
+  const hasStockData = product.stock !== undefined;
+  const isOutOfStock = hasStockData && stock <= 0;
+
   // Determine discount badge
   let discountText = product.discount || null;
   if (!discountText && product.oldPrice && product.price) {
@@ -60,6 +64,7 @@ export default function ProductCard({
         {discountText && (
           <span className="deal-badge">{discountText}</span>
         )}
+        {isOutOfStock && <span className="deal-badge" style={{ background: '#6b7280' }}>স্টক নেই</span>}
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -114,12 +119,15 @@ export default function ProductCard({
             data-title={product.title}
             data-price={product.price}
             data-image={product.image}
+            disabled={isOutOfStock}
+            aria-disabled={isOutOfStock}
+            style={isOutOfStock ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
             onClick={(e) => {
               e.stopPropagation();
-              onOrderProduct(product);
+              if (!isOutOfStock) onOrderProduct(product);
             }}
           >
-            <span>অর্ডার করুন</span>
+            <span>{isOutOfStock ? 'স্টক নেই' : 'অর্ডার করুন'}</span>
           </button>
 
           <button
@@ -129,7 +137,7 @@ export default function ProductCard({
             data-id={product.id}
             onClick={(e) => {
               e.stopPropagation();
-              onAddToCart(product);
+              if (!isOutOfStock) onAddToCart(product);
             }}
           >
             <svg

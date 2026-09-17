@@ -9,6 +9,7 @@ interface GccLiveChatProps {
   onOrderProduct: (product: Product) => void;
   allProducts: Product[];
   externalOpenComplaint?: boolean;
+  onOpenInfo?: (title: string, message: string) => void;
   onCloseComplaint?: () => void;
 }
 
@@ -23,6 +24,7 @@ export default function GccLiveChat({
   onOrderProduct,
   allProducts,
   externalOpenComplaint,
+  onOpenInfo,
   onCloseComplaint,
 }: GccLiveChatProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -102,7 +104,7 @@ export default function GccLiveChat({
   const handleComplaintSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cName || !cPhone || !cDesc) {
-      alert('অনুগ্রহ করে নাম, মোবাইল এবং বিস্তারিত পূরণ করুন।');
+      onOpenInfo?.('তথ্য প্রয়োজন', 'অনুগ্রহ করে নাম, মোবাইল এবং বিস্তারিত পূরণ করুন।');
       return;
     }
     setCSubmitting(true);
@@ -112,7 +114,7 @@ export default function GccLiveChat({
         body: JSON.stringify({ payload: { customer_name: cName.trim(), customer_phone: cPhone.trim(), order_id: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(cOrder.trim()) ? cOrder.trim() : null, subject: cOrder.trim() ? `Order reference: ${cOrder.trim()}` : null, description: cDesc.trim() } }),
       });
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'কমপ্লেইন জমা দেওয়া যায়নি।');
+      onOpenInfo?.('সমস্যা', error instanceof Error ? error.message : 'কমপ্লেইন জমা দেওয়া যায়নি।');
       setCSubmitting(false);
       return;
     }

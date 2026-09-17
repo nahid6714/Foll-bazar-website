@@ -19,6 +19,7 @@ interface SiteHeaderProps {
   onOpenAuth?: (mode?: 'login' | 'register') => void;
   currentUser?: { name: string; phone: string; email?: string } | null;
   onOpenCartPage?: () => void;
+  onOpenInfo?: (title: string, message: string) => void;
 }
 
 export default function SiteHeader({
@@ -35,6 +36,7 @@ export default function SiteHeader({
   onOpenAuth,
   currentUser,
   onOpenCartPage,
+  onOpenInfo,
 }: SiteHeaderProps) {
   const { categories } = useSiteData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -258,7 +260,7 @@ export default function SiteHeader({
                 if (onOpenAuth) {
                   onOpenAuth('login');
                 } else {
-                  alert('স্বাগতম! ফল বাজার-এ আপনি অতিথি হিসেবে সরাসরি অর্ডার করতে পারেন।');
+                  onOpenInfo?.('আমার অ্যাকাউন্ট', 'অতিথি গ্রাহক হিসেবে সরাসরি অর্ডার করতে পারেন।');
                 }
               }}
             >

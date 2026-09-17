@@ -5,9 +5,10 @@ import React, { useState } from 'react';
 interface SiteFooterProps {
   onOpenTrackModal: () => void;
   onOpenComplaintModal: () => void;
+  onOpenInfo?: (title: string, message: string) => void;
 }
 
-export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal }: SiteFooterProps) {
+export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal, onOpenInfo }: SiteFooterProps) {
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState('');
 
@@ -53,22 +54,22 @@ export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal }: S
           <h3 className="footer-col-title">প্রয়োজনীয় লিঙ্ক</h3>
           <ul className="footer-links">
             <li>
-              <a href="#contact" onClick={(e) => { e.preventDefault(); alert('আমাদের সাথে যোগাযোগ: 01810502120 অথবা ইমেইল করুন support@scaleuper.com'); }}>
+              <a href="#contact" onClick={(e) => { e.preventDefault(); onOpenInfo?.('যোগাযোগ', 'ফোন: 01810502120\nইমেইল: support@scaleuper.com'); }}>
                 যোগাযোগ
               </a>
             </li>
             <li>
-              <a href="#how-to-order" onClick={(e) => { e.preventDefault(); alert('অর্ডার করতে যেকোনো পণ্যের "অর্ডার করুন" বাটনে ক্লিক করুন, আপনার নাম-ঠিকানা দিন এবং কনফার্ম করুন!'); }}>
+              <a href="#how-to-order" onClick={(e) => { e.preventDefault(); onOpenInfo?.('কিভাবে অর্ডার করবেন', 'যেকোনো পণ্যের “অর্ডার করুন” বাটনে ক্লিক করুন, আপনার নাম-ঠিকানা দিন এবং অর্ডার কনফার্ম করুন।'); }}>
                 কিভাবে অর্ডার করবেন
               </a>
             </li>
             <li>
-              <a href="#delivery-terms" onClick={(e) => { e.preventDefault(); alert('ডেলিভারি শর্ত: ঢাকার ভিতরে ১-২ কার্যদিবস (চার্জ ৳৮০), ঢাকার বাইরে ২-৩ কার্যদিবস (চার্জ ৳১৫০)।'); }}>
+              <a href="#delivery-terms" onClick={(e) => { e.preventDefault(); onOpenInfo?.('ডেলিভারি শর্ত', 'ঢাকার ভিতরে ১-২ কার্যদিবস (চার্জ ৳৮০), ঢাকার বাইরে ২-৩ কার্যদিবস (চার্জ ৳১৫০)।'); }}>
                 ডেলিভারির শর্ত
               </a>
             </li>
             <li>
-              <a href="#return-policy" onClick={(e) => { e.preventDefault(); alert('রিটার্ন পলিসি: লিচুতে কোনো ত্রুটি থাকলে ডেলিভারি ম্যানের সামনে চেক করে সাথে সাথে রিটার্ন করতে পারবেন।'); }}>
+              <a href="#return-policy" onClick={(e) => { e.preventDefault(); onOpenInfo?.('রিটার্ন পলিসি', 'লিচুতে কোনো ত্রুটি থাকলে ডেলিভারি ম্যানের সামনে চেক করে সাথে সাথে রিটার্ন করতে পারবেন।'); }}>
                 রিট্রান পলিসি
               </a>
             </li>
@@ -79,7 +80,7 @@ export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal }: S
           <h3 className="footer-col-title">আমাদের গ্রাহক সেবা</h3>
           <ul className="footer-links">
             <li>
-              <a href="#login" onClick={(e) => { e.preventDefault(); alert('অতিথি গ্রাহক হিসেবে সরাসরি অর্ডার করতে পারেন!'); }}>
+              <a href="#login" onClick={(e) => { e.preventDefault(); onOpenInfo?.('আমার অ্যাকাউন্ট', 'অতিথি গ্রাহক হিসেবে সরাসরি অর্ডার করতে পারেন।'); }}>
                 আমার অ্যাকাউন্ট
               </a>
             </li>
@@ -94,7 +95,7 @@ export default function SiteFooter({ onOpenTrackModal, onOpenComplaintModal }: S
               </a>
             </li>
             <li>
-              <a href="#blog" onClick={(e) => { e.preventDefault(); alert('ব্লগ আর্টিকেলে দিনাজপুরের বিখ্যাত বেদানা ও বোম্বাই লিচুর বৈশিষ্ট্য সম্পর্কে জানুন!'); }}>
+              <a href="#blog" onClick={(e) => { e.preventDefault(); onOpenInfo?.('আমাদের ব্লগ', 'ব্লগ আর্টিকেলে দিনাজপুরের বিখ্যাত বেদানা ও বোম্বাই লিচুর বৈশিষ্ট্য সম্পর্কে জানুন।'); }}>
                 আমাদের ব্লগ
               </a>
             </li>

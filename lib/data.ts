@@ -12,6 +12,8 @@ export interface Product {
   isHotDeal?: boolean;
   category?: string;
   categoryName?: string;
+  slug?: string;
+  stock?: number;
 }
 
 export interface CartItem {

@@ -94,6 +94,9 @@ export default function ProductDetailsView({
   const productCode = `P0${product.id.padStart(3, '0')}`;
   const categoryName = product.categoryName || 'প্রিমিয়াম লিচু';
   const categorySlug = product.category || 'premium-licu';
+  const stock = Number(product.stock ?? 0);
+  const hasStockData = product.stock !== undefined;
+  const isOutOfStock = hasStockData && stock <= 0;
 
   // Average review rating
   const averageRating = useMemo(() => {
@@ -329,11 +332,11 @@ export default function ProductDetailsView({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600 font-medium">স্টক:</span>
-              <span className="flex items-center gap-1 text-[#16a34a] font-semibold">
-                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#16a34a] text-white text-[10px]">
-                  ✓
+              <span className={`flex items-center gap-1 font-semibold ${isOutOfStock ? 'text-gray-500' : 'text-[#16a34a]'}`}>
+                <span className={`inline-flex items-center justify-center w-4 h-4 rounded-full text-white text-[10px] ${isOutOfStock ? 'bg-gray-500' : 'bg-[#16a34a]'}`}>
+                  {isOutOfStock ? '×' : '✓'}
                 </span>
-                স্টকে আছে
+                {isOutOfStock ? 'স্টক নেই' : hasStockData ? `স্টকে আছে (${stock})` : 'স্টক তথ্য পাওয়া যায়নি'}
               </span>
             </div>
           </div>
@@ -367,7 +370,7 @@ export default function ProductDetailsView({
                   <button
                     key={v}
                     type="button"
-                    onClick={() => setSelectedVariant(v)}
+                    onClick={() => setSelectedVariant(v)} disabled={isOutOfStock}
                     className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium border transition-all ${
                       isSelected
                         ? 'border-[#df2d4d] bg-red-50/50 text-[#df2d4d] font-bold shadow-2xs'
@@ -421,21 +424,21 @@ export default function ProductDetailsView({
             {/* Add to Cart Button (White with red border and red text) */}
             <button
               type="button"
-              onClick={() => onAddToCart(product, quantity, selectedVariant)}
+              onClick={() => onAddToCart(product, Math.min(quantity, stock), selectedVariant)} disabled={isOutOfStock}
               className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 border-[#df2d4d] bg-white text-[#df2d4d] font-bold text-sm sm:text-base hover:bg-red-50/50 active:scale-[0.99] transition-all shadow-xs"
             >
               <ShoppingCart size={18} className="stroke-[2.5]" />
-              <span>Add to Cart</span>
+              <span>{isOutOfStock ? 'স্টক নেই' : 'Add to Cart'}</span>
             </button>
 
             {/* Buy Now Button (Solid red with lightning icon) */}
             <button
               type="button"
-              onClick={() => onOrderProduct(product, quantity, selectedVariant)}
+              onClick={() => onOrderProduct(product, Math.min(quantity, stock), selectedVariant)} disabled={isOutOfStock}
               className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#df2d4d] text-white font-bold text-sm sm:text-base hover:bg-[#c8233f] active:scale-[0.99] transition-all shadow-sm"
             >
               <Zap size={18} className="fill-white" />
-              <span>Buy Now</span>
+              <span>{isOutOfStock ? 'স্টক নেই' : 'Buy Now'}</span>
             </button>
           </div>
 

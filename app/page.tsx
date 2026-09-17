@@ -82,6 +82,31 @@ export default function HomePage() {
   }, [currentView]);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || siteLoading) return;
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    if (path === '/' ) return;
+    if (path === '/cart') { setCurrentView('cart'); return; }
+    if (path === '/track') { setCurrentView('track'); return; }
+    if (path === '/complaint') { setCurrentView('complaint'); return; }
+    if (path === '/shop') {
+      const category = new URLSearchParams(window.location.search).get('category');
+      setShopCategory(category);
+      setCurrentView('shop');
+      return;
+    }
+    if (path === '/login' || path === '/register') {
+      setAuthInitialMode(path === '/register' ? 'register' : 'login');
+      setCurrentView('auth');
+      return;
+    }
+    if (path.startsWith('/product/')) {
+      const slug = decodeURIComponent(path.split('/').filter(Boolean).slice(1).join('/'));
+      const found = allProductsList.find((item) => item.slug === slug || item.id === slug);
+      if (found) { setViewingProduct(found); setCurrentView('product-detail'); }
+    }
+  }, [siteLoading, allProductsList]);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const initialState = {
@@ -159,7 +184,16 @@ export default function HomePage() {
       authMode: authInitialMode,
     };
 
-    window.history.pushState(state, '', window.location.href);
+    const path = currentView === 'product-detail' && viewingProduct
+      ? `/product/${encodeURIComponent(viewingProduct.slug || viewingProduct.id)}`
+      : currentView === 'shop'
+        ? `/shop${shopCategory ? `?category=${encodeURIComponent(shopCategory)}` : ''}`
+        : currentView === 'cart' ? '/cart'
+        : currentView === 'track' ? '/track'
+        : currentView === 'complaint' ? '/complaint'
+        : currentView === 'auth' ? `/${authInitialMode}`
+        : '/';
+    window.history.pushState(state, '', path);
   }, [currentView, shopCategory, viewingProduct?.id, authInitialMode]);
 
   // Cart state
@@ -189,6 +223,7 @@ export default function HomePage() {
     }
   }, [cart, cartHydrated]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [infoModal, setInfoModal] = useState<{ title: string; message: string } | null>(null);
 
   // Modal states
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -428,6 +463,7 @@ export default function HomePage() {
 
   const totalCartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
+
   return (
     <div className="site-wrapper" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* 1. Notice Ticker */}
@@ -459,6 +495,7 @@ export default function HomePage() {
         onViewProductDetails={handleViewProductDetails}
         onOpenAuth={handleOpenAuth}
         currentUser={currentUser}
+        onOpenInfo={(title, message) => setInfoModal({ title, message })}
       />
 
       {/* 3. Mobile Category Scroll (Only on Home view, ShopView has its own pills) */}
@@ -622,6 +659,7 @@ export default function HomePage() {
       <SiteFooter
         onOpenTrackModal={() => { setIsTrackModalOpen(false); setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onOpenComplaintModal={() => { setIsComplaintOpen(false); setCurrentView('complaint'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        onOpenInfo={(title, message) => setInfoModal({ title, message })}
       />
 
       {/* 16. Product-card selection modal: one preview for quantity/variant + cart/order */}
@@ -670,6 +708,7 @@ export default function HomePage() {
         onOrderProduct={handleProductCardOrder}
         allProducts={allProductsList}
         externalOpenComplaint={false}
+        onOpenInfo={(title, message) => setInfoModal({ title, message })}
       />
 
       {/* 22. Mobile Bottom Navigation */}
@@ -686,6 +725,19 @@ export default function HomePage() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
       />
+
+      {infoModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-label={infoModal.title}>
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl p-5">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <h2 className="text-lg font-bold text-gray-900">{infoModal.title}</h2>
+              <button type="button" onClick={() => setInfoModal(null)} className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700" aria-label="বন্ধ করুন">×</button>
+            </div>
+            <p className="whitespace-pre-line text-sm leading-6 text-gray-600">{infoModal.message}</p>
+            <button type="button" onClick={() => setInfoModal(null)} className="mt-5 w-full rounded-xl bg-[#df2d4d] py-2.5 font-bold text-white">ঠিক আছে</button>
+          </div>
+        </div>
+      )}
 
       {/* 23. Toast notification */}
       <CartToast message={toastMessage} />
