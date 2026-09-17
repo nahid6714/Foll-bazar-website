@@ -22,7 +22,6 @@ import ShopView from '@/components/ShopView';
 import ProductDetailsView from '@/components/ProductDetailsView';
 import AuthView, { UserProfile } from '@/components/AuthView';
 import CartOrderView from '@/components/CartOrderView';
-import AddToCartModal from '@/components/AddToCartModal';
 import ComplaintView from '@/components/ComplaintView';
 import GccLiveChat from '@/components/GccLiveChat';
 import HomeLoadingSkeleton from '@/components/HomeLoadingSkeleton';
@@ -164,9 +163,31 @@ export default function HomePage() {
 
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartHydrated, setCartHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('falbazar_cart');
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) setCart(parsed as CartItem[]);
+      }
+    } catch {
+      // Ignore malformed local cart data.
+    } finally {
+      setCartHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!cartHydrated) return;
+    try {
+      localStorage.setItem('falbazar_cart', JSON.stringify(cart));
+    } catch {
+      // Storage may be unavailable; cart still works in memory.
+    }
+  }, [cart, cartHydrated]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [addCartProduct, setAddCartProduct] = useState<Product | null>(null);
-  const [isAddCartModalOpen, setIsAddCartModalOpen] = useState(false);
 
   // Modal states
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -264,15 +285,10 @@ export default function HomePage() {
     }, 2800);
   };
 
-  // Product-card add-to-cart behavior: desktop opens the selection modal;
-  // mobile adds directly so the mobile cart/checkout remains uninterrupted.
-  const handleProductAddToCart = (product: Product) => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
-      setAddCartProduct(product);
-      setIsAddCartModalOpen(true);
-      return;
-    }
-    handleAddToCart(product);
+  // Product cards add directly to the cart on every device.
+  // Package-size selection remains available from the product-details page.
+  const handleProductAddToCart = (product: Product, quantity = 1, variant = '১ কেজি') => {
+    handleAddToCart(product, quantity, variant);
   };
 
   // Update cart qty
@@ -605,16 +621,6 @@ export default function HomePage() {
         initialQuantity={orderModalQuantity}
         onClose={() => setIsOrderModalOpen(false)}
         onSuccess={handleOrderSuccess}
-      />
-
-      <AddToCartModal
-        isOpen={isAddCartModalOpen}
-        product={addCartProduct}
-        onClose={() => {
-          setIsAddCartModalOpen(false);
-          setAddCartProduct(null);
-        }}
-        onConfirm={(product, quantity, variant) => handleAddToCart(product, quantity, variant)}
       />
 
       {/* 17. Order Success Confirmation Modal */}

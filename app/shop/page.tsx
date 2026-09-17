@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NoticeTicker from '@/components/NoticeTicker';
 import SiteHeader from '@/components/SiteHeader';
 import ShopView from '@/components/ShopView';
@@ -11,7 +11,6 @@ import OrderSuccessModal from '@/components/OrderSuccessModal';
 import OrderTrackModal from '@/components/OrderTrackModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import CartToast from '@/components/CartToast';
-import AddToCartModal from '@/components/AddToCartModal';
 
 import { Product, CartItem } from '@/lib/data';
 import { useSiteData } from '@/lib/site-data';
@@ -20,9 +19,31 @@ export default function ShopPage() {
   const { products: allProductsList } = useSiteData();
   // Cart state
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartHydrated, setCartHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('falbazar_cart');
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) setCart(parsed as CartItem[]);
+      }
+    } catch {
+      // Ignore malformed local cart data.
+    } finally {
+      setCartHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!cartHydrated) return;
+    try {
+      localStorage.setItem('falbazar_cart', JSON.stringify(cart));
+    } catch {
+      // Storage may be unavailable; cart still works in memory.
+    }
+  }, [cart, cartHydrated]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [addCartProduct, setAddCartProduct] = useState<Product | null>(null);
-  const [isAddCartModalOpen, setIsAddCartModalOpen] = useState(false);
 
   // Modal states
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -51,14 +72,21 @@ export default function ShopPage() {
     const multiplier = variant === '৫০০ গ্রাম' ? 0.5 : variant === '২ কেজি' ? 2 : 1;
     const itemPrice = Math.round(numericPrice * multiplier);
     const itemOldPrice = numericOldPrice == null ? null : Math.round(numericOldPrice * multiplier);
-    const itemId = variant ? `${product.id}-${variant}` : product.id;
-    const itemTitle = variant ? `${product.title} (${variant})` : product.title;
+    const normalizedVariant = variant || '১ কেজি';
+    const itemId = `${product.id}::${normalizedVariant}`;
+    const itemTitle = `${product.title} (${normalizedVariant})`;
+
+    const safeQuantity = Math.max(1, Math.min(50, Number(quantity) || 1));
 
     setCart((prev) => {
-      const existing = prev.find((item) => item.id === itemId);
+      const existing = prev.find((item) => {
+        const itemProductId = item.productId || item.id.split('::')[0] || item.id;
+        const itemVariant = item.variant || (item.id.includes('::') ? item.id.split('::').slice(1).join('::') : '১ কেজি');
+        return itemProductId === product.id && itemVariant === normalizedVariant;
+      });
       if (existing) {
         return prev.map((item) =>
-          item.id === itemId ? { ...item, quantity: item.quantity + quantity } : item
+          item.id === existing.id ? { ...item, id: itemId, productId: product.id, title: itemTitle, image: product.image, price: itemPrice, oldPrice: itemOldPrice, basePrice: numericPrice, baseOldPrice: numericOldPrice, variant: normalizedVariant, quantity: Math.min(50, item.quantity + safeQuantity) } : item
         );
       } else {
         return [
@@ -70,10 +98,10 @@ export default function ShopPage() {
             image: product.image,
             price: itemPrice,
             oldPrice: itemOldPrice,
-            quantity,
+            quantity: safeQuantity,
             basePrice: numericPrice,
             baseOldPrice: numericOldPrice,
-            variant,
+            variant: normalizedVariant,
           },
         ];
       }
@@ -85,14 +113,10 @@ export default function ShopPage() {
     }, 2800);
   };
 
-  // Desktop: show the product-selection modal. Mobile: add immediately.
-  const handleProductAddToCart = (product: Product) => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
-      setAddCartProduct(product);
-      setIsAddCartModalOpen(true);
-      return;
-    }
-    handleAddToCart(product);
+  // Product cards add directly to the cart on every device.
+  // Package-size selection remains available from the product-details page.
+  const handleProductAddToCart = (product: Product, quantity = 1, variant = '১ কেজি') => {
+    handleAddToCart(product, quantity, variant);
   };
 
   // Update cart qty
@@ -189,16 +213,6 @@ export default function ShopPage() {
         cartItems={cart}
         onClose={() => setIsOrderModalOpen(false)}
         onSuccess={handleOrderSuccess}
-      />
-
-      <AddToCartModal
-        isOpen={isAddCartModalOpen}
-        product={addCartProduct}
-        onClose={() => {
-          setIsAddCartModalOpen(false);
-          setAddCartProduct(null);
-        }}
-        onConfirm={(product, quantity, variant) => handleAddToCart(product, quantity, variant)}
       />
 
       {/* 7. Order Success Confirmation Modal */}
