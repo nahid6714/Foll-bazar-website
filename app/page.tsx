@@ -18,6 +18,7 @@ import OrderTrackView from '@/components/OrderTrackView';
 import PromoPopup from '@/components/PromoPopup';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import CartToast from '@/components/CartToast';
+import AddToCartModal from '@/components/AddToCartModal';
 import ShopView from '@/components/ShopView';
 import ProductDetailsView from '@/components/ProductDetailsView';
 import AuthView, { UserProfile } from '@/components/AuthView';
@@ -191,6 +192,8 @@ export default function HomePage() {
 
   // Modal states
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isAddToCartModalOpen, setIsAddToCartModalOpen] = useState(false);
+  const [addToCartProduct, setAddToCartProduct] = useState<Product | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [orderModalQuantity, setOrderModalQuantity] = useState<number>(1);
   const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
@@ -285,10 +288,19 @@ export default function HomePage() {
     }, 2800);
   };
 
-  // Product cards add directly to the cart on every device.
-  // Package-size selection remains available from the product-details page.
-  const handleProductAddToCart = (product: Product, quantity = 1, variant = '১ কেজি') => {
-    handleAddToCart(product, quantity, variant);
+  // Product-card actions open one shared product selection dialog.
+  // The customer can choose package/quantity and then either add to cart or order now.
+  const openProductSelection = (product: Product) => {
+    setAddToCartProduct(product);
+    setIsAddToCartModalOpen(true);
+  };
+
+  const handleProductAddToCart = (product: Product) => {
+    openProductSelection(product);
+  };
+
+  const handleProductCardOrder = (product: Product) => {
+    openProductSelection(product);
   };
 
   // Update cart qty
@@ -526,7 +538,7 @@ export default function HomePage() {
           /* Dedicated Shop Page View with Filtering & Sorting */
           <ShopView
             key={`shop-${shopCategory || 'all'}`}
-            onOrderProduct={handleOrderProduct}
+            onOrderProduct={handleProductCardOrder}
             onAddToCart={handleProductAddToCart}
             initialCategory={shopCategory}
             onCategoryChange={(categorySlug) => setShopCategory(categorySlug)}
@@ -548,30 +560,30 @@ export default function HomePage() {
 
             {/* 5. Flash Sale Section */}
             <FlashSaleSection
-              onOrderProduct={handleOrderProduct}
+              onOrderProduct={handleProductCardOrder}
               onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
             {/* 6. Promo Banner 1 */}
-            {promoBanners[0] && <PromoSection image={promoBanners[0].image} widthPercent={promoBanners[0].widthPercent} heightPx={promoBanners[0].heightPx} linkUrl={promoBanners[0].linkUrl} />}
+            {promoBanners[0] && <PromoSection image={promoBanners[0].image} linkUrl={promoBanners[0].linkUrl} />}
 
             {/* 7. Hot Deal Section */}
             <HotDealSection
-              onOrderProduct={handleOrderProduct}
+              onOrderProduct={handleProductCardOrder}
               onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
             {/* 8. Promo Banner 2 */}
-            {promoBanners[1] && <PromoSection image={promoBanners[1].image} widthPercent={promoBanners[1].widthPercent} heightPx={promoBanners[1].heightPx} linkUrl={promoBanners[1].linkUrl} />}
+            {promoBanners[1] && <PromoSection image={promoBanners[1].image} linkUrl={promoBanners[1].linkUrl} />}
 
             {/* 9. দিনাজপুর লিচু Section */}
             <CategorySection
               id="dinajpur-licu"
               title="দিনাজপুর লিচু"
               products={dinajpurProducts}
-              onOrderProduct={handleOrderProduct}
+              onOrderProduct={handleProductCardOrder}
               onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
@@ -581,23 +593,23 @@ export default function HomePage() {
               id="premium-licu"
               title="প্রিমিয়াম লিচু"
               products={premiumProducts}
-              onOrderProduct={handleOrderProduct}
+              onOrderProduct={handleProductCardOrder}
               onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
             {/* 11. Promo Banner 3 */}
-            {promoBanners[2] && <PromoSection image={promoBanners[2].image} widthPercent={promoBanners[2].widthPercent} heightPx={promoBanners[2].heightPx} linkUrl={promoBanners[2].linkUrl} />}
+            {promoBanners[2] && <PromoSection image={promoBanners[2].image} linkUrl={promoBanners[2].linkUrl} />}
 
             {/* 12. সকল প্রোডাক্ট Section */}
             <AllProductsSection
-              onOrderProduct={handleOrderProduct}
+              onOrderProduct={handleProductCardOrder}
               onAddToCart={handleProductAddToCart}
               onViewDetails={handleViewProductDetails}
             />
 
             {/* 13. Promo Banner 4 */}
-            {promoBanners[3] && <PromoSection image={promoBanners[3].image} widthPercent={promoBanners[3].widthPercent} heightPx={promoBanners[3].heightPx} linkUrl={promoBanners[3].linkUrl} />}
+            {promoBanners[3] && <PromoSection image={promoBanners[3].image} linkUrl={promoBanners[3].linkUrl} />}
             </>
           )
         )}
@@ -612,7 +624,27 @@ export default function HomePage() {
         onOpenComplaintModal={() => { setIsComplaintOpen(false); setCurrentView('complaint'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
       />
 
-      {/* 16. Quick Order & Checkout Modal */}
+      {/* 16. Product-card selection modal: one preview for quantity/variant + cart/order */}
+      <AddToCartModal
+        isOpen={isAddToCartModalOpen}
+        product={addToCartProduct}
+        onClose={() => {
+          setIsAddToCartModalOpen(false);
+          setAddToCartProduct(null);
+        }}
+        onConfirm={(product, quantity, variant) => {
+          handleAddToCart(product, quantity, variant);
+        }}
+        onOrder={(product, quantity, variant) => {
+          handleAddToCart(product, quantity, variant);
+          setIsAddToCartModalOpen(false);
+          setAddToCartProduct(null);
+          setCurrentView('cart');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+
+      {/* 17. Quick Order & Checkout Modal */}
       <VomOrderModal
         key={isOrderModalOpen ? `${selectedProduct?.id || 'cart'}-${orderModalQuantity}` : 'closed'}
         isOpen={isOrderModalOpen}
@@ -635,7 +667,7 @@ export default function HomePage() {
       {/* 22. Floating customer chat, matching the reference home screen */}
       <GccLiveChat
         onOpenTrackModal={() => { setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'auto' }); }}
-        onOrderProduct={handleOrderProduct}
+        onOrderProduct={handleProductCardOrder}
         allProducts={allProductsList}
         externalOpenComplaint={false}
       />
