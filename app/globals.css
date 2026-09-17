@@ -2947,3 +2947,123 @@ textarea {
     padding-top: 10px !important;
   }
 }
+
+
+/* =========================================================
+   V45 — HERO IMAGE FIT FIX
+   Fixed 250px outer frame, but NEVER crop the banner artwork.
+   The source image scales to the available width and keeps its natural ratio.
+   Any remaining space is only below the image; nothing is added above it.
+   ========================================================= */
+.fb-hero-banner,
+.fb-hero-slider {
+  height: 250px !important;
+  min-height: 250px !important;
+  max-height: 250px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.fb-hero-track,
+.fb-hero-slide {
+  height: 250px !important;
+  min-height: 250px !important;
+  max-height: 250px !important;
+}
+
+.fb-hero-slide {
+  align-items: flex-start !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.fb-hero-link {
+  width: min(var(--fb-banner-width, 100%), 100%) !important;
+  height: 250px !important;
+  max-width: 100% !important;
+  max-height: 250px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  display: block !important;
+  line-height: 0 !important;
+}
+
+.fb-hero-image-frame {
+  width: 100% !important;
+  height: 250px !important;
+  max-height: 250px !important;
+  overflow: hidden !important;
+  display: block !important;
+  line-height: 0 !important;
+  background: #f2f2f7 !important;
+}
+
+.fb-hero-img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 250px !important;
+  object-fit: contain !important;
+  object-position: top center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: top !important;
+}
+
+/* Keep controls above the image and easy to tap. */
+.fb-hero-nav {
+  z-index: 90 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.fb-hero-dots {
+  z-index: 91 !important;
+}
+
+@media (max-width: 767px) {
+  .app-home .fb-hero-banner,
+  .app-home .fb-hero-slider,
+  .app-home .fb-hero-track,
+  .app-home .fb-hero-slide {
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+  }
+
+  .app-home .fb-hero-slide {
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  .app-home .fb-hero-link {
+    width: min(var(--fb-banner-width, 100%), 100%) !important;
+    height: 250px !important;
+    max-height: 250px !important;
+    margin: 0 auto !important;
+  }
+
+  .app-home .fb-hero-image-frame {
+    width: 100% !important;
+    height: 250px !important;
+    max-height: 250px !important;
+  }
+
+  .app-home .fb-hero-img {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 250px !important;
+    object-fit: contain !important;
+    object-position: top center !important;
+    margin: 0 !important;
+  }
+
+  .app-home .fb-hero-banner + .flash-sale-section {
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+  }
+}

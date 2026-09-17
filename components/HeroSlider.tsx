@@ -100,7 +100,14 @@ export default function HeroSlider() {
           style={{ transform: `translate3d(-${current * 100}%, 0, 0)` }}
         >
           {heroBanners.map((banner, index) => (
-            <div key={banner.id} className="fb-hero-slide">
+            <div
+              key={banner.id}
+              className="fb-hero-slide"
+              style={{
+                ['--fb-banner-width' as string]: `${Math.min(100, Math.max(50, banner.widthPercent))}%`,
+                ['--fb-banner-height' as string]: `${Math.min(250, Math.max(120, banner.heightPx))}px`,
+              }}
+            >
               <a
                 href={banner.linkUrl || '#'}
                 className="fb-hero-link"
