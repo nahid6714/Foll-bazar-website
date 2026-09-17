@@ -3067,3 +3067,164 @@ textarea {
     padding-top: 10px !important;
   }
 }
+
+/* =========================================================
+   V46 — RESPONSIVE BANNER SYSTEM
+   Width/height are controlled by the website, not by banner rows.
+   The admin can replace images; the renderer always uses full width.
+   ========================================================= */
+.fb-hero-banner {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f2f2f7 !important;
+  overflow: hidden !important;
+}
+.fb-hero-slider {
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  touch-action: pan-y !important;
+  background: #f2f2f7 !important;
+}
+.fb-hero-loading {
+  height: 250px !important;
+  background: linear-gradient(90deg,#ececf1,#f7f7fa,#ececf1) !important;
+}
+.fb-hero-track {
+  display: flex !important;
+  width: 100% !important;
+  height: auto !important;
+  transition: transform 420ms ease !important;
+  will-change: transform !important;
+}
+.fb-hero-slide {
+  position: relative !important;
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: block !important;
+  overflow: hidden !important;
+}
+.fb-hero-link,
+.fb-hero-image-frame {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 0 !important;
+  overflow: hidden !important;
+}
+.fb-hero-img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: top center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+}
+.fb-hero-nav {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 20 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 46px !important;
+  height: 46px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  color: #df294d !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.10) !important;
+  cursor: pointer !important;
+}
+.fb-hero-nav svg { width: 25px !important; height: 25px !important; }
+.fb-hero-prev { left: 14px !important; }
+.fb-hero-next { right: 14px !important; }
+.fb-hero-dots {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 10px !important;
+  transform: translateX(-50%) !important;
+  z-index: 21 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  pointer-events: auto !important;
+}
+.fb-hero-dot {
+  width: 10px !important;
+  height: 10px !important;
+  min-width: 10px !important;
+  min-height: 10px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.78) !important;
+  box-shadow: 0 1px 5px rgba(0,0,0,.18) !important;
+  cursor: pointer !important;
+}
+.fb-hero-dot.active { width: 28px !important; background: #fff !important; }
+
+/* Promo banners also ignore old admin width/height values. */
+.app-home .promo-section {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 16px 0 !important;
+}
+.app-home .promo-section .container {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding-inline: 16px !important;
+  box-sizing: border-box !important;
+}
+.fb-promo-link {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 0 !important;
+}
+.app-home .promo-banner-img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 1200px) {
+  .fb-hero-nav { width: 50px !important; height: 50px !important; }
+  .fb-hero-prev { left: 20px !important; }
+  .fb-hero-next { right: 20px !important; }
+}
+@media (max-width: 767px) {
+  .fb-hero-nav { width: 42px !important; height: 42px !important; }
+  .fb-hero-prev { left: 10px !important; }
+  .fb-hero-next { right: 10px !important; }
+  .fb-hero-dots { bottom: 8px !important; }
+  .app-home .promo-section { padding: 8px 0 !important; }
+  .app-home .promo-section .container { padding-inline: 12px !important; }
+}
