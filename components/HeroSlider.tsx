@@ -8,10 +8,9 @@ const MOBILE_FRAME_HEIGHT = 320;
 export default function HeroSlider() {
   const { heroBanners } = useSiteData();
   const [current, setCurrent] = useState(0);
-  const touchStartX = useRef<number | null>(null);
-  const touchDeltaX = useRef(0);
+  const pointerStartX = useRef<number | null>(null);
+  const pointerDeltaX = useRef(0);
   const total = heroBanners.length;
-  const activeBanner = heroBanners[current] ?? heroBanners[0];
 
   const nextSlide = useCallback(() => {
     if (total > 1) setCurrent((prev) => (prev + 1) % total);
@@ -33,20 +32,21 @@ export default function HeroSlider() {
 
   if (total === 0) return null;
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    touchStartX.current = e.touches[0]?.clientX ?? null;
-    touchDeltaX.current = 0;
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === 'mouse') return;
+    pointerStartX.current = e.clientX;
+    pointerDeltaX.current = 0;
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (touchStartX.current == null) return;
-    touchDeltaX.current = (e.touches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (pointerStartX.current == null) return;
+    pointerDeltaX.current = e.clientX - pointerStartX.current;
   };
 
-  const handleTouchEnd = () => {
-    const delta = touchDeltaX.current;
-    touchStartX.current = null;
-    touchDeltaX.current = 0;
+  const handlePointerEnd = () => {
+    const delta = pointerDeltaX.current;
+    pointerStartX.current = null;
+    pointerDeltaX.current = 0;
     if (Math.abs(delta) < 45 || total <= 1) return;
     if (delta < 0) nextSlide();
     else prevSlide();
@@ -58,9 +58,10 @@ export default function HeroSlider() {
         className="hero-slider"
         id="heroSlider"
         aria-label="হিরো ব্যানার স্লাইডার"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
         style={{ ['--hero-frame-height' as any]: `${MOBILE_FRAME_HEIGHT}px` }}
       >
         <div
@@ -111,10 +112,10 @@ export default function HeroSlider() {
         {total > 1 && (
           <>
             <button type="button" className="hero-nav hero-arrow hero-prev" id="heroPrev" aria-label="পূর্ববর্তী স্লাইড" onClick={prevSlide}>
-              <i className="fas fa-chevron-left" aria-hidden="true"></i>
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="hero-chevron"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
             <button type="button" className="hero-nav hero-arrow hero-next" id="heroNext" aria-label="পরবর্তী স্লাইড" onClick={nextSlide}>
-              <i className="fas fa-chevron-right" aria-hidden="true"></i>
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="hero-chevron"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
 
             <div className="hero-dots" id="heroDots" aria-label="ব্যানার নির্বাচন">
