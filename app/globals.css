@@ -3386,3 +3386,78 @@ textarea {
     padding: 0 !important;
   }
 }
+
+
+/* =========================================================
+   V51 — ALL HOME BANNERS USE THE NORMAL SITE CONTENT WIDTH
+   Applies to BOTH hero banners and every promo/site banner.
+   The banner image never gets a separate admin width/height on the
+   website; it follows the normal responsive content width.
+   ========================================================= */
+@media (min-width: 768px) {
+  .app-home .fb-hero-banner,
+  .app-home .promo-section .container {
+    width: min(var(--container), 94%) !important;
+    max-width: min(var(--container), 94%) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .app-home .fb-hero-banner {
+    padding: 0 !important;
+  }
+
+  .app-home .promo-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .app-home .promo-section .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .app-home .promo-section .fb-promo-link,
+  .app-home .promo-section .promo-banner,
+  .app-home .promo-section .promo-banner-img {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .app-home .promo-section .promo-banner,
+  .app-home .promo-section .promo-banner-img {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 767px) {
+  /* On mobile the normal site content is full-width with its existing
+     horizontal page padding, so every banner follows that same width. */
+  .app-home .fb-hero-banner,
+  .app-home .promo-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .app-home .promo-section .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .app-home .promo-section .promo-banner,
+  .app-home .promo-section .promo-banner-img {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
