@@ -3,13 +3,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSiteData } from '@/lib/site-data';
 
-const MOBILE_FRAME_HEIGHT = 320;
+const MOBILE_FRAME_HEIGHT = 300;
 
 export default function HeroSlider() {
   const { heroBanners } = useSiteData();
   const [current, setCurrent] = useState(0);
-  const pointerStartX = useRef<number | null>(null);
-  const pointerDeltaX = useRef(0);
+  const startX = useRef<number | null>(null);
+  const deltaX = useRef(0);
+  const suppressClick = useRef(false);
   const total = heroBanners.length;
 
   const nextSlide = useCallback(() => {
@@ -32,24 +33,26 @@ export default function HeroSlider() {
 
   if (total === 0) return null;
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType === 'mouse') return;
-    pointerStartX.current = e.clientX;
-    pointerDeltaX.current = 0;
+  const startSwipe = (x: number) => {
+    startX.current = x;
+    deltaX.current = 0;
+    suppressClick.current = false;
   };
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (pointerStartX.current == null) return;
-    pointerDeltaX.current = e.clientX - pointerStartX.current;
+  const moveSwipe = (x: number) => {
+    if (startX.current == null) return;
+    deltaX.current = x - startX.current;
   };
 
-  const handlePointerEnd = () => {
-    const delta = pointerDeltaX.current;
-    pointerStartX.current = null;
-    pointerDeltaX.current = 0;
+  const endSwipe = () => {
+    const delta = deltaX.current;
+    startX.current = null;
+    deltaX.current = 0;
     if (Math.abs(delta) < 45 || total <= 1) return;
+    suppressClick.current = true;
     if (delta < 0) nextSlide();
     else prevSlide();
+    window.setTimeout(() => { suppressClick.current = false; }, 300);
   };
 
   return (
@@ -58,10 +61,13 @@ export default function HeroSlider() {
         className="hero-slider"
         id="heroSlider"
         aria-label="হিরো ব্যানার স্লাইডার"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerEnd}
-        onPointerCancel={handlePointerEnd}
+        onTouchStart={(e) => { if (e.touches.length === 1) startSwipe(e.touches[0].clientX); }}
+        onTouchMove={(e) => { if (e.touches.length === 1) moveSwipe(e.touches[0].clientX); }}
+        onTouchEnd={endSwipe}
+        onPointerDown={(e) => { if (e.pointerType !== 'mouse') startSwipe(e.clientX); }}
+        onPointerMove={(e) => { if (e.pointerType !== 'mouse') moveSwipe(e.clientX); }}
+        onPointerUp={(e) => { if (e.pointerType !== 'mouse') endSwipe(); }}
+        onPointerCancel={(e) => { if (e.pointerType !== 'mouse') endSwipe(); }}
         style={{ ['--hero-frame-height' as any]: `${MOBILE_FRAME_HEIGHT}px` }}
       >
         <div
@@ -71,10 +77,8 @@ export default function HeroSlider() {
         >
           {heroBanners.map((banner, index) => {
             const widthPercent = Math.min(100, Math.max(50, Number(banner.widthPercent ?? 100)));
-            const heightPx = Math.min(500, Math.max(120, Number(banner.heightPx ?? 320)));
-            // Admin height controls the image's size INSIDE the fixed frame.
-            // The frame itself never grows/shrinks, preventing layout jumps.
-            const heightPercent = Math.min(100, Math.max(38, (heightPx / MOBILE_FRAME_HEIGHT) * 100));
+            const heightPx = Math.min(MOBILE_FRAME_HEIGHT, Math.max(120, Number(banner.heightPx ?? MOBILE_FRAME_HEIGHT)));
+            const heightPercent = Math.min(100, Math.max(40, (heightPx / MOBILE_FRAME_HEIGHT) * 100));
 
             return (
               <div
@@ -87,9 +91,12 @@ export default function HeroSlider() {
               >
                 <a
                   href={banner.linkUrl || '#'}
-                  onClick={(e) => { if (!banner.linkUrl) e.preventDefault(); }}
+                  onClick={(e) => {
+                    if (!banner.linkUrl || suppressClick.current) e.preventDefault();
+                  }}
                   className="hero-link"
                   aria-label={banner.alt}
+                  draggable={false}
                 >
                   <span className="hero-image-frame">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -101,6 +108,7 @@ export default function HeroSlider() {
                       fetchPriority={index === 0 ? 'high' : 'auto'}
                       width={1920}
                       height={600}
+                      draggable={false}
                     />
                   </span>
                 </a>
@@ -117,7 +125,6 @@ export default function HeroSlider() {
             <button type="button" className="hero-nav hero-arrow hero-next" id="heroNext" aria-label="পরবর্তী স্লাইড" onClick={nextSlide}>
               <svg viewBox="0 0 24 24" aria-hidden="true" className="hero-chevron"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
-
             <div className="hero-dots" id="heroDots" aria-label="ব্যানার নির্বাচন">
               {heroBanners.map((banner, index) => (
                 <button

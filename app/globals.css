@@ -2652,3 +2652,25 @@ textarea {
   border: 0 !important;
 }
 .notice-ticker .notice-close i { color: #fff !important; }
+
+/* V41 final override: compact mobile hero and reliable touch swipe. */
+@media (max-width: 767px) {
+  .app-home .hero-banner,
+  .app-home .hero-slider,
+  .app-home .hero-track,
+  .app-home .hero-slide { height: 300px !important; min-height: 300px !important; max-height: 300px !important; }
+  .app-home .hero-banner { margin: 0 !important; padding: 0 !important; overflow: hidden !important; }
+  .app-home .hero-slider { position: relative !important; overflow: hidden !important; touch-action: pan-y !important; user-select: none !important; -webkit-user-select: none !important; }
+  .app-home .hero-track { display: flex !important; width: 100% !important; align-items: center !important; will-change: transform; }
+  .app-home .hero-slide { flex: 0 0 100% !important; width: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden !important; }
+  .app-home .hero-link { display: block !important; width: min(var(--banner-width, 100%), 100%) !important; height: min(var(--banner-height-percent, 100%), 100%) !important; max-width: 100% !important; max-height: 300px !important; margin: auto !important; padding: 0 !important; overflow: hidden !important; line-height: 0 !important; }
+  .app-home .hero-image-frame, .app-home .hero-img { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 300px !important; }
+  .app-home .hero-img { display: block !important; object-fit: cover !important; object-position: center !important; pointer-events: none !important; }
+  .app-home .hero-arrow.hero-nav { display: flex !important; position: absolute !important; top: 50% !important; transform: translateY(-50%) !important; width: 42px !important; height: 42px !important; min-width: 42px !important; min-height: 42px !important; max-width: 42px !important; max-height: 42px !important; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: #fff !important; color: #df294d !important; opacity: 1 !important; visibility: visible !important; z-index: 100 !important; box-shadow: 0 2px 10px rgba(0,0,0,.12) !important; }
+  .app-home .hero-prev { left: 14px !important; } .app-home .hero-next { right: 14px !important; }
+  .app-home .hero-chevron { width: 22px !important; height: 22px !important; color: #df294d !important; }
+  .app-home .hero-dots, .app-home #heroDots { position: absolute !important; left: 0 !important; right: 0 !important; bottom: 9px !important; height: 12px !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 7px !important; z-index: 101 !important; pointer-events: auto !important; }
+  .app-home .hero-dot, .app-home .hero-dot.active { display: block !important; width: 9px !important; min-width: 9px !important; max-width: 9px !important; height: 9px !important; min-height: 9px !important; max-height: 9px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: rgba(255,255,255,.9) !important; box-shadow: 0 1px 4px rgba(0,0,0,.14) !important; }
+  .app-home .hero-dot.active { width: 24px !important; min-width: 24px !important; max-width: 24px !important; border-radius: 6px !important; background: #fff !important; }
+  .app-home .hero-banner + .flash-sale-section { margin-top: 0 !important; padding-top: 12px !important; }
+}
