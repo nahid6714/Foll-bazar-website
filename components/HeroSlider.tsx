@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSiteData } from '@/lib/site-data';
 
 const MOBILE_FRAME_HEIGHT = 320;
@@ -8,6 +8,8 @@ const MOBILE_FRAME_HEIGHT = 320;
 export default function HeroSlider() {
   const { heroBanners } = useSiteData();
   const [current, setCurrent] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef(0);
   const total = heroBanners.length;
   const activeBanner = heroBanners[current] ?? heroBanners[0];
 
@@ -31,12 +33,34 @@ export default function HeroSlider() {
 
   if (total === 0) return null;
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+    touchDeltaX.current = 0;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current == null) return;
+    touchDeltaX.current = (e.touches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+  };
+
+  const handleTouchEnd = () => {
+    const delta = touchDeltaX.current;
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+    if (Math.abs(delta) < 45 || total <= 1) return;
+    if (delta < 0) nextSlide();
+    else prevSlide();
+  };
+
   return (
     <section className="hero-banner">
       <div
         className="hero-slider"
         id="heroSlider"
         aria-label="হিরো ব্যানার স্লাইডার"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={{ ['--hero-frame-height' as any]: `${MOBILE_FRAME_HEIGHT}px` }}
       >
         <div
