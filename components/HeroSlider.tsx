@@ -46,16 +46,16 @@ export default function HeroSlider() {
             <div
               key={banner.id}
               className={`hero-slide ${index === current ? 'active' : ''}`}
-              style={{ minWidth: '100%', flexShrink: 0 }}
+              style={{ minWidth: '100%', flexShrink: 0, ['--banner-height' as any]: `${Math.max(120, banner.heightPx)}px`, display: 'flex', justifyContent: 'center', alignItems: 'stretch' }}
             >
-              <a href={banner.linkUrl || '#'} onClick={(e) => { if (!banner.linkUrl) e.preventDefault(); }} className="hero-link" style={{ display: 'block' }}>
+              <a href={banner.linkUrl || '#'} onClick={(e) => { if (!banner.linkUrl) e.preventDefault(); }} className="hero-link" style={{ display: 'block', ['--banner-width' as any]: `${Math.min(100, Math.max(50, banner.widthPercent))}%`, height: '100%', margin: '0 auto' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={banner.image}
                   alt={banner.alt}
                   className="hero-img"
                   loading={index === 0 ? 'eager' : 'lazy'}
-                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                  style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', objectPosition: 'center' }}
                 />
               </a>
             </div>
@@ -82,20 +82,7 @@ export default function HeroSlider() {
           <i className="fas fa-chevron-right"></i>
         </button>
 
-        {/* Indicator Dots */}
-        <div className="hero-dots" id="heroDots" role="tablist" aria-label="স্লাইড নির্বাচন">
-          {heroBanners.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`hero-dot ${i === current ? 'active' : ''}`}
-              role="tab"
-              aria-label={`স্লাইড ${i + 1}`}
-              aria-selected={i === current}
-              onClick={() => setCurrent(i)}
-            />
-          ))}
-        </div>
+
       </div>
     </section>
   );

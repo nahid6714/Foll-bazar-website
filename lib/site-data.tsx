@@ -17,6 +17,8 @@ export type SiteBanner = {
   type: 'hero' | 'promo';
   sortOrder: number;
   linkUrl?: string | null;
+  widthPercent: number;
+  heightPx: number;
 };
 
 type SiteCategory = {
@@ -34,7 +36,7 @@ type SiteDataContextValue = {
   dinajpurProducts: Product[];
   premiumProducts: Product[];
   heroBanners: SiteBanner[];
-  promoBanners: string[];
+  promoBanners: SiteBanner[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
@@ -77,8 +79,8 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       hasSubmenu: c.hasSubmenu,
     }))
   );
-  const [heroBanners, setHeroBanners] = useState<SiteBanner[]>(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i })));
-  const [promoBanners, setPromoBanners] = useState<string[]>(fallbackPromoBanners);
+  const [heroBanners, setHeroBanners] = useState<SiteBanner[]>(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i, widthPercent: 100, heightPx: 220 })));
+  const [promoBanners, setPromoBanners] = useState<SiteBanner[]>(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, image, alt: 'Promo banner', type: 'promo', sortOrder: i, widthPercent: 100, heightPx: 160 })));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,7 +100,7 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
 
       let bannersResult: any[] = [];
       try {
-        bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url&is_active=eq.true&order=banner_type.asc,sort_order.asc');
+        bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url,width_percent,height_px&is_active=eq.true&order=banner_type.asc,sort_order.asc');
       } catch (bannerError) {
         console.warn('Supabase banner table is unavailable; keeping fallback banners.', bannerError);
       }
@@ -129,9 +131,11 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
           type: String(row.banner_type) === 'promo' ? 'promo' : 'hero',
           sortOrder: Number(row.sort_order ?? index),
           linkUrl: row.link_url ? String(row.link_url) : null,
+          widthPercent: Math.min(100, Math.max(50, Number(row.width_percent ?? 100))),
+          heightPx: Math.min(500, Math.max(120, Number(row.height_px ?? 220))),
         })) as SiteBanner[];
         setHeroBanners(mapped.filter((b) => b.type === 'hero'));
-        setPromoBanners(mapped.filter((b) => b.type === 'promo').map((b) => b.image));
+        setPromoBanners(mapped.filter((b) => b.type === 'promo'));
       }
     } catch (err) {
       console.warn('Supabase catalogue load failed; using local fallback data.', err);
@@ -156,7 +160,7 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
 
         let bannersResult: any[] = [];
         try {
-          bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url&is_active=eq.true&order=banner_type.asc,sort_order.asc');
+          bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url,width_percent,height_px&is_active=eq.true&order=banner_type.asc,sort_order.asc');
         } catch (bannerError) {
           console.warn('Supabase banner table is unavailable; keeping fallback banners.', bannerError);
         }
@@ -187,9 +191,11 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
             type: String(row.banner_type) === 'promo' ? 'promo' : 'hero',
             sortOrder: Number(row.sort_order ?? index),
             linkUrl: row.link_url ? String(row.link_url) : null,
+          widthPercent: Math.min(100, Math.max(50, Number(row.width_percent ?? 100))),
+          heightPx: Math.min(500, Math.max(120, Number(row.height_px ?? 220))),
           })) as SiteBanner[];
           setHeroBanners(mapped.filter((b) => b.type === 'hero'));
-          setPromoBanners(mapped.filter((b) => b.type === 'promo').map((b) => b.image));
+          setPromoBanners(mapped.filter((b) => b.type === 'promo'));
         }
       } catch (err) {
         if (!ignore) {

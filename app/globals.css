@@ -2048,3 +2048,50 @@ textarea {
 .order-track-summary strong {
   color: #111827;
 }
+
+
+/* =========================================================
+   ADMIN-CONTROLLED BANNER RENDERING
+   Uses site_banners.width_percent + height_px on the live website.
+   The old carousel indicator dots are intentionally removed.
+   ========================================================= */
+.hero-slide {
+  height: var(--banner-height, 220px) !important;
+}
+.hero-slide .hero-link {
+  width: var(--banner-width, 100%) !important;
+  height: 100% !important;
+  margin-inline: auto !important;
+  display: block !important;
+}
+.hero-slide .hero-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+/* Remove carousel pagination dots completely. */
+.hero-dots,
+#heroDots,
+.hero-dot {
+  display: none !important;
+}
+
+/* Promo banners follow the same Admin width/height settings. */
+.promo-banner,
+.app-home .promo-banner {
+  width: var(--banner-width, 100%) !important;
+  height: var(--banner-height, 160px) !important;
+  min-height: 0 !important;
+  margin-inline: auto !important;
+}
+.promo-banner-img,
+.app-home .promo-banner-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}

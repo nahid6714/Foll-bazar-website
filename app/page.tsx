@@ -533,7 +533,7 @@ export default function HomePage() {
             />
 
             {/* 6. Promo Banner 1 */}
-            {promoBanners[0] && <PromoSection image={promoBanners[0]} />}
+            {promoBanners[0] && <PromoSection image={promoBanners[0].image} widthPercent={promoBanners[0].widthPercent} heightPx={promoBanners[0].heightPx} linkUrl={promoBanners[0].linkUrl} />}
 
             {/* 7. Hot Deal Section */}
             <HotDealSection
@@ -543,7 +543,7 @@ export default function HomePage() {
             />
 
             {/* 8. Promo Banner 2 */}
-            {promoBanners[1] && <PromoSection image={promoBanners[1]} />}
+            {promoBanners[1] && <PromoSection image={promoBanners[1].image} widthPercent={promoBanners[1].widthPercent} heightPx={promoBanners[1].heightPx} linkUrl={promoBanners[1].linkUrl} />}
 
             {/* 9. দিনাজপুর লিচু Section */}
             <CategorySection
@@ -566,7 +566,7 @@ export default function HomePage() {
             />
 
             {/* 11. Promo Banner 3 */}
-            {promoBanners[2] && <PromoSection image={promoBanners[2]} />}
+            {promoBanners[2] && <PromoSection image={promoBanners[2].image} widthPercent={promoBanners[2].widthPercent} heightPx={promoBanners[2].heightPx} linkUrl={promoBanners[2].linkUrl} />}
 
             {/* 12. সকল প্রোডাক্ট Section */}
             <AllProductsSection
@@ -576,7 +576,7 @@ export default function HomePage() {
             />
 
             {/* 13. Promo Banner 4 */}
-            {promoBanners[3] && <PromoSection image={promoBanners[3]} />}
+            {promoBanners[3] && <PromoSection image={promoBanners[3].image} widthPercent={promoBanners[3].widthPercent} heightPx={promoBanners[3].heightPx} linkUrl={promoBanners[3].linkUrl} />}
           </>
         )}
       </main>
