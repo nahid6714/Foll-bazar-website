@@ -3228,3 +3228,53 @@ textarea {
   .app-home .promo-section { padding: 8px 0 !important; }
   .app-home .promo-section .container { padding-inline: 12px !important; }
 }
+
+/* =========================================================
+   V48 — DESKTOP HERO HEIGHT / NO BOTTOM CROP
+   Mobile remains unchanged at 250px. On larger screens the
+   hero gets a little more vertical room so banner artwork is
+   never clipped at the bottom.
+   ========================================================= */
+@media (min-width: 768px) {
+  .app-home .fb-hero-banner,
+  .app-home .fb-hero-slider,
+  .app-home .fb-hero-track,
+  .app-home .fb-hero-slide {
+    min-height: 340px !important;
+  }
+
+  .app-home .fb-hero-slider,
+  .app-home .fb-hero-track,
+  .app-home .fb-hero-slide,
+  .app-home .fb-hero-link,
+  .app-home .fb-hero-image-frame {
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .app-home .fb-hero-slide {
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  .app-home .fb-hero-img {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: top center !important;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Keep the approved mobile hero exactly at 250px. */
+  .app-home .fb-hero-banner,
+  .app-home .fb-hero-slider,
+  .app-home .fb-hero-track,
+  .app-home .fb-hero-slide {
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+  }
+}
