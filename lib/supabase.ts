@@ -54,3 +54,63 @@ export async function supabaseRest<T = unknown>(
 export function isSupabaseConfigured() {
   return Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
 }
+
+
+export interface SupabaseAuthSession {
+  access_token: string;
+  refresh_token: string;
+  expires_in?: number;
+  user: { id: string; email?: string | null; user_metadata?: Record<string, unknown> | null };
+}
+
+async function supabaseAuthRequest<T>(path: string, body: Record<string, unknown>): Promise<T> {
+  const response = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_PUBLISHABLE_KEY,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+    cache: 'no-store',
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = data?.msg || data?.message || data?.error_description || data?.error || `Supabase Auth failed (${response.status})`;
+    throw new Error(String(message));
+  }
+  return data as T;
+}
+
+export async function supabaseSignUp(email: string, password: string, metadata: Record<string, unknown>) {
+  return supabaseAuthRequest<SupabaseAuthSession>('signup', { email, password, data: metadata });
+}
+
+export async function supabaseSignIn(email: string, password: string) {
+  return supabaseAuthRequest<SupabaseAuthSession>('token?grant_type=password', { email, password });
+}
+
+export async function supabaseGetProfile(accessToken: string, userId: string) {
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=id,full_name,phone,email,role,created_at`,
+    {
+      headers: {
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json',
+      },
+      cache: 'no-store',
+    },
+  );
+  if (!response.ok) throw new Error(`Profile request failed (${response.status})`);
+  const rows = (await response.json()) as Array<Record<string, unknown>>;
+  return rows[0] ?? null;
+}
+
+export async function supabaseSignOut(accessToken: string) {
+  await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${accessToken}` },
+    cache: 'no-store',
+  }).catch(() => undefined);
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { supabaseGetProfile, supabaseSignIn, supabaseSignUp } from '@/lib/supabase';
 import {
   User,
   Lock,
@@ -111,74 +112,69 @@ export default function AuthView({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handle Login Submit - STRICT REGISTRATION CHECK
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  // Handle Login Submit - Supabase Auth
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
 
     const identifier = loginIdentifier.trim();
     const password = loginPassword.trim();
-
-    if (!identifier) {
-      setErrorMessage('অনুগ্রহ করে আপনার মোবাইল নম্বর বা ইমেইল লিখুন।');
-      return;
-    }
-    if (!password) {
-      setErrorMessage('অনুগ্রহ করে আপনার পাসওয়ার্ড লিখুন।');
-      return;
-    }
+    if (!identifier) return setErrorMessage('অনুগ্রহ করে আপনার মোবাইল নম্বর বা ইমেইল লিখুন।');
+    if (!password) return setErrorMessage('অনুগ্রহ করে আপনার পাসওয়ার্ড লিখুন।');
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-
-      const accounts = getStoredAccounts();
-      const inputCleanPhone = normalizePhone(identifier);
+    try {
+      const cleanPhone = normalizePhone(identifier);
       const isEmail = identifier.includes('@');
-      const inputEmail = identifier.toLowerCase();
-
-      // Find registered account
-      const matchedAccount = accounts.find((acc) => {
-        if (isEmail && acc.email && acc.email.toLowerCase() === inputEmail) {
-          return true;
-        }
-        if (inputCleanPhone.length >= 10 && normalizePhone(acc.phone) === inputCleanPhone) {
-          return true;
-        }
-        return false;
-      });
-
-      // 1. If NO registered account found: PREVENT LOGIN STRICTLY
-      if (!matchedAccount) {
-        setErrorMessage(
-          'এই মোবাইল নম্বর বা ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি! রেজিস্ট্রেশন করা ছাড়া লগইন করা সম্ভব নয়। অনুগ্রহ করে প্রথমে নতুন অ্যাকাউন্ট রেজিস্ট্রেশন করুন।'
+      const email = isEmail ? identifier.toLowerCase() : `phone_${cleanPhone}@customer.falbazar.local`;
+      let session;
+      try {
+        session = await supabaseSignIn(email, password);
+      } catch (authError) {
+        // One-time migration path for accounts created by the old localStorage system.
+        const legacy = getStoredAccounts().find((acc) =>
+          (isEmail && acc.email?.toLowerCase() === email) ||
+          (!isEmail && normalizePhone(acc.phone) === cleanPhone),
         );
+        if (!legacy || legacy.password !== password) throw authError;
+        session = await supabaseSignUp(email, password, {
+          full_name: legacy.name,
+          phone: legacy.phone,
+          name: legacy.name,
+        });
+      }
+
+      if (!session.access_token) {
+        setSuccessMessage('অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল ভেরিফিকেশন প্রয়োজন হলে ইমেইলটি যাচাই করে আবার লগইন করুন।');
         return;
       }
 
-      // 2. Validate Password
-      if (matchedAccount.password !== password) {
-        setErrorMessage('পাসওয়ার্ড সঠিক নয়! অনুগ্রহ করে সঠিক পাসওয়ার্ড দিন অথবা "পাসওয়ার্ড ভুলে গেছেন?" চাপুন।');
-        return;
-      }
-
-      // 3. Login Success
+      const profile = await supabaseGetProfile(session.access_token, session.user.id);
+      const metadata = session.user.user_metadata || {};
       const user: UserProfile = {
-        name: matchedAccount.name,
-        phone: matchedAccount.phone,
-        email: matchedAccount.email,
+        name: String(profile?.full_name || metadata.full_name || metadata.name || 'Customer'),
+        phone: String(profile?.phone || metadata.phone || (isEmail ? '' : identifier)),
+        email: String(profile?.email || session.user.email || (isEmail ? identifier : '')) || undefined,
         role: 'customer',
-        createdAt: matchedAccount.createdAt,
+        createdAt: String(profile?.created_at || new Date().toISOString()),
       };
-
+      localStorage.setItem('falbazar_auth_access_token', session.access_token);
+      localStorage.setItem('falbazar_auth_refresh_token', session.refresh_token || '');
       onLoginSuccess(user);
       setSuccessMessage(`সফলভাবে লগইন সম্পন্ন হয়েছে! স্বাগতম, ${user.name}`);
-    }, 450);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '';
+      setErrorMessage(message.includes('Invalid login credentials') || message.includes('invalid_credentials')
+        ? 'মোবাইল/ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।'
+        : `লগইন করা যায়নি: ${message || 'আবার চেষ্টা করুন।'}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Handle Register Submit
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  // Handle Register Submit - Supabase Auth
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -187,82 +183,52 @@ export default function AuthView({
     const phone = regPhone.trim();
     const password = regPassword.trim();
     const confirmPassword = regConfirmPassword.trim();
-
-    if (!name) {
-      setErrorMessage('অনুগ্রহ করে আপনার পুরো নাম লিখুন।');
-      return;
-    }
-    if (name.length < 2) {
-      setErrorMessage('অনুগ্রহ করে আপনার সঠিক নাম লিখুন।');
-      return;
-    }
-    if (!phone) {
-      setErrorMessage('অনুগ্রহ করে আপনার মোবাইল নম্বর লিখুন।');
-      return;
-    }
     const cleanPhone = normalizePhone(phone);
-    if (cleanPhone.length < 10) {
-      setErrorMessage('অনুগ্রহ করে সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
-      return;
-    }
-    if (!password) {
-      setErrorMessage('পাসওয়ার্ড দিন (কমপক্ষে ৬ অক্ষর)।');
-      return;
-    }
-    if (password.length < 6) {
-      setErrorMessage('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setErrorMessage('পাসওয়ার্ড দুটি মিলছে না! আবার চেক করুন।');
-      return;
-    }
-    if (!agreeTerms) {
-      setErrorMessage('অনুগ্রহ করে শর্তাবলী ও গোপনীয়তা নীতি মেনে নেওয়ার বক্সে টিক দিন।');
-      return;
-    }
+
+    if (!name || name.length < 2) return setErrorMessage('অনুগ্রহ করে আপনার সঠিক পুরো নাম লিখুন।');
+    if (!phone || cleanPhone.length < 10) return setErrorMessage('অনুগ্রহ করে সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।');
+    if (!password || password.length < 6) return setErrorMessage('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।');
+    if (password !== confirmPassword) return setErrorMessage('পাসওয়ার্ড দুটি মিলছে না! আবার চেক করুন।');
+    if (!agreeTerms) return setErrorMessage('অনুগ্রহ করে শর্তাবলী ও গোপনীয়তা নীতি মেনে নেওয়ার বক্সে টিক দিন।');
+
+    // Supabase Auth needs an email/password identity. For phone-only checkout accounts,
+    // use a deterministic internal email so the customer can still register without changing the UI.
+    const suppliedEmail = regEmail.trim().toLowerCase();
+    const authEmail = suppliedEmail || `phone_${cleanPhone}@customer.falbazar.local`;
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-
-      const accounts = getStoredAccounts();
-      const duplicate = accounts.find((acc) => {
-        if (normalizePhone(acc.phone) === cleanPhone) return true;
-        if (regEmail.trim() && acc.email && acc.email.toLowerCase() === regEmail.trim().toLowerCase()) return true;
-        return false;
-      });
-
-      if (duplicate) {
-        setErrorMessage(
-          'এই মোবাইল নম্বর বা ইমেইল দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট তৈরি করা হয়েছে! অনুগ্রহ করে লগইন করুন।'
-        );
-        return;
-      }
-
-      const newAccount: RegisteredAccount = {
+    try {
+      const session = await supabaseSignUp(authEmail, password, {
+        full_name: name,
         name,
         phone,
-        email: regEmail.trim() || undefined,
-        password,
         role: 'customer',
-        createdAt: new Date().toLocaleDateString('bn-BD'),
-      };
+      });
 
-      accounts.push(newAccount);
-      saveStoredAccounts(accounts);
-
-      const user: UserProfile = {
-        name: newAccount.name,
-        phone: newAccount.phone,
-        email: newAccount.email,
-        role: 'customer',
-        createdAt: newAccount.createdAt,
-      };
-
-      onLoginSuccess(user);
-      setSuccessMessage('আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে এবং আপনি স্বয়ংক্রিয়ভাবে লগইন হয়েছেন!');
-    }, 550);
+      if (session.access_token) {
+        const profile = await supabaseGetProfile(session.access_token, session.user.id);
+        const user: UserProfile = {
+          name: String(profile?.full_name || name),
+          phone: String(profile?.phone || phone),
+          email: suppliedEmail || undefined,
+          role: 'customer',
+          createdAt: String(profile?.created_at || new Date().toISOString()),
+        };
+        localStorage.setItem('falbazar_auth_access_token', session.access_token);
+        localStorage.setItem('falbazar_auth_refresh_token', session.refresh_token || '');
+        onLoginSuccess(user);
+        setSuccessMessage('আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে এবং Supabase-এ সংরক্ষিত হয়েছে।');
+      } else {
+        setSuccessMessage('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে। ইমেইল ভেরিফিকেশন চালু থাকলে আগে ইমেইলটি ভেরিফাই করে লগইন করুন।');
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '';
+      setErrorMessage(message.toLowerCase().includes('already registered')
+        ? 'এই মোবাইল নম্বর/ইমেইল দিয়ে ইতিমধ্যে একটি অ্যাকাউন্ট আছে। লগইন করুন।'
+        : `রেজিস্ট্রেশন করা যায়নি: ${message || 'আবার চেষ্টা করুন।'}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // If user is already logged in, show their account details & dashboard options

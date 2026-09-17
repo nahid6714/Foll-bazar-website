@@ -26,6 +26,7 @@ import AddToCartModal from '@/components/AddToCartModal';
 import ComplaintView from '@/components/ComplaintView';
 
 import { Product, CartItem } from '@/lib/data';
+import { supabaseSignOut } from '@/lib/supabase';
 import { useSiteData } from '@/lib/site-data';
 
 export default function HomePage() {
@@ -369,9 +370,13 @@ export default function HomePage() {
   };
 
   const handleLogout = () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('falbazar_auth_access_token') : null;
+    if (token) void supabaseSignOut(token);
     setCurrentUser(null);
     try {
       localStorage.removeItem('falbazar_user');
+      localStorage.removeItem('falbazar_auth_access_token');
+      localStorage.removeItem('falbazar_auth_refresh_token');
     } catch {
       // Ignore
     }
