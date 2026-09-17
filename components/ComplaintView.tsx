@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowLeft, Headphones, Phone, Mail, MapPin, ShieldCheck, Clock3, UserRound, PencilLine, UploadCloud, Send } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, Headphones, Phone, Mail, MapPin, ShieldCheck, Clock3, UserRound, PencilLine, UploadCloud, Send, X } from 'lucide-react';
 
 interface ComplaintViewProps { onBack: () => void; }
+
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
 
 export default function ComplaintView({ onBack }: ComplaintViewProps) {
   const [submitted, setSubmitted] = useState(false);
@@ -12,6 +15,35 @@ export default function ComplaintView({ onBack }: ComplaintViewProps) {
   const [orderId, setOrderId] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState('');
+  const [imageError, setImageError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!image) {
+      setImagePreview('');
+      return;
+    }
+    const url = URL.createObjectURL(image);
+    setImagePreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [image]);
+
+  const selectImage = (file: File | undefined) => {
+    setImageError('');
+    if (!file) return;
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setImage(null);
+      setImageError('শুধু JPG, JPEG অথবা PNG ছবি দেওয়া যাবে।');
+      return;
+    }
+    if (file.size > MAX_IMAGE_SIZE) {
+      setImage(null);
+      setImageError('ছবির সাইজ সর্বোচ্চ 2MB হতে হবে।');
+      return;
+    }
+    setImage(file);
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +84,15 @@ export default function ComplaintView({ onBack }: ComplaintViewProps) {
               <label>মোবাইল নম্বর <b>*</b><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="01XXXXXXXXX" type="tel" required /></label>
               <label>অর্ডার আইডি <span>(ঐচ্ছিক)</span><input value={orderId} onChange={e=>setOrderId(e.target.value)} placeholder="যেমন: FB-54321" /></label>
               <label>কমপ্লেইনের বিবরণ <b>*</b><textarea value={description} onChange={e=>setDescription(e.target.value)} placeholder="আপনার সমস্যাটি বিস্তারিত লিখুন..." rows={6} required /></label>
-              <label>প্রমাণস্বরূপ ছবি <span>(ঐচ্ছিক)</span><div className="complaint-upload"><UploadCloud/><span>{image ? image.name : <>ছবি টেনে আনুন বা <strong>ব্রাউজ করুন</strong></>}<small>JPG, JPEG, PNG — সর্বোচ্চ 2MB</small></span><input type="file" accept="image/jpeg,image/png" onChange={e=>setImage(e.target.files?.[0] || null)} /></div></label>
+              <label>প্রমাণস্বরূপ ছবি <span>(ঐচ্ছিক)</span>
+                <div className={`complaint-upload${image ? ' has-file' : ''}`} onClick={() => fileInputRef.current?.click()} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click(); }}>
+                  <UploadCloud/>
+                  <span>{image ? image.name : <>ছবি টেনে আনুন বা <strong>ব্রাউজ করুন</strong></>}<small>JPG, JPEG, PNG — সর্বোচ্চ 2MB</small></span>
+                  <input ref={fileInputRef} type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" onChange={e=>selectImage(e.target.files?.[0])} onClick={e => e.stopPropagation()} />
+                </div>
+                {imageError && <div className="complaint-upload-error">{imageError}</div>}
+                {imagePreview && <div className="complaint-image-preview"><img src={imagePreview} alt="নির্বাচিত অভিযোগের ছবি" /><button type="button" aria-label="ছবি সরান" onClick={() => { setImage(null); setImageError(''); if (fileInputRef.current) fileInputRef.current.value = ''; }}><X size={16} /></button></div>}
+              </label>
               <button className="complaint-submit" type="submit"><Send/> কমপ্লেইন প্রেরণ</button>
             </form>
           )}

@@ -44,14 +44,11 @@ export default function ProductDetailsView({
   {
   const { products: allProductsList } = useSiteData();
 
-  // Gallery images: main product image + complementary litchi harvest photos + 1 video thumbnail
+  // Use only the image currently stored on the product record.
+  // Never append legacy/demo images to a newly uploaded Cloudinary image.
   const defaultGallery = useMemo(() => {
-    return [
-      product.image,
-      'https://demo.scaleuper.com/public/uploads/product/1783257684-6a4a5a5450d49-golapi-licu-spesal.webp',
-      'https://demo.scaleuper.com/public/uploads/product/1783257937-6a4a5b5148647-bagan-theke-taja-licu.webp',
-      'https://demo.scaleuper.com/public/uploads/product/1783258031-6a4a5bafce02d-primiyam-lal-licu.webp',
-    ];
+    const imageUrl = String(product.image ?? '').trim();
+    return imageUrl ? [imageUrl] : [];
   }, [product.image]);
 
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
@@ -269,9 +266,10 @@ export default function ProductDetailsView({
               }`}
               aria-label="ভিডিও দেখুন"
             >
+              {/* Use the current product image so no legacy product photo is shown. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://demo.scaleuper.com/public/uploads/product/1783258119-6a4a5c071f90b-golapi-licu-spesal.webp"
+                src={product.image}
                 alt="ভিডিও থাম্বনেইল"
                 className="w-full h-full object-cover filter brightness-75 group-hover:brightness-90 transition-all"
               />

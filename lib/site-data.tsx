@@ -38,7 +38,7 @@ function toProduct(row: any): Product {
   return {
     id: String(row.legacy_id ?? row.id),
     title: String(row.name ?? ''),
-    image: String(row.image_url ?? ''),
+    image: String(row.image_url ?? '').trim(),
     price: String(price),
     oldPrice,
     soldText: Number(row.sold_quantity ?? 0) > 0
