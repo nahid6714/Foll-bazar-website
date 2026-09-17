@@ -632,7 +632,7 @@ export default function AuthView({
               </div>
             ) : (
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
                   setForgotError(null);
                   const email = forgotEmail.trim().toLowerCase();
