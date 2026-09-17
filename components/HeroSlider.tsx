@@ -3,19 +3,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSiteData } from '@/lib/site-data';
 
+const MOBILE_FRAME_HEIGHT = 320;
+
 export default function HeroSlider() {
   const { heroBanners } = useSiteData();
   const [current, setCurrent] = useState(0);
   const total = heroBanners.length;
   const activeBanner = heroBanners[current] ?? heroBanners[0];
-  const activeHeight = Math.min(500, Math.max(120, Number(activeBanner?.heightPx ?? 220)));
 
   const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % total);
+    if (total > 1) setCurrent((prev) => (prev + 1) % total);
   }, [total]);
 
   const prevSlide = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + total) % total);
+    if (total > 1) setCurrent((prev) => (prev - 1 + total) % total);
   }, [total]);
 
   useEffect(() => {
@@ -24,9 +25,7 @@ export default function HeroSlider() {
 
   useEffect(() => {
     if (total <= 1) return;
-    const timer = setInterval(() => {
-      nextSlide();
-    }, 4500);
+    const timer = setInterval(nextSlide, 4500);
     return () => clearInterval(timer);
   }, [nextSlide, total]);
 
@@ -34,61 +33,80 @@ export default function HeroSlider() {
 
   return (
     <section className="hero-banner">
-      <div className="hero-slider" id="heroSlider" aria-label="হিরো ব্যানার স্লাইডার" style={{ position: 'relative', overflow: 'hidden', height: `${activeHeight}px` }}>
+      <div
+        className="hero-slider"
+        id="heroSlider"
+        aria-label="হিরো ব্যানার স্লাইডার"
+        style={{ ['--hero-frame-height' as any]: `${MOBILE_FRAME_HEIGHT}px` }}
+      >
         <div
           className="hero-track"
           id="heroTrack"
-          style={{
-            display: 'flex',
-            height: `${activeHeight}px`,
-            transition: 'transform 0.5s ease-in-out',
-            transform: `translateX(-${current * 100}%)`,
-          }}
+          style={{ transform: `translateX(-${current * 100}%)` }}
         >
-          {heroBanners.map((banner, index) => (
-            <div
-              key={banner.id}
-              className={`hero-slide ${index === current ? 'active' : ''}`}
-              style={{ minWidth: '100%', flexShrink: 0, ['--banner-height' as any]: `${Math.max(120, banner.heightPx)}px`, display: 'flex', justifyContent: 'center', alignItems: 'stretch' }}
-            >
-              <a href={banner.linkUrl || '#'} onClick={(e) => { if (!banner.linkUrl) e.preventDefault(); }} className="hero-link" style={{ display: 'block', ['--banner-width' as any]: `${Math.min(100, Math.max(50, banner.widthPercent))}%`, height: '100%', margin: '0 auto' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={banner.image}
-                  alt={banner.alt}
-                  className="hero-img"
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  fetchPriority={index === 0 ? 'high' : 'auto'}
-                  width={1920}
-                  height={600}
-                  style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', objectPosition: 'center' }}
-                />
-              </a>
-            </div>
-          ))}
+          {heroBanners.map((banner, index) => {
+            const widthPercent = Math.min(100, Math.max(50, Number(banner.widthPercent ?? 100)));
+            const heightPx = Math.min(500, Math.max(120, Number(banner.heightPx ?? 320)));
+            // Admin height controls the image's size INSIDE the fixed frame.
+            // The frame itself never grows/shrinks, preventing layout jumps.
+            const heightPercent = Math.min(100, Math.max(38, (heightPx / MOBILE_FRAME_HEIGHT) * 100));
+
+            return (
+              <div
+                key={banner.id}
+                className={`hero-slide ${index === current ? 'active' : ''}`}
+                style={{
+                  ['--banner-width' as any]: `${widthPercent}%`,
+                  ['--banner-height-percent' as any]: `${heightPercent}%`,
+                }}
+              >
+                <a
+                  href={banner.linkUrl || '#'}
+                  onClick={(e) => { if (!banner.linkUrl) e.preventDefault(); }}
+                  className="hero-link"
+                  aria-label={banner.alt}
+                >
+                  <span className="hero-image-frame">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={banner.image}
+                      alt={banner.alt}
+                      className="hero-img"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      fetchPriority={index === 0 ? 'high' : 'auto'}
+                      width={1920}
+                      height={600}
+                    />
+                  </span>
+                </a>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Prev / Next Arrows */}
-        <button
-          type="button"
-          className="hero-nav hero-arrow hero-prev"
-          id="heroPrev"
-          aria-label="পূর্ববর্তী স্লাইড"
-          onClick={prevSlide}
-        >
-          <i className="fas fa-chevron-left"></i>
-        </button>
-        <button
-          type="button"
-          className="hero-nav hero-arrow hero-next"
-          id="heroNext"
-          aria-label="পরবর্তী স্লাইড"
-          onClick={nextSlide}
-        >
-          <i className="fas fa-chevron-right"></i>
-        </button>
+        {total > 1 && (
+          <>
+            <button type="button" className="hero-nav hero-arrow hero-prev" id="heroPrev" aria-label="পূর্ববর্তী স্লাইড" onClick={prevSlide}>
+              <i className="fas fa-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button type="button" className="hero-nav hero-arrow hero-next" id="heroNext" aria-label="পরবর্তী স্লাইড" onClick={nextSlide}>
+              <i className="fas fa-chevron-right" aria-hidden="true"></i>
+            </button>
 
-
+            <div className="hero-dots" id="heroDots" aria-label="ব্যানার নির্বাচন">
+              {heroBanners.map((banner, index) => (
+                <button
+                  key={banner.id}
+                  type="button"
+                  className={`hero-dot ${index === current ? 'active' : ''}`}
+                  aria-label={`ব্যানার ${index + 1}`}
+                  aria-current={index === current ? 'true' : undefined}
+                  onClick={() => setCurrent(index)}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

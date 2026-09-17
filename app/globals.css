@@ -2073,11 +2073,7 @@ textarea {
 }
 
 /* Remove carousel pagination dots completely. */
-.hero-dots,
-#heroDots,
-.hero-dot {
-  display: none !important;
-}
+/* carousel dots are restored by the final reference override below */
 
 /* Promo banners follow the same Admin width/height settings. */
 .promo-banner,
@@ -2305,7 +2301,168 @@ textarea {
   .app-home .flash-sale-section { margin-top: 0 !important; }
 
   /* Never let the removed pagination dots reappear through legacy styles. */
+  /* carousel dots are restored by the final reference override below */
+}
+
+/* =========================================================
+   FINAL MOBILE HOME HERO — REFERENCE FRAME
+   Fixed outer frame + responsive image inside it.
+   The frame never changes size because of image dimensions.
+   ========================================================= */
+.hero-slider {
+  position: relative !important;
+  width: 100% !important;
+  height: var(--hero-frame-height, 320px) !important;
+  min-height: var(--hero-frame-height, 320px) !important;
+  max-height: var(--hero-frame-height, 320px) !important;
+  overflow: hidden !important;
+  background: #f2f2f7 !important;
+}
+
+.hero-track {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: stretch !important;
+  transition: transform .5s cubic-bezier(.4,0,.2,1) !important;
+}
+
+.hero-slide {
+  position: relative !important;
+  min-width: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  flex: 0 0 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.hero-link {
+  width: var(--banner-width, 100%) !important;
+  height: var(--banner-height-percent, 100%) !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  flex: 0 0 auto !important;
+  display: block !important;
+  line-height: 0 !important;
+  margin: auto !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+}
+
+.hero-image-frame {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  background: #f2f2f7 !important;
+}
+
+.hero-img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  vertical-align: top !important;
+}
+
+/* Restore reference carousel controls. */
+.hero-arrow.hero-nav {
+  display: flex !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+.hero-dots,
+#heroDots {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  z-index: 11 !important;
+}
+
+.hero-dot,
+.hero-dot.active {
+  display: block !important;
+  width: 8px !important;
+  min-width: 8px !important;
+  height: 8px !important;
+  min-height: 8px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255,255,255,.85) !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.65) !important;
+  box-sizing: border-box !important;
+}
+
+.hero-dot.active {
+  width: 22px !important;
+  min-width: 22px !important;
+  border-radius: 5px !important;
+  background: #fff !important;
+}
+
+/* Keep the reference notice close button visible and tappable. */
+.notice-ticker .notice-close {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  z-index: 20 !important;
+}
+
+@media (max-width: 767px) {
+  .app-home .hero-banner,
+  .app-home .hero-slider,
+  .app-home .hero-track,
+  .app-home .hero-slide {
+    height: 320px !important;
+    min-height: 320px !important;
+    max-height: 320px !important;
+  }
+
+  .app-home .hero-link {
+    width: var(--banner-width, 100%) !important;
+    height: var(--banner-height-percent, 100%) !important;
+  }
+
+  .app-home .hero-arrow.hero-nav {
+    width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    background: rgba(255,255,255,.9) !important;
+    color: var(--primary, #df294d) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,.12) !important;
+  }
+
+  .app-home .hero-prev { left: 10px !important; }
+  .app-home .hero-next { right: 10px !important; }
+
   .app-home .hero-dots,
   .app-home #heroDots,
-  .app-home .hero-dot { display: none !important; }
+  .app-home .hero-dot {
+    display: flex !important;
+  }
+
+  .app-home .hero-dot {
+    display: block !important;
+  }
+
+  /* Reference-like compact spacing below the fixed hero. */
+  .app-home .hero-banner + .flash-sale-section {
+    margin-top: 0 !important;
+    padding-top: 18px !important;
+  }
 }
