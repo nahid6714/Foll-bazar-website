@@ -9,21 +9,22 @@ interface AddToCartModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (product: Product, quantity: number, variant?: string) => void;
-  onOrder: (product: Product, quantity: number, variant?: string) => void;
 }
 
-export default function AddToCartModal({ product, isOpen, onClose, onConfirm, onOrder }: AddToCartModalProps) {
+export default function AddToCartModal({ product, isOpen, onClose, onConfirm }: AddToCartModalProps) {
   const [quantity, setQuantity] = useState(1);
   const variants = ['৫০০ গ্রাম', '১ কেজি', '২ কেজি'];
   const [variant, setVariant] = useState('১ কেজি');
+  const [prevTrackedKey, setPrevTrackedKey] = useState<string | null>(null);
 
-  // Reset the selector whenever a different product is opened.
-  useEffect(() => {
+  const currentKey = isOpen ? (product?.id ?? 'open') : null;
+  if (currentKey !== prevTrackedKey) {
+    setPrevTrackedKey(currentKey);
     if (isOpen) {
       setQuantity(1);
       setVariant('১ কেজি');
     }
-  }, [isOpen, product?.id]);
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -86,10 +87,10 @@ export default function AddToCartModal({ product, isOpen, onClose, onConfirm, on
         </div>
 
         <div className="add-cart-modal-actions">
-          <button type="button" className="add-cart-modal-cancel" onClick={onClose}>বাতিল</button>
+          <button type="button" className="add-cart-modal-cancel" onClick={onClose}>পরে করব</button>
           <button
             type="button"
-            className="add-cart-modal-cart"
+            className="add-cart-modal-confirm"
             onClick={() => {
               onConfirm(product, quantity, variant);
               onClose();
@@ -97,13 +98,6 @@ export default function AddToCartModal({ product, isOpen, onClose, onConfirm, on
           >
             <ShoppingCart size={18} />
             কার্টে যোগ করুন
-          </button>
-          <button
-            type="button"
-            className="add-cart-modal-order"
-            onClick={() => onOrder(product, quantity, variant)}
-          >
-            ⚡ অর্ডার করুন
           </button>
         </div>
       </section>

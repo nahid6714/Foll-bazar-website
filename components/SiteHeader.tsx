@@ -40,6 +40,7 @@ export default function SiteHeader({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubCat, setOpenSubCat] = useState<string | null>(null);
   const [openChildCat, setOpenChildCat] = useState<string | null>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -224,14 +225,21 @@ export default function SiteHeader({
 
           {/* Header Actions */}
           <div className="header-actions">
-            <div className="cart-wrap">
+            <div
+              className="cart-wrap"
+              onMouseEnter={() => setIsCartOpen(true)}
+              onMouseLeave={() => setIsCartOpen(false)}
+            >
               <button
                 type="button"
                 className="cart-btn"
                 aria-label="কার্ট"
                 onClick={() => {
                   if (onOpenCartPage) {
+                    setIsCartOpen(false);
                     onOpenCartPage();
+                  } else {
+                    setIsCartOpen(!isCartOpen);
                   }
                 }}
               >
@@ -246,7 +254,169 @@ export default function SiteHeader({
                 </span>
               </button>
 
+              {/* Mini Cart Dropdown */}
+              <div
+                className="cart-dropdown"
+                id="miniCart"
+                style={{
+                  display: isCartOpen ? 'block' : 'none',
+                  opacity: isCartOpen ? 1 : 0,
+                  pointerEvents: isCartOpen ? 'auto' : 'none',
+                  transform: isCartOpen ? 'translateY(0)' : 'translateY(10px)',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div className="cart-dropdown-head">
+                  <span className="cart-dropdown-title">আপনার কার্ট</span>
+                  <span className="cart-dropdown-count">{cartCount} টি পণ্য</span>
+                </div>
 
+                <div className="cart-dropdown-body" style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                  {cart.length === 0 ? (
+                    <div className="mini-cart-empty">
+                      <i className="fas fa-cart-shopping"></i>
+                      <p>আপনার কার্ট খালি</p>
+                    </div>
+                  ) : (
+                    cart.map((item) => (
+                      <div
+                        key={item.id}
+                        className="mini-cart-item"
+                        data-id={item.id}
+                        data-line={item.price * item.quantity}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          padding: '12px 14px',
+                          borderBottom: '1px solid #f3f4f6',
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '6px' }}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h4
+                            style={{
+                              fontSize: '13px',
+                              fontWeight: 600,
+                              color: '#1f2937',
+                              marginBottom: '4px',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {item.title}
+                          </h4>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#df2d4d' }}>৳{item.price}</span>
+                            <span style={{ fontSize: '12px', color: '#6b7280' }}>x {item.quantity}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                            <button
+                              type="button"
+                              onClick={() => onUpdateCartQty(item.id, -1)}
+                              style={{
+                                width: '22px',
+                                height: '22px',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '4px',
+                                background: '#fff',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '12px',
+                              }}
+                            >
+                              -
+                            </button>
+                            <span style={{ fontSize: '12px', fontWeight: 600, minWidth: '16px', textAlign: 'center' }}>
+                              {item.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => onUpdateCartQty(item.id, 1)}
+                              style={{
+                                width: '22px',
+                                height: '22px',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '4px',
+                                background: '#fff',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '12px',
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="mini-cart-remove"
+                          onClick={() => onRemoveFromCart(item.id)}
+                          aria-label="পণ্য মুছুন"
+                          style={{
+                            color: '#9ca3af',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '4px',
+                          }}
+                        >
+                          <i className="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {cart.length > 0 && (
+                  <div className="cart-dropdown-foot" style={{ display: 'block' }}>
+                    <div className="mini-cart-total">
+                      <span>সর্বমোট</span>
+                      <span className="mini-cart-total-amt">৳{cartTotal}</span>
+                    </div>
+                    <div className="mini-cart-actions">
+                      <button
+                        type="button"
+                        className="mini-cart-view"
+                        onClick={() => {
+                          setIsCartOpen(false);
+                          if (onOpenCartPage) {
+                            onOpenCartPage();
+                          } else {
+                            onOpenOrderModal(null);
+                          }
+                        }}
+                      >
+                        কার্ট দেখুন
+                      </button>
+                      <button
+                        type="button"
+                        className="mini-cart-checkout"
+                        onClick={() => {
+                          setIsCartOpen(false);
+                          if (onOpenCartPage) {
+                            onOpenCartPage();
+                          } else {
+                            onOpenOrderModal(null);
+                          }
+                        }}
+                      >
+                        অর্ডার করুন
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             <button
