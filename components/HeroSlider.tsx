@@ -7,6 +7,8 @@ export default function HeroSlider() {
   const { heroBanners } = useSiteData();
   const [current, setCurrent] = useState(0);
   const total = heroBanners.length;
+  const activeBanner = heroBanners[current] ?? heroBanners[0];
+  const activeHeight = Math.min(500, Math.max(120, Number(activeBanner?.heightPx ?? 220)));
 
   const nextSlide = useCallback(() => {
     setCurrent((prev) => (prev + 1) % total);
@@ -32,12 +34,13 @@ export default function HeroSlider() {
 
   return (
     <section className="hero-banner">
-      <div className="hero-slider" id="heroSlider" aria-label="হিরো ব্যানার স্লাইডার" style={{ position: 'relative', overflow: 'hidden' }}>
+      <div className="hero-slider" id="heroSlider" aria-label="হিরো ব্যানার স্লাইডার" style={{ position: 'relative', overflow: 'hidden', height: `${activeHeight}px` }}>
         <div
           className="hero-track"
           id="heroTrack"
           style={{
             display: 'flex',
+            height: `${activeHeight}px`,
             transition: 'transform 0.5s ease-in-out',
             transform: `translateX(-${current * 100}%)`,
           }}
@@ -55,6 +58,9 @@ export default function HeroSlider() {
                   alt={banner.alt}
                   className="hero-img"
                   loading={index === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={index === 0 ? 'high' : 'auto'}
+                  width={1920}
+                  height={600}
                   style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', objectPosition: 'center' }}
                 />
               </a>

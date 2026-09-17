@@ -2095,3 +2095,81 @@ textarea {
   object-fit: contain !important;
   object-position: center !important;
 }
+
+
+/* =========================================================
+   MOBILE LAYOUT STABILITY + BANNER GAP FIX
+   Keeps banner frames deterministic during image/data loading
+   and removes the large vertical gaps seen between sections.
+   ========================================================= */
+@media (max-width: 767px) {
+  .app-home .hero-banner {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+
+  .app-home .hero-slider {
+    width: 100%;
+    overflow: hidden !important;
+    margin: 0 !important;
+  }
+
+  .app-home .hero-track,
+  .app-home .hero-slide {
+    height: var(--banner-height, 220px) !important;
+  }
+
+  .app-home .hero-link {
+    line-height: 0 !important;
+    flex: 0 0 var(--banner-width, 100%);
+  }
+
+  .app-home .hero-img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+  .app-home .hero-banner + .flash-sale-section {
+    margin-top: 0 !important;
+    padding-top: 8px !important;
+  }
+
+  .app-home .flash-sale-section {
+    margin-bottom: 4px !important;
+  }
+
+  .app-home .promo-section {
+    padding: 4px 0 !important;
+    margin: 0 !important;
+    line-height: 0 !important;
+  }
+
+  .app-home .promo-section .container {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .app-home .promo-section a,
+  .app-home .promo-banner {
+    line-height: 0 !important;
+  }
+
+  .app-home .promo-banner-img {
+    display: block !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+}
+
+/* Desktop: keep exact Admin-controlled banner dimensions without
+   introducing baseline whitespace around replaced images. */
+.hero-link,
+.promo-section a,
+.hero-img,
+.promo-banner-img {
+  line-height: 0;
+}

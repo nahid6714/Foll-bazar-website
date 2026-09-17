@@ -21,7 +21,7 @@ export default function PromoSection({ image, alt = 'Promo banner', onClick, wid
             if (!linkUrl) e.preventDefault();
             if (onClick) onClick();
           }}
-          style={{ display: 'block' }}
+          style={{ display: 'block', lineHeight: 0 }}
         >
           <div className="promo-banner" style={{ ['--banner-width' as any]: `${Math.min(100, Math.max(50, widthPercent))}%`, ['--banner-height' as any]: `${Math.max(120, heightPx)}px`, margin: '0 auto' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
