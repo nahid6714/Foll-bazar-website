@@ -3230,45 +3230,63 @@ textarea {
 }
 
 /* =========================================================
-   V48 — DESKTOP HERO HEIGHT / NO BOTTOM CROP
-   Mobile remains unchanged at 250px. On larger screens the
-   hero gets a little more vertical room so banner artwork is
-   never clipped at the bottom.
+   V49 — DESKTOP/TABLET FULL HERO IMAGE
+   IMPORTANT: older rules capped the desktop hero at 250px, which
+   caused the lower part of the banner artwork to be clipped.
+   Desktop/tablet now follow the image's natural aspect ratio at
+   100% width, so the complete banner is visible. Mobile keeps
+   the approved 250px frame.
    ========================================================= */
 @media (min-width: 768px) {
   .app-home .fb-hero-banner,
   .app-home .fb-hero-slider,
   .app-home .fb-hero-track,
-  .app-home .fb-hero-slide {
-    min-height: 340px !important;
-  }
-
-  .app-home .fb-hero-slider,
-  .app-home .fb-hero-track,
   .app-home .fb-hero-slide,
   .app-home .fb-hero-link,
   .app-home .fb-hero-image-frame {
+    width: 100% !important;
     height: auto !important;
+    min-height: 0 !important;
     max-height: none !important;
   }
 
-  .app-home .fb-hero-slide {
+  .app-home .fb-hero-banner,
+  .app-home .fb-hero-slider {
+    overflow: hidden !important;
+  }
+
+  .app-home .fb-hero-track {
     align-items: flex-start !important;
-    justify-content: center !important;
+  }
+
+  .app-home .fb-hero-slide {
+    flex: 0 0 100% !important;
+    display: block !important;
+    overflow: hidden !important;
+  }
+
+  .app-home .fb-hero-link,
+  .app-home .fb-hero-image-frame {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
   }
 
   .app-home .fb-hero-img {
+    display: block !important;
     width: 100% !important;
     height: auto !important;
     max-width: 100% !important;
     max-height: none !important;
     object-fit: contain !important;
     object-position: top center !important;
+    margin: 0 !important;
   }
 }
 
 @media (max-width: 767px) {
-  /* Keep the approved mobile hero exactly at 250px. */
+  /* Mobile remains exactly 250px and never grows from image height. */
   .app-home .fb-hero-banner,
   .app-home .fb-hero-slider,
   .app-home .fb-hero-track,
@@ -3276,5 +3294,95 @@ textarea {
     height: 250px !important;
     min-height: 250px !important;
     max-height: 250px !important;
+  }
+
+  .app-home .fb-hero-img {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 250px !important;
+    object-fit: contain !important;
+    object-position: top center !important;
+  }
+}
+
+/* =========================================================
+   V50 — HERO WIDTH MATCHES THE SITE'S NORMAL CONTENT WIDTH
+   Desktop/tablet: use the same .container width as the rest of the
+   website. The image fills that width and keeps its natural aspect ratio.
+   Mobile keeps the existing 250px reference layout.
+   ========================================================= */
+@media (min-width: 768px) {
+  .app-home .fb-hero-banner {
+    width: min(var(--container), 94%) !important;
+    max-width: min(var(--container), 94%) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
+  }
+
+  .app-home .fb-hero-slider {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .app-home .fb-hero-track {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: flex-start !important;
+  }
+
+  .app-home .fb-hero-slide {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .app-home .fb-hero-link {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .app-home .fb-hero-image-frame {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    line-height: 0 !important;
+  }
+
+  .app-home .fb-hero-img {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
