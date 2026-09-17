@@ -71,7 +71,7 @@ export default function HeroSlider() {
         {/* Prev / Next Arrows */}
         <button
           type="button"
-          className="hero-arrow hero-prev"
+          className="hero-nav hero-arrow hero-prev"
           id="heroPrev"
           aria-label="পূর্ববর্তী স্লাইড"
           onClick={prevSlide}
@@ -80,7 +80,7 @@ export default function HeroSlider() {
         </button>
         <button
           type="button"
-          className="hero-arrow hero-next"
+          className="hero-nav hero-arrow hero-next"
           id="heroNext"
           aria-label="পরবর্তী স্লাইড"
           onClick={nextSlide}

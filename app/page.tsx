@@ -24,13 +24,15 @@ import AuthView, { UserProfile } from '@/components/AuthView';
 import CartOrderView from '@/components/CartOrderView';
 import AddToCartModal from '@/components/AddToCartModal';
 import ComplaintView from '@/components/ComplaintView';
+import GccLiveChat from '@/components/GccLiveChat';
+import HomeLoadingSkeleton from '@/components/HomeLoadingSkeleton';
 
 import { Product, CartItem } from '@/lib/data';
 import { clearAuthSession, getStoredAccessToken, supabaseGetProfile, supabaseSignOut } from '@/lib/supabase';
 import { useSiteData } from '@/lib/site-data';
 
 export default function HomePage() {
-  const { products: allProductsList, dinajpurProducts, premiumProducts, promoBanners } = useSiteData();
+  const { products: allProductsList, dinajpurProducts, premiumProducts, promoBanners, loading: siteLoading } = useSiteData();
   // Navigation view state: 'home' | 'shop' | 'product-detail' | 'auth' | 'cart'
   const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart' | 'track' | 'complaint'>('home');
   const [shopCategory, setShopCategory] = useState<string | null>(null);
@@ -521,7 +523,10 @@ export default function HomePage() {
           />
         ) : (
           /* Home Page Sections */
-          <>
+          siteLoading ? (
+            <HomeLoadingSkeleton />
+          ) : (
+            <>
             {/* 4. Hero Slider */}
             <HeroSlider />
 
@@ -577,7 +582,8 @@ export default function HomePage() {
 
             {/* 13. Promo Banner 4 */}
             {promoBanners[3] && <PromoSection image={promoBanners[3].image} widthPercent={promoBanners[3].widthPercent} heightPx={promoBanners[3].heightPx} linkUrl={promoBanners[3].linkUrl} />}
-          </>
+            </>
+          )
         )}
       </main>
 
@@ -619,6 +625,14 @@ export default function HomePage() {
 
       {/* 21. Promo Modal Popup on first load */}
       <PromoPopup />
+
+      {/* 22. Floating customer chat, matching the reference home screen */}
+      <GccLiveChat
+        onOpenTrackModal={() => { setCurrentView('track'); window.scrollTo({ top: 0, behavior: 'auto' }); }}
+        onOrderProduct={handleOrderProduct}
+        allProducts={allProductsList}
+        externalOpenComplaint={false}
+      />
 
       {/* 22. Mobile Bottom Navigation */}
       <MobileBottomNav

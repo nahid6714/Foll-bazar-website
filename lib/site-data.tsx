@@ -70,7 +70,7 @@ function toProduct(row: any): Product {
 }
 
 export function SiteDataProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(fallbackProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<SiteCategory[]>(
     fallbackCategories.map((c) => ({
       name: c.name,
@@ -79,8 +79,8 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       hasSubmenu: c.hasSubmenu,
     }))
   );
-  const [heroBanners, setHeroBanners] = useState<SiteBanner[]>(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i, widthPercent: 100, heightPx: 220 })));
-  const [promoBanners, setPromoBanners] = useState<SiteBanner[]>(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, image, alt: 'Promo banner', type: 'promo', sortOrder: i, widthPercent: 100, heightPx: 160 })));
+  const [heroBanners, setHeroBanners] = useState<SiteBanner[]>([]);
+  const [promoBanners, setPromoBanners] = useState<SiteBanner[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -102,14 +102,14 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       try {
         bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url,width_percent,height_px&is_active=eq.true&order=banner_type.asc,sort_order.asc');
       } catch (bannerError) {
-        console.warn('Supabase banner table is unavailable; keeping fallback banners.', bannerError);
+        console.warn('Supabase banner table is unavailable; using local fallback banners.', bannerError);
+        bannersResult = fallbackHeroBanners.map((b, i) => ({ id: String(b.id), banner_type: 'hero', image_url: b.image, alt_text: b.alt, sort_order: i, link_url: null, width_percent: 100, height_px: 320 }))
+          .concat(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, banner_type: 'promo', image_url: image, alt_text: 'Promo banner', sort_order: i, link_url: null, width_percent: 100, height_px: 160 })));
       }
 
       const liveProducts = (productsResult ?? []).map(toProduct);
 
-      if (liveProducts.length > 0) {
-        setProducts(liveProducts);
-      }
+      setProducts(liveProducts.length > 0 ? liveProducts : fallbackProducts);
 
       const liveCategories = (categoriesResult ?? []).map((row: any) => ({
         name: String(row.name ?? ''),
@@ -118,9 +118,7 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
         hasSubmenu: false,
       }));
 
-      if (liveCategories.length > 0) {
-        setCategories(liveCategories);
-      }
+      setCategories(liveCategories.length > 0 ? liveCategories : fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
 
       const liveBanners = (bannersResult ?? []).filter((row: any) => String(row.image_url ?? '').trim());
       if (liveBanners.length > 0) {
@@ -139,6 +137,10 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (err) {
       console.warn('Supabase catalogue load failed; using local fallback data.', err);
+      setProducts(fallbackProducts);
+      setCategories(fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
+      setHeroBanners(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i, widthPercent: 100, heightPx: 320 })));
+      setPromoBanners(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, image, alt: 'Promo banner', type: 'promo', sortOrder: i, widthPercent: 100, heightPx: 160 })));
       setError(err instanceof Error ? err.message : 'Supabase data load failed');
     } finally {
       setLoading(false);
@@ -162,14 +164,14 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
         try {
           bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url,width_percent,height_px&is_active=eq.true&order=banner_type.asc,sort_order.asc');
         } catch (bannerError) {
-          console.warn('Supabase banner table is unavailable; keeping fallback banners.', bannerError);
+          console.warn('Supabase banner table is unavailable; using local fallback banners.', bannerError);
+          bannersResult = fallbackHeroBanners.map((b, i) => ({ id: String(b.id), banner_type: 'hero', image_url: b.image, alt_text: b.alt, sort_order: i, link_url: null, width_percent: 100, height_px: 320 }))
+            .concat(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, banner_type: 'promo', image_url: image, alt_text: 'Promo banner', sort_order: i, link_url: null, width_percent: 100, height_px: 160 })));
         }
 
         if (ignore) return;
         const liveProducts = (productsResult ?? []).map(toProduct);
-        if (liveProducts.length > 0) {
-          setProducts(liveProducts);
-        }
+        setProducts(liveProducts.length > 0 ? liveProducts : fallbackProducts);
 
         const liveCategories = (categoriesResult ?? []).map((row: any) => ({
           name: String(row.name ?? ''),
@@ -178,9 +180,7 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
           hasSubmenu: false,
         }));
 
-        if (liveCategories.length > 0) {
-          setCategories(liveCategories);
-        }
+        setCategories(liveCategories.length > 0 ? liveCategories : fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
 
         const liveBanners = (bannersResult ?? []).filter((row: any) => String(row.image_url ?? '').trim());
         if (liveBanners.length > 0) {
@@ -200,6 +200,10 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         if (!ignore) {
           console.warn('Supabase catalogue load failed; using local fallback data.', err);
+          setProducts(fallbackProducts);
+          setCategories(fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
+          setHeroBanners(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i, widthPercent: 100, heightPx: 320 })));
+          setPromoBanners(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, image, alt: 'Promo banner', type: 'promo', sortOrder: i, widthPercent: 100, heightPx: 160 })));
           setError(err instanceof Error ? err.message : 'Supabase data load failed');
         }
       } finally {

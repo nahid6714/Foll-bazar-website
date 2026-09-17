@@ -2173,3 +2173,139 @@ textarea {
 .promo-banner-img {
   line-height: 0;
 }
+
+/* =========================================================
+   HOME REFERENCE LAYOUT + NO-LAYOUT-SHIFT STABILITY
+   ========================================================= */
+.home-loading-skeleton {
+  width: 100%;
+  overflow: hidden;
+  background: #f2f2f7;
+}
+.home-skeleton-hero {
+  width: 100%;
+  height: 320px;
+  background: #e8e8ee;
+  overflow: hidden;
+}
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, #ececf1 0%, #f7f7fa 45%, #ececf1 100%);
+}
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+  animation: homeSkeletonShimmer 1.35s infinite;
+}
+@keyframes homeSkeletonShimmer {
+  100% { transform: translateX(100%); }
+}
+.home-skeleton-flash {
+  width: calc(100% - 28px);
+  height: 220px;
+  margin: 54px auto 20px;
+  border-radius: 16px;
+  background: linear-gradient(120deg, #d9d9df, #eeeeF2);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-sizing: border-box;
+}
+.skeleton-bolt { width: 54px; height: 54px; border-radius: 14px; background: #e5e5ea; flex: 0 0 auto; }
+.skeleton-flash-lines { flex: 1; display: grid; gap: 10px; }
+.skeleton-line { display: block; height: 14px; border-radius: 999px; background: #e5e5ea; }
+.skeleton-line.wide { width: min(220px, 90%); }
+.skeleton-line.medium { width: min(150px, 70%); }
+.skeleton-timer-row { display: flex; gap: 8px; }
+.skeleton-timer-row span { width: 46px; height: 64px; border-radius: 10px; background: #e5e5ea; }
+.home-skeleton-products { padding: 8px 14px 28px; }
+.skeleton-line.title { width: 130px; height: 22px; margin-bottom: 14px; }
+.home-skeleton-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.home-skeleton-card { background: #fff; border-radius: 14px; overflow: hidden; padding-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+.skeleton-card-image { width: 100%; aspect-ratio: 1 / 1; }
+.skeleton-card-line { height: 12px; margin: 12px 12px 0; border-radius: 999px; background: #e9e9ee; }
+.skeleton-card-line.short { width: 45%; }
+
+@media (max-width: 767px) {
+  /* Match the reference mobile home: header, search and category row consume fixed space. */
+  .app-home .site-header { position: sticky; top: var(--notice-height, 0px); }
+  .app-home .header-inner { min-height: 112px; }
+  .app-home .mobile-search { display: flex !important; width: 100% !important; box-sizing: border-box !important; }
+  .app-home .mobile-category-scroll { min-height: 64px; box-sizing: border-box; }
+
+  /* Prevent image intrinsic dimensions from creating blank space or shifting the page. */
+  .app-home .hero-banner { height: auto !important; }
+  .app-home .hero-slider { height: var(--current-banner-height, 320px) !important; min-height: 220px; }
+  .app-home .hero-track { height: 100% !important; }
+  .app-home .hero-slide { height: 100% !important; }
+  .app-home .hero-link { height: 100% !important; }
+  .app-home .hero-img { height: 100% !important; width: 100% !important; object-fit: cover !important; }
+
+  /* Keep the normal gap close to the reference screenshot, never a large empty block. */
+  .app-home .hero-banner + .flash-sale-section { padding-top: 10px !important; margin-top: 0 !important; }
+  .app-home .flash-sale-section { padding-bottom: 10px !important; margin-bottom: 0 !important; }
+  .app-home .promo-section { padding: 8px 0 !important; }
+
+  .home-skeleton-hero { height: 320px; }
+  .home-skeleton-flash { height: 220px; margin-top: 18px; padding: 18px; }
+  .skeleton-timer-row span { width: 42px; height: 58px; }
+}
+
+/* The arrow class is shared with the original stylesheet; keep it visible on touch devices. */
+.hero-arrow.hero-nav { display: flex; }
+@media (max-width: 767px) {
+  .hero-arrow.hero-nav { opacity: 1 !important; width: 38px; height: 38px; z-index: 5; }
+}
+
+/* Final mobile reference alignment: search row is always present, while all
+   dynamic home content waits behind a fixed skeleton during first load. */
+@media (max-width: 767px) {
+  .app-home .site-header .header-inner {
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) 40px !important;
+    grid-template-areas: "menu logo actions" "search search search" !important;
+    row-gap: 10px !important;
+    min-height: 112px !important;
+    padding: 8px 14px 10px !important;
+  }
+  .app-home .site-header .mobile-search {
+    grid-area: search !important;
+    display: flex !important;
+    height: 42px !important;
+    border: 2px solid var(--primary, #df2d4d) !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+  }
+  .app-home .site-header .mobile-search input {
+    width: 100% !important;
+    height: 38px !important;
+    font-size: 14px !important;
+  }
+  .app-home .site-header .header-actions { grid-area: actions !important; }
+  .app-home .site-header .logo { grid-area: logo !important; }
+  .app-home .mobile-category-scroll {
+    height: 64px !important;
+    min-height: 64px !important;
+    padding: 10px 14px !important;
+    box-sizing: border-box !important;
+  }
+  .app-home .mobile-category-scroll .category-chip {
+    height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  /* The reference screen has a compact gap between hero and Flash Sale. */
+  .app-home .hero-banner + .flash-sale-section { margin-top: 0 !important; padding-top: 12px !important; }
+  .app-home .flash-sale-section { margin-top: 0 !important; }
+
+  /* Never let the removed pagination dots reappear through legacy styles. */
+  .app-home .hero-dots,
+  .app-home #heroDots,
+  .app-home .hero-dot { display: none !important; }
+}
