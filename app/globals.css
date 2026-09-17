@@ -2846,3 +2846,104 @@ textarea {
     max-height: 250px !important;
   }
 }
+
+/* =========================================================
+   V44 — COMPACT REFERENCE HERO
+   One clean final rule-set. The outer frame is capped at 250px,
+   the image is anchored to the top and fills the frame without
+   creating blank space above. A small gap remains before Flash Sale.
+   ========================================================= */
+@media (max-width: 767px) {
+  .app-home .fb-hero-banner {
+    width: 100% !important;
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #f2f2f7 !important;
+  }
+
+  .app-home .fb-hero-slider {
+    width: 100% !important;
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+    overflow: hidden !important;
+    touch-action: pan-y !important;
+  }
+
+  .app-home .fb-hero-track,
+  .app-home .fb-hero-slide {
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+  }
+
+  .app-home .fb-hero-slide {
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  .app-home .fb-hero-link {
+    display: block !important;
+    width: 100% !important;
+    height: 250px !important;
+    max-width: 100% !important;
+    max-height: 250px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .app-home .fb-hero-image-frame {
+    display: block !important;
+    width: 100% !important;
+    height: 250px !important;
+    max-height: 250px !important;
+    overflow: hidden !important;
+  }
+
+  .app-home .fb-hero-img {
+    display: block !important;
+    width: 100% !important;
+    height: 250px !important;
+    max-width: 100% !important;
+    max-height: 250px !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
+  }
+
+  .app-home .fb-hero-nav {
+    display: flex !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: #fff !important;
+    color: #df294d !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 80 !important;
+  }
+
+  .app-home .fb-hero-prev { left: 12px !important; }
+  .app-home .fb-hero-next { right: 12px !important; }
+
+  .app-home .fb-hero-dots {
+    bottom: 8px !important;
+    z-index: 81 !important;
+  }
+
+  .app-home .fb-hero-banner + .flash-sale-section {
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+  }
+}
