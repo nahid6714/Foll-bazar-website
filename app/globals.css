@@ -721,7 +721,6 @@ textarea {
 @media (max-width: 900px) {
     body.app-home.menu-open {
         overflow: hidden !important;
-        touch-action: none;
     }
 
     body.app-home .main-nav.md\:hidden {
@@ -1343,7 +1342,6 @@ textarea {
 @media (max-width: 900px) {
     body.menu-open {
         overflow: hidden !important;
-        touch-action: none !important;
     }
 
     .fal-mobile-drawer.main-nav.md\:hidden,
@@ -1979,3 +1977,74 @@ textarea {
 .complaint-upload-error { margin-top: 6px; color: #dc2626; font-size: 11px; font-weight: 500; }
 .complaint-image-preview { position: relative; }
 .complaint-image-preview button { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(31,41,55,.78); color: #fff; cursor: pointer; }
+
+/* =========================================================
+   MOBILE TOUCH RELIABILITY
+   Scoped only to touch-sized screens. Keeps existing layout intact while
+   preventing browser gesture delays and accidental invisible hit-blocking.
+   ========================================================= */
+@media (max-width: 900px) {
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .hero-slider,
+  .hero-track,
+  .hero-slide,
+  .hero-link,
+  .hero-img,
+  .promo-section a,
+  .promo-banner {
+    touch-action: pan-y;
+  }
+
+  .mobile-bottom-nav {
+    -webkit-touch-callout: none;
+  }
+
+  .mobile-bottom-nav a,
+  .mobile-bottom-nav button,
+  .hero-arrow,
+  .hero-dot,
+  .order-track-submit {
+    min-height: 44px;
+  }
+}
+
+.order-track-error {
+  margin: 3px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fff7f7;
+  color: #b91c1c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.order-track-submit:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.order-track-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: -2px 0 20px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.order-track-summary strong {
+  color: #111827;
+}

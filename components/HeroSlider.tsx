@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { heroBanners } from '@/lib/data';
+import { useSiteData } from '@/lib/site-data';
 
 export default function HeroSlider() {
+  const { heroBanners } = useSiteData();
   const [current, setCurrent] = useState(0);
   const total = heroBanners.length;
 
@@ -16,11 +17,18 @@ export default function HeroSlider() {
   }, [total]);
 
   useEffect(() => {
+    if (current >= total && total > 0) setCurrent(0);
+  }, [current, total]);
+
+  useEffect(() => {
+    if (total <= 1) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 4500);
     return () => clearInterval(timer);
-  }, [nextSlide]);
+  }, [nextSlide, total]);
+
+  if (total === 0) return null;
 
   return (
     <section className="hero-banner">
@@ -40,7 +48,7 @@ export default function HeroSlider() {
               className={`hero-slide ${index === current ? 'active' : ''}`}
               style={{ minWidth: '100%', flexShrink: 0 }}
             >
-              <a href="#" onClick={(e) => e.preventDefault()} className="hero-link" style={{ display: 'block' }}>
+              <a href={banner.linkUrl || '#'} onClick={(e) => { if (!banner.linkUrl) e.preventDefault(); }} className="hero-link" style={{ display: 'block' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={banner.image}

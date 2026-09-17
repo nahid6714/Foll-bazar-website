@@ -6,7 +6,18 @@ import {
   Product,
   categories as fallbackCategories,
   allProductsList as fallbackProducts,
+  heroBanners as fallbackHeroBanners,
+  promoBanners as fallbackPromoBanners,
 } from '@/lib/data';
+
+export type SiteBanner = {
+  id: string;
+  image: string;
+  alt: string;
+  type: 'hero' | 'promo';
+  sortOrder: number;
+  linkUrl?: string | null;
+};
 
 type SiteCategory = {
   name: string;
@@ -22,6 +33,8 @@ type SiteDataContextValue = {
   hotDealProducts: Product[];
   dinajpurProducts: Product[];
   premiumProducts: Product[];
+  heroBanners: SiteBanner[];
+  promoBanners: string[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
@@ -64,6 +77,8 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       hasSubmenu: c.hasSubmenu,
     }))
   );
+  const [heroBanners, setHeroBanners] = useState<SiteBanner[]>(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i })));
+  const [promoBanners, setPromoBanners] = useState<string[]>(fallbackPromoBanners);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -76,11 +91,17 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
         supabaseRest<any[]>(
           'products?select=id,legacy_id,name,slug,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc'
         ),
-
         supabaseRest<any[]>(
           'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
         ),
       ]);
+
+      let bannersResult: any[] = [];
+      try {
+        bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url&is_active=eq.true&order=banner_type.asc,sort_order.asc');
+      } catch (bannerError) {
+        console.warn('Supabase banner table is unavailable; keeping fallback banners.', bannerError);
+      }
 
       const liveProducts = (productsResult ?? []).map(toProduct);
 
@@ -97,6 +118,20 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
 
       if (liveCategories.length > 0) {
         setCategories(liveCategories);
+      }
+
+      const liveBanners = (bannersResult ?? []).filter((row: any) => String(row.image_url ?? '').trim());
+      if (liveBanners.length > 0) {
+        const mapped = liveBanners.map((row: any, index: number) => ({
+          id: String(row.id ?? index),
+          image: String(row.image_url ?? '').trim(),
+          alt: String(row.alt_text ?? 'ফল বাজার ব্যানার'),
+          type: String(row.banner_type) === 'promo' ? 'promo' : 'hero',
+          sortOrder: Number(row.sort_order ?? index),
+          linkUrl: row.link_url ? String(row.link_url) : null,
+        })) as SiteBanner[];
+        setHeroBanners(mapped.filter((b) => b.type === 'hero'));
+        setPromoBanners(mapped.filter((b) => b.type === 'promo').map((b) => b.image));
       }
     } catch (err) {
       console.warn('Supabase catalogue load failed; using local fallback data.', err);
@@ -119,6 +154,13 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
           ),
         ]);
 
+        let bannersResult: any[] = [];
+        try {
+          bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url&is_active=eq.true&order=banner_type.asc,sort_order.asc');
+        } catch (bannerError) {
+          console.warn('Supabase banner table is unavailable; keeping fallback banners.', bannerError);
+        }
+
         if (ignore) return;
         const liveProducts = (productsResult ?? []).map(toProduct);
         if (liveProducts.length > 0) {
@@ -134,6 +176,20 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
 
         if (liveCategories.length > 0) {
           setCategories(liveCategories);
+        }
+
+        const liveBanners = (bannersResult ?? []).filter((row: any) => String(row.image_url ?? '').trim());
+        if (liveBanners.length > 0) {
+          const mapped = liveBanners.map((row: any, index: number) => ({
+            id: String(row.id ?? index),
+            image: String(row.image_url ?? '').trim(),
+            alt: String(row.alt_text ?? 'ফল বাজার ব্যানার'),
+            type: String(row.banner_type) === 'promo' ? 'promo' : 'hero',
+            sortOrder: Number(row.sort_order ?? index),
+            linkUrl: row.link_url ? String(row.link_url) : null,
+          })) as SiteBanner[];
+          setHeroBanners(mapped.filter((b) => b.type === 'hero'));
+          setPromoBanners(mapped.filter((b) => b.type === 'promo').map((b) => b.image));
         }
       } catch (err) {
         if (!ignore) {
@@ -169,11 +225,13 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       hotDealProducts: products.filter((p) => p.isHotDeal),
       dinajpurProducts: products.filter((p) => p.category === 'dinajpur-licu'),
       premiumProducts: products.filter((p) => p.category === 'premium-licu'),
+      heroBanners,
+      promoBanners,
       loading,
       error,
       refresh,
     };
-  }, [products, categories, loading, error]);
+  }, [products, categories, heroBanners, promoBanners, loading, error]);
 
   return (
     <SiteDataContext.Provider value={value}>

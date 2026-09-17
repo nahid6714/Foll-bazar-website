@@ -25,11 +25,11 @@ import CartOrderView from '@/components/CartOrderView';
 import AddToCartModal from '@/components/AddToCartModal';
 import ComplaintView from '@/components/ComplaintView';
 
-import { Product, CartItem, promoBanners } from '@/lib/data';
+import { Product, CartItem } from '@/lib/data';
 import { useSiteData } from '@/lib/site-data';
 
 export default function HomePage() {
-  const { products: allProductsList, dinajpurProducts, premiumProducts } = useSiteData();
+  const { products: allProductsList, dinajpurProducts, premiumProducts, promoBanners } = useSiteData();
   // Navigation view state: 'home' | 'shop' | 'product-detail' | 'auth' | 'cart'
   const [currentView, setCurrentView] = useState<'home' | 'shop' | 'product-detail' | 'auth' | 'cart' | 'track' | 'complaint'>('home');
   const [shopCategory, setShopCategory] = useState<string | null>(null);
@@ -518,7 +518,7 @@ export default function HomePage() {
             />
 
             {/* 6. Promo Banner 1 */}
-            <PromoSection image={promoBanners[0]} />
+            {promoBanners[0] && <PromoSection image={promoBanners[0]} />}
 
             {/* 7. Hot Deal Section */}
             <HotDealSection
@@ -528,7 +528,7 @@ export default function HomePage() {
             />
 
             {/* 8. Promo Banner 2 */}
-            <PromoSection image={promoBanners[1]} />
+            {promoBanners[1] && <PromoSection image={promoBanners[1]} />}
 
             {/* 9. দিনাজপুর লিচু Section */}
             <CategorySection
@@ -551,7 +551,7 @@ export default function HomePage() {
             />
 
             {/* 11. Promo Banner 3 */}
-            <PromoSection image={promoBanners[2]} />
+            {promoBanners[2] && <PromoSection image={promoBanners[2]} />}
 
             {/* 12. সকল প্রোডাক্ট Section */}
             <AllProductsSection
@@ -561,7 +561,7 @@ export default function HomePage() {
             />
 
             {/* 13. Promo Banner 4 */}
-            <PromoSection image={promoBanners[3]} />
+            {promoBanners[3] && <PromoSection image={promoBanners[3]} />}
           </>
         )}
       </main>

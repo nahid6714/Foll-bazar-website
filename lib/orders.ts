@@ -69,3 +69,21 @@ export async function createOrderInSupabase(
 
   return { id: response.order_id, orderNumber: response.order_number };
 }
+
+export type PublicTrackedOrder = {
+  order_number: string;
+  status: string;
+  total_amount: number;
+  created_at: string;
+};
+
+export async function trackPublicOrder(input: { orderNumber?: string; phone?: string }) {
+  const response = await supabaseRest<PublicTrackedOrder | null>('rpc/track_public_order', {
+    method: 'POST',
+    body: JSON.stringify({
+      p_order_number: input.orderNumber?.trim() || null,
+      p_phone: input.phone?.trim() || null,
+    }),
+  });
+  return response;
+}
