@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSiteData } from '@/lib/site-data';
 
-const MOBILE_FRAME_HEIGHT = 300;
+const MOBILE_FRAME_HEIGHT = 270;
 
 export default function HeroSlider() {
   const { heroBanners } = useSiteData();
@@ -61,13 +61,24 @@ export default function HeroSlider() {
         className="hero-slider"
         id="heroSlider"
         aria-label="হিরো ব্যানার স্লাইডার"
-        onTouchStart={(e) => { if (e.touches.length === 1) startSwipe(e.touches[0].clientX); }}
-        onTouchMove={(e) => { if (e.touches.length === 1) moveSwipe(e.touches[0].clientX); }}
-        onTouchEnd={endSwipe}
-        onPointerDown={(e) => { if (e.pointerType !== 'mouse') startSwipe(e.clientX); }}
-        onPointerMove={(e) => { if (e.pointerType !== 'mouse') moveSwipe(e.clientX); }}
-        onPointerUp={(e) => { if (e.pointerType !== 'mouse') endSwipe(); }}
-        onPointerCancel={(e) => { if (e.pointerType !== 'mouse') endSwipe(); }}
+        onPointerDown={(e) => {
+          if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+            try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+            startSwipe(e.clientX);
+          }
+        }}
+        onPointerMove={(e) => {
+          if (e.pointerType === 'touch' || e.pointerType === 'pen') moveSwipe(e.clientX);
+        }}
+        onPointerUp={(e) => {
+          if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+            try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+            endSwipe();
+          }
+        }}
+        onPointerCancel={(e) => {
+          if (e.pointerType === 'touch' || e.pointerType === 'pen') endSwipe();
+        }}
         style={{ ['--hero-frame-height' as any]: `${MOBILE_FRAME_HEIGHT}px` }}
       >
         <div
@@ -92,7 +103,10 @@ export default function HeroSlider() {
                 <a
                   href={banner.linkUrl || '#'}
                   onClick={(e) => {
-                    if (!banner.linkUrl || suppressClick.current) e.preventDefault();
+                    if (!banner.linkUrl || suppressClick.current) {
+                      e.preventDefault();
+                      if (suppressClick.current) e.stopPropagation();
+                    }
                   }}
                   className="hero-link"
                   aria-label={banner.alt}
