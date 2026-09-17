@@ -14,6 +14,10 @@ export type CreateOrderInput = {
   phone: string;
   email?: string;
   address: string;
+  division?: string;
+  district?: string;
+  upazila?: string;
+  deliveryNote?: string;
   note?: string;
   shippingMethod: 'dhaka' | 'outside';
   paymentMethod: string;
@@ -47,6 +51,10 @@ export async function createOrderInSupabase(input: CreateOrderInput) {
     customer_phone: input.phone.trim().replace(/[^0-9+]/g, ''),
     customer_email: input.email?.trim() || null,
     address: input.address.trim(),
+    division: input.division?.trim() || null,
+    district: input.district?.trim() || null,
+    upazila: input.upazila?.trim() || null,
+    delivery_note: input.deliveryNote?.trim() || null,
     order_note: input.note?.trim() || null,
     shipping_method: input.shippingMethod,
     payment_method: paymentMethod,

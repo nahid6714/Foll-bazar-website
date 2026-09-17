@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Product } from '@/lib/data';
+import { supabaseRest } from '@/lib/supabase';
 
 interface GccLiveChatProps {
   onOpenTrackModal: () => void;
@@ -42,6 +43,7 @@ export default function GccLiveChat({
   const [cOrder, setCOrder] = useState('');
   const [cDesc, setCDesc] = useState('');
   const [cSuccess, setCSuccess] = useState(false);
+  const [cSubmitting, setCSubmitting] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -97,12 +99,24 @@ export default function GccLiveChat({
     }, 700);
   };
 
-  const handleComplaintSubmit = (e: React.FormEvent) => {
+  const handleComplaintSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cName || !cPhone || !cDesc) {
       alert('অনুগ্রহ করে নাম, মোবাইল এবং বিস্তারিত পূরণ করুন।');
       return;
     }
+    setCSubmitting(true);
+    try {
+      await supabaseRest('rpc/create_public_complaint', {
+        method: 'POST',
+        body: JSON.stringify({ payload: { customer_name: cName.trim(), customer_phone: cPhone.trim(), order_id: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(cOrder.trim()) ? cOrder.trim() : null, subject: cOrder.trim() ? `Order reference: ${cOrder.trim()}` : null, description: cDesc.trim() } }),
+      });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'কমপ্লেইন জমা দেওয়া যায়নি।');
+      setCSubmitting(false);
+      return;
+    }
+    setCSubmitting(false);
     setCSuccess(true);
     setTimeout(() => {
       setShowComplaint(false);
@@ -315,8 +329,8 @@ export default function GccLiveChat({
                     >
                       বাতিল
                     </button>
-                    <button type="submit" className="gcc-complaint-submit" id="gcc-complaint-submit">
-                      জমা দিন
+                    <button type="submit" disabled={cSubmitting} className="gcc-complaint-submit" id="gcc-complaint-submit">
+                      {cSubmitting ? 'জমা হচ্ছে...' : 'জমা দিন'}
                     </button>
                   </div>
                 </form>

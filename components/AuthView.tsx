@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { supabaseGetProfile, supabaseSignIn, supabaseSignUp } from '@/lib/supabase';
+import { saveAuthSession, supabaseGetProfile, supabaseResetPasswordForEmail, supabaseSignIn, supabaseSignUp } from '@/lib/supabase';
 import {
   User,
   Lock,
@@ -17,53 +17,18 @@ import {
   Truck,
 } from 'lucide-react';
 
+
+function normalizePhone(phoneStr: string): string {
+  const cleaned = phoneStr.replace(/\D/g, '');
+  return cleaned.length > 11 && cleaned.startsWith('88') ? cleaned.slice(2) : cleaned;
+}
+
 export interface UserProfile {
   name: string;
   phone: string;
   email?: string;
   role: 'customer';
   createdAt: string;
-}
-
-export interface RegisteredAccount {
-  name: string;
-  phone: string;
-  email?: string;
-  password: string;
-  role: 'customer';
-  createdAt: string;
-}
-
-const REGISTERED_ACCOUNTS_KEY = 'falbazar_registered_accounts';
-
-// Normalize phone to digits for reliable comparison across formats
-function normalizePhone(phoneStr: string): string {
-  if (!phoneStr) return '';
-  const cleaned = phoneStr.replace(/\D/g, '');
-  if (cleaned.length > 11 && cleaned.startsWith('88')) {
-    return cleaned.slice(2);
-  }
-  return cleaned;
-}
-
-function getStoredAccounts(): RegisteredAccount[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(REGISTERED_ACCOUNTS_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as RegisteredAccount[];
-  } catch {
-    return [];
-  }
-}
-
-function saveStoredAccounts(accounts: RegisteredAccount[]): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(REGISTERED_ACCOUNTS_KEY, JSON.stringify(accounts));
-  } catch {
-    // Ignore
-  }
 }
 
 interface AuthViewProps {
@@ -89,7 +54,6 @@ export default function AuthView({
   const [loginIdentifier, setLoginIdentifier] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginShowPassword, setLoginShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
 
   // Register form state
   const [regName, setRegName] = useState('');
@@ -103,7 +67,7 @@ export default function AuthView({
 
   // Forgot password modal state
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotPhone, setForgotPhone] = useState('');
+  const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
   const [forgotError, setForgotError] = useState<string | null>(null);
 
@@ -128,22 +92,7 @@ export default function AuthView({
       const cleanPhone = normalizePhone(identifier);
       const isEmail = identifier.includes('@');
       const email = isEmail ? identifier.toLowerCase() : `phone_${cleanPhone}@customer.falbazar.local`;
-      let session;
-      try {
-        session = await supabaseSignIn(email, password);
-      } catch (authError) {
-        // One-time migration path for accounts created by the old localStorage system.
-        const legacy = getStoredAccounts().find((acc) =>
-          (isEmail && acc.email?.toLowerCase() === email) ||
-          (!isEmail && normalizePhone(acc.phone) === cleanPhone),
-        );
-        if (!legacy || legacy.password !== password) throw authError;
-        session = await supabaseSignUp(email, password, {
-          full_name: legacy.name,
-          phone: legacy.phone,
-          name: legacy.name,
-        });
-      }
+      const session = await supabaseSignIn(email, password);
 
       if (!session.access_token) {
         setSuccessMessage('অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল ভেরিফিকেশন প্রয়োজন হলে ইমেইলটি যাচাই করে আবার লগইন করুন।');
@@ -159,8 +108,7 @@ export default function AuthView({
         role: 'customer',
         createdAt: String(profile?.created_at || new Date().toISOString()),
       };
-      localStorage.setItem('falbazar_auth_access_token', session.access_token);
-      localStorage.setItem('falbazar_auth_refresh_token', session.refresh_token || '');
+      saveAuthSession(session);
       onLoginSuccess(user);
       setSuccessMessage(`সফলভাবে লগইন সম্পন্ন হয়েছে! স্বাগতম, ${user.name}`);
     } catch (error) {
@@ -214,8 +162,7 @@ export default function AuthView({
           role: 'customer',
           createdAt: String(profile?.created_at || new Date().toISOString()),
         };
-        localStorage.setItem('falbazar_auth_access_token', session.access_token);
-        localStorage.setItem('falbazar_auth_refresh_token', session.refresh_token || '');
+        saveAuthSession(session);
         onLoginSuccess(user);
         setSuccessMessage('আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে এবং Supabase-এ সংরক্ষিত হয়েছে।');
       } else {
@@ -425,22 +372,12 @@ export default function AuthView({
 
               {/* Row: মনে রাখুন & পাসওয়ার্ড ভুলে গেছেন? */}
               <div className="flex items-center justify-between text-xs sm:text-sm pt-1 mb-3">
-                <label className="flex items-center gap-2 cursor-pointer text-gray-700 select-none">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded accent-[#df2d4d] cursor-pointer"
-                  />
-                  <span>মনে রাখুন</span>
-                </label>
-
                 <button
                   type="button"
                   onClick={() => {
                     setShowForgotPassword(true);
                     setForgotSent(false);
-                    setForgotPhone(loginIdentifier);
+                    setForgotEmail(loginIdentifier.includes('@') ? loginIdentifier.trim() : '');
                   }}
                   className="text-[#df2d4d] hover:underline font-medium focus:outline-none cursor-pointer"
                 >
@@ -666,7 +603,7 @@ export default function AuthView({
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-gray-100 relative">
             <h3 className="text-lg font-bold text-gray-900 mb-2">পাসওয়ার্ড পুনরুদ্ধার</h3>
             <p className="text-xs text-gray-600 mb-4">
-              আপনার অ্যাকাউন্টের মোবাইল নম্বর দিন। আমরা পাসওয়ার্ড রিসেটের ওটিপি পাঠিয়ে দেব।
+              আপনার অ্যাকাউন্টের ইমেইল দিন। আমরা নিরাপদ পাসওয়ার্ড রিসেট লিংক পাঠিয়ে দেব।
             </p>
 
             {forgotError && (
@@ -681,9 +618,9 @@ export default function AuthView({
                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <p className="text-sm font-semibold text-gray-800">ওটিপি কোড পাঠানো হয়েছে!</p>
+                <p className="text-sm font-semibold text-gray-800">রিসেট লিংক পাঠানো হয়েছে!</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  আপনার মোবাইল নম্বরে ৬ সংখ্যার ভেরিফিকেশন কোড পাঠানো হয়েছে।
+                  আপনার ইমেইলে পাসওয়ার্ড পরিবর্তনের লিংক পাঠানো হয়েছে।
                 </p>
                 <button
                   type="button"
@@ -698,27 +635,29 @@ export default function AuthView({
                 onSubmit={(e) => {
                   e.preventDefault();
                   setForgotError(null);
-                  const clean = normalizePhone(forgotPhone);
-                  if (!clean) return;
-                  const accounts = getStoredAccounts();
-                  const found = accounts.find((acc) => normalizePhone(acc.phone) === clean);
-                  if (!found) {
-                    setForgotError('এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি! পাসওয়ার্ড পুনরুদ্ধার করতে আগে রেজিস্ট্রেশন করুন।');
+                  const email = forgotEmail.trim().toLowerCase();
+                  if (!email || !email.includes('@')) {
+                    setForgotError('অনুগ্রহ করে একটি সঠিক ইমেইল দিন।');
                     return;
                   }
-                  setForgotSent(true);
+                  try {
+                    await supabaseResetPasswordForEmail(email, `${window.location.origin}/`);
+                    setForgotSent(true);
+                  } catch (error) {
+                    setForgotError(error instanceof Error ? error.message : 'রিসেট লিংক পাঠানো যায়নি।');
+                  }
                 }}
                 className="space-y-3"
               >
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    মোবাইল নম্বর
+                    ইমেইল
                   </label>
                   <input
-                    type="tel"
-                    value={forgotPhone}
-                    onChange={(e) => setForgotPhone(e.target.value)}
-                    placeholder="01XXXXXXXXX"
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="you@example.com"
                     required
                     className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:border-[#df2d4d]"
                   />

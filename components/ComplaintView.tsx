@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { supabaseRest } from '@/lib/supabase';
 import { ArrowLeft, Headphones, Phone, Mail, MapPin, ShieldCheck, Clock3, UserRound, PencilLine, UploadCloud, Send, X } from 'lucide-react';
 
 interface ComplaintViewProps { onBack: () => void; }
@@ -10,6 +11,8 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
 
 export default function ComplaintView({ onBack }: ComplaintViewProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [orderId, setOrderId] = useState('');
@@ -45,10 +48,42 @@ export default function ComplaintView({ onBack }: ComplaintViewProps) {
     setImage(file);
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
     if (!name.trim() || !phone.trim() || !description.trim()) return;
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      let evidenceUrl: string | null = null;
+      if (image) {
+        const form = new FormData();
+        form.append('file', image);
+        form.append('upload_preset', 'bak9nabq');
+        form.append('folder', 'fol_bazar_complaints');
+        const upload = await fetch('https://api.cloudinary.com/v1_1/bak9nabq/image/upload', { method: 'POST', body: form });
+        const data = await upload.json().catch(() => ({}));
+        if (!upload.ok || !data.secure_url) throw new Error('ছবিটি আপলোড করা যায়নি। আবার চেষ্টা করুন।');
+        evidenceUrl = String(data.secure_url);
+      }
+      await supabaseRest('rpc/create_public_complaint', {
+        method: 'POST',
+        body: JSON.stringify({
+          payload: {
+            customer_name: name.trim(),
+            customer_phone: phone.trim(),
+            order_id: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId.trim()) ? orderId.trim() : null,
+            subject: orderId.trim() && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId.trim()) ? `Order reference: ${orderId.trim()}` : null,
+            description: description.trim(),
+            evidence_image_url: evidenceUrl,
+          },
+        }),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'কমপ্লেইন জমা দেওয়া যায়নি।');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -93,7 +128,8 @@ export default function ComplaintView({ onBack }: ComplaintViewProps) {
                 {imageError && <div className="complaint-upload-error">{imageError}</div>}
                 {imagePreview && <div className="complaint-image-preview"><img src={imagePreview} alt="নির্বাচিত অভিযোগের ছবি" /><button type="button" aria-label="ছবি সরান" onClick={() => { setImage(null); setImageError(''); if (fileInputRef.current) fileInputRef.current.value = ''; }}><X size={16} /></button></div>}
               </label>
-              <button className="complaint-submit" type="submit"><Send/> কমপ্লেইন প্রেরণ</button>
+              <button className="complaint-submit" type="submit" disabled={isSubmitting}><Send/> {isSubmitting ? 'জমা হচ্ছে...' : 'কমপ্লেইন প্রেরণ'}</button>
+              {submitError && <div className="complaint-upload-error">{submitError}</div>}
             </form>
           )}
         </section>

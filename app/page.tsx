@@ -26,7 +26,7 @@ import AddToCartModal from '@/components/AddToCartModal';
 import ComplaintView from '@/components/ComplaintView';
 
 import { Product, CartItem } from '@/lib/data';
-import { supabaseSignOut } from '@/lib/supabase';
+import { clearAuthSession, getStoredAccessToken, supabaseGetProfile, supabaseSignOut } from '@/lib/supabase';
 import { useSiteData } from '@/lib/site-data';
 
 export default function HomePage() {
@@ -41,7 +41,7 @@ export default function HomePage() {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedUser = localStorage.getItem('falbazar_user');
+        const savedUser = sessionStorage.getItem('falbazar_user');
         return savedUser ? (JSON.parse(savedUser) as UserProfile) : null;
       } catch {
         return null;
@@ -50,6 +50,18 @@ export default function HomePage() {
     return null;
   });
 
+
+
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    // Remove the legacy client-side account/token store. Auth is now owned by Supabase
+    // and the short-lived browser session uses sessionStorage only.
+    localStorage.removeItem('falbazar_user');
+    localStorage.removeItem('falbazar_registered_accounts');
+    localStorage.removeItem('falbazar_auth_access_token');
+    localStorage.removeItem('falbazar_auth_refresh_token');
+  }, []);
 
   // Keep the SPA navigation inside the browser history so Android/Chrome
   // back returns to the previous website view instead of leaving the site.
@@ -359,7 +371,7 @@ export default function HomePage() {
   const handleLoginSuccess = (user: UserProfile) => {
     setCurrentUser(user);
     try {
-      localStorage.setItem('falbazar_user', JSON.stringify(user));
+      sessionStorage.setItem('falbazar_user', JSON.stringify(user));
     } catch {
       // Ignore
     }
@@ -370,13 +382,11 @@ export default function HomePage() {
   };
 
   const handleLogout = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('falbazar_auth_access_token') : null;
+    const token = getStoredAccessToken();
     if (token) void supabaseSignOut(token);
     setCurrentUser(null);
     try {
-      localStorage.removeItem('falbazar_user');
-      localStorage.removeItem('falbazar_auth_access_token');
-      localStorage.removeItem('falbazar_auth_refresh_token');
+      clearAuthSession();
     } catch {
       // Ignore
     }

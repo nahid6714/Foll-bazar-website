@@ -140,6 +140,10 @@ export default function CartOrderView({
   const [fullName, setFullName] = useState(() => currentUser?.name || '');
   const [phone, setPhone] = useState(() => currentUser?.phone || '');
   const [address, setAddress] = useState('');
+  const [division, setDivision] = useState('');
+  const [district, setDistrict] = useState('');
+  const [upazila, setUpazila] = useState('');
+  const [deliveryNote, setDeliveryNote] = useState('');
   const [shippingMethod, setShippingMethod] = useState<'dhaka' | 'outside'>('dhaka');
   const [orderNote, setOrderNote] = useState('');
   const [isShippingDropdownOpen, setIsShippingDropdownOpen] = useState(false);
@@ -239,6 +243,12 @@ export default function CartOrderView({
       return;
     }
 
+    if (!division.trim() || !district.trim() || !upazila.trim()) {
+      setErrorMessage('অনুগ্রহ করে বিভাগ, জেলা ও উপজেলা নির্বাচন/লিখুন।');
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+      return;
+    }
+
     if (!address.trim()) {
       setErrorMessage('অনুগ্রহ করে সম্পূর্ণ ডেলিভারি ঠিকানা দিন (বাসা নং, রোড, এলাকা)।');
       window.scrollTo({ top: 200, behavior: 'smooth' });
@@ -275,6 +285,9 @@ export default function CartOrderView({
       phone: phone.trim(),
       email: currentUser?.email || undefined,
       address: address.trim(),
+      division: division.trim(),
+      district: district.trim(),
+      upazila: upazila.trim(),
       note: orderNote.trim() || undefined,
       paymentMethod: selectedPayment,
       paymentTitle: selectedOpt?.title || 'ক্যাশ অন ডেলিভারি',
@@ -294,6 +307,10 @@ export default function CartOrderView({
       phone: orderData.phone,
       email: orderData.email,
       address: orderData.address,
+      division: orderData.division,
+      district: orderData.district,
+      upazila: orderData.upazila,
+      deliveryNote: deliveryNote.trim() || undefined,
       note: orderData.note,
       shippingMethod,
       paymentMethod: orderData.paymentMethod,
@@ -562,6 +579,22 @@ export default function CartOrderView({
             </div>
           </div>
 
+          {/* Location fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <label className="block text-sm font-bold text-gray-800">
+              বিভাগ <span className="text-[#df2d4d]">*</span>
+              <input value={division} onChange={(e) => setDivision(e.target.value)} placeholder="যেমন: ঢাকা" required className="mt-1 w-full px-3 py-3 bg-white border border-gray-300 rounded-xl text-sm font-normal focus:outline-none focus:border-[#df2d4d]" />
+            </label>
+            <label className="block text-sm font-bold text-gray-800">
+              জেলা <span className="text-[#df2d4d]">*</span>
+              <input value={district} onChange={(e) => setDistrict(e.target.value)} placeholder="যেমন: ঢাকা" required className="mt-1 w-full px-3 py-3 bg-white border border-gray-300 rounded-xl text-sm font-normal focus:outline-none focus:border-[#df2d4d]" />
+            </label>
+            <label className="block text-sm font-bold text-gray-800">
+              উপজেলা <span className="text-[#df2d4d]">*</span>
+              <input value={upazila} onChange={(e) => setUpazila(e.target.value)} placeholder="যেমন: তেজগাঁও" required className="mt-1 w-full px-3 py-3 bg-white border border-gray-300 rounded-xl text-sm font-normal focus:outline-none focus:border-[#df2d4d]" />
+            </label>
+          </div>
+
           {/* Field 4: শিপিং */}
           <div className="mb-4">
             <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1.5">
@@ -624,6 +657,19 @@ export default function CartOrderView({
                 className="w-full pl-11 pr-4 py-3 bg-white border border-gray-300 rounded-xl text-sm sm:text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#df2d4d] focus:ring-2 focus:ring-[#df2d4d]/15 transition resize-none"
               />
             </div>
+          </div>
+
+          <div className="mb-2">
+            <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1.5">
+              ডেলিভারি নোট <span className="text-gray-400 font-normal text-xs sm:text-sm">(ঐচ্ছিক)</span>
+            </label>
+            <textarea
+              rows={2}
+              value={deliveryNote}
+              onChange={(e) => setDeliveryNote(e.target.value)}
+              placeholder="ডেলিভারি ম্যানকে কোনো বিশেষ নির্দেশনা থাকলে লিখুন..."
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm sm:text-base text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#df2d4d] focus:ring-2 focus:ring-[#df2d4d]/15 transition resize-none"
+            />
           </div>
         </div>
 
