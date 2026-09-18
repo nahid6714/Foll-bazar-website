@@ -48,7 +48,7 @@ export default function ShopView({
   onCategoryChange,
 }: ShopViewProps)
   {
-  const { products: allProductsList, categories } = useSiteData();
+  const { products: allProductsList, categories, loading: siteLoading } = useSiteData();
 
   // Category state
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
@@ -338,7 +338,26 @@ export default function ShopView({
         )}
 
         {/* Product Grid (2 columns on mobile, 3-4 on desktop) */}
-        {sortedProducts.length > 0 ? (
+        {siteLoading ? (
+          /* Still loading the real catalogue — never show "no products
+             found" here, and never show demo/placeholder products either.
+             Just a skeleton grid until the live data actually arrives. */
+          <div
+            className="product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4"
+            aria-label="লোড হচ্ছে"
+            aria-busy="true"
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border border-gray-100 bg-white overflow-hidden animate-pulse">
+                <div className="aspect-square bg-gray-200" />
+                <div className="p-3 space-y-2">
+                  <div className="h-3 bg-gray-200 rounded w-4/5" />
+                  <div className="h-3 bg-gray-200 rounded w-2/5" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : sortedProducts.length > 0 ? (
           <div className="product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
             {sortedProducts.map((p) => (
               <ProductCard
@@ -352,7 +371,8 @@ export default function ShopView({
             ))}
           </div>
         ) : (
-          /* Empty State */
+          /* Empty State — only reached once loading has finished and there
+             are genuinely no matches. */
           <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-gray-100 shadow-sm my-6">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 text-[#df2d4d] flex items-center justify-center">
               <SlidersHorizontal size={28} />

@@ -1,14 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { supabaseRest } from '@/lib/supabase';
-import {
-  Product,
-  categories as fallbackCategories,
-  allProductsList as fallbackProducts,
-  heroBanners as fallbackHeroBanners,
-  promoBanners as fallbackPromoBanners,
-} from '@/lib/data';
+import { Product } from '@/lib/data';
 
 export type SiteBanner = {
   id: string;
@@ -35,7 +29,14 @@ type SiteDataContextValue = {
   premiumProducts: Product[];
   heroBanners: SiteBanner[];
   promoBanners: SiteBanner[];
+  // True until the real catalogue has been successfully loaded from
+  // Supabase at least once. No demo/placeholder content is ever shown in
+  // its place — the UI must keep showing a skeleton while this is true.
   loading: boolean;
+  // True while a retry attempt is in flight after an earlier failed load.
+  retrying: boolean;
+  // How many failed attempts have happened since the last success.
+  retryCount: number;
   error: string | null;
   refresh: () => Promise<void>;
 };
@@ -84,157 +85,147 @@ async function fetchProductsWithStock() {
   }
 }
 
+// Fetches the full catalogue (products, categories, banners) in one shot.
+// Throws if any required piece (products/categories) fails — banners alone
+// are allowed to come back empty since they're not required to show
+// products.
+async function fetchCatalogue() {
+  const [productsResult, categoriesResult] = await Promise.all([
+    fetchProductsWithStock(),
+    supabaseRest<any[]>(
+      'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
+    ),
+  ]);
+
+  let bannersResult: any[] = [];
+  try {
+    bannersResult = await supabaseRest<any[]>(
+      'site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url&is_active=eq.true&order=banner_type.asc,sort_order.asc'
+    );
+  } catch (bannerError) {
+    // Banners are decorative; if the table isn't reachable, carry on with
+    // an empty banner list rather than failing the whole page load.
+    console.warn('Supabase banner table is unavailable.', bannerError);
+    bannersResult = [];
+  }
+
+  const products = (productsResult ?? []).map(toProduct);
+  const categories = (categoriesResult ?? []).map((row: any) => ({
+    name: String(row.name ?? ''),
+    slug: String(row.slug ?? ''),
+    icon: String(row.image_url ?? ''),
+    hasSubmenu: false,
+  }));
+
+  const liveBanners = (bannersResult ?? []).filter((row: any) => String(row.image_url ?? '').trim());
+  const mappedBanners = liveBanners.map((row: any, index: number) => ({
+    id: String(row.id ?? index),
+    image: String(row.image_url ?? '').trim(),
+    alt: String(row.alt_text ?? 'ফল বাজার ব্যানার'),
+    type: (String(row.banner_type) === 'promo' ? 'promo' : 'hero') as 'hero' | 'promo',
+    sortOrder: Number(row.sort_order ?? index),
+    linkUrl: row.link_url ? String(row.link_url) : null,
+  }));
+
+  return {
+    products,
+    categories,
+    heroBanners: mappedBanners.filter((b) => b.type === 'hero'),
+    promoBanners: mappedBanners.filter((b) => b.type === 'promo'),
+  };
+}
+
+// Auto-retry backoff schedule (ms) used when the live catalogue fails to
+// load. There is no demo/placeholder fallback: on failure we simply wait
+// and try again, and the UI stays on its loading skeleton the whole time.
+const RETRY_DELAYS_MS = [2000, 4000, 8000, 15000, 30000];
+
 export function SiteDataProvider({ children }: { children: React.ReactNode }) {
-  // Do NOT pre-fill the page with the bundled demo catalogue. If we start
-  // with fallback products/banners and then the real Supabase data arrives
-  // a moment later, every image on the page suddenly swaps out from under
-  // the visitor (old demo photos -> real photos), which looks broken.
-  // Instead we keep `loading: true` until the real data (or, on failure,
-  // the fallback) is actually known, and the homepage shows the skeleton
-  // until then. This is a short wait, not a swap.
+  // No demo/placeholder catalogue is ever loaded into state. `loading`
+  // stays true — and the homepage/shop keep showing their skeletons —
+  // until the real Supabase data has actually arrived. On failure we
+  // retry automatically instead of ever substituting bundled sample data.
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<SiteCategory[]>([]);
   const [heroBanners, setHeroBanners] = useState<SiteBanner[]>([]);
   const [promoBanners, setPromoBanners] = useState<SiteBanner[]>([]);
   const [loading, setLoading] = useState(true);
+  const [retrying, setRetrying] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const refresh = async () => {
-    setLoading(true);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const attemptIdRef = useRef(0);
+
+  const applyCatalogue = (data: { products: Product[]; categories: SiteCategory[]; heroBanners: SiteBanner[]; promoBanners: SiteBanner[] }) => {
+    setProducts(data.products);
+    setCategories(data.categories);
+    setHeroBanners(data.heroBanners);
+    setPromoBanners(data.promoBanners);
+  };
+
+  const load = async ({ isManualRefresh }: { isManualRefresh: boolean }) => {
+    const attemptId = ++attemptIdRef.current;
+    if (retryTimerRef.current) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+
+    if (isManualRefresh) {
+      setLoading(true);
+    }
     setError(null);
 
-    try {
-      const [productsResult, categoriesResult] = await Promise.all([
-        fetchProductsWithStock(),
-        supabaseRest<any[]>(
-          'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
-        ),
-      ]);
-
-      let bannersResult: any[] = [];
+    let attempt = 0;
+    while (attemptIdRef.current === attemptId) {
       try {
-        bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url&is_active=eq.true&order=banner_type.asc,sort_order.asc');
-      } catch (bannerError) {
-        console.warn('Supabase banner table is unavailable; using local fallback banners.', bannerError);
-        bannersResult = fallbackHeroBanners.map((b, i) => ({ id: String(b.id), banner_type: 'hero', image_url: b.image, alt_text: b.alt, sort_order: i, link_url: null }))
-          .concat(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, banner_type: 'promo', image_url: image, alt_text: 'Promo banner', sort_order: i, link_url: null })));
+        const data = await fetchCatalogue();
+        if (attemptIdRef.current !== attemptId) return; // a newer load superseded this one
+        applyCatalogue(data);
+        setError(null);
+        setRetryCount(0);
+        setRetrying(false);
+        setLoading(false);
+        return;
+      } catch (err) {
+        if (attemptIdRef.current !== attemptId) return;
+        attempt += 1;
+        console.warn(`Supabase catalogue load failed (attempt ${attempt}); retrying — no demo data will be shown.`, err);
+        setError(err instanceof Error ? err.message : 'Supabase data load failed');
+        setRetryCount(attempt);
+        setRetrying(true);
+        // Loading (i.e. skeleton) stays true the entire time — real
+        // products/categories/prices are only ever shown once a live
+        // fetch actually succeeds.
+        const delay = RETRY_DELAYS_MS[Math.min(attempt - 1, RETRY_DELAYS_MS.length - 1)];
+        await new Promise<void>((resolve) => {
+          retryTimerRef.current = setTimeout(resolve, delay);
+        });
       }
-
-      const liveProducts = (productsResult ?? []).map(toProduct);
-
-      setProducts(liveProducts.length > 0 ? liveProducts : fallbackProducts);
-
-      const liveCategories = (categoriesResult ?? []).map((row: any) => ({
-        name: String(row.name ?? ''),
-        slug: String(row.slug ?? ''),
-        icon: String(row.image_url ?? ''),
-        hasSubmenu: false,
-      }));
-
-      setCategories(liveCategories.length > 0 ? liveCategories : fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
-
-      const liveBanners = (bannersResult ?? []).filter((row: any) => String(row.image_url ?? '').trim());
-      if (liveBanners.length > 0) {
-        const mapped = liveBanners.map((row: any, index: number) => ({
-          id: String(row.id ?? index),
-          image: String(row.image_url ?? '').trim(),
-          alt: String(row.alt_text ?? 'ফল বাজার ব্যানার'),
-          type: String(row.banner_type) === 'promo' ? 'promo' : 'hero',
-          sortOrder: Number(row.sort_order ?? index),
-          linkUrl: row.link_url ? String(row.link_url) : null,
-        })) as SiteBanner[];
-        setHeroBanners(mapped.filter((b) => b.type === 'hero'));
-        setPromoBanners(mapped.filter((b) => b.type === 'promo'));
-      }
-    } catch (err) {
-      console.warn('Supabase catalogue load failed; using local fallback data.', err);
-      setProducts(fallbackProducts);
-      setCategories(fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
-      setHeroBanners(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i })));
-      setPromoBanners(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, image, alt: 'Promo banner', type: 'promo', sortOrder: i })));
-      setError(err instanceof Error ? err.message : 'Supabase data load failed');
-    } finally {
-      setLoading(false);
     }
   };
 
+  const refresh = async () => {
+    await load({ isManualRefresh: true });
+  };
+
   useEffect(() => {
-    let ignore = false;
-    const fetchInitial = async () => {
-      try {
-        const [productsResult, categoriesResult] = await Promise.all([
-          fetchProductsWithStock(),
-          supabaseRest<any[]>(
-            'categories?select=id,name,slug,image_url,sort_order&is_active=eq.true&order=sort_order.asc'
-          ),
-        ]);
-
-        let bannersResult: any[] = [];
-        try {
-          bannersResult = await supabaseRest<any[]>('site_banners?select=id,banner_type,image_url,alt_text,sort_order,link_url&is_active=eq.true&order=banner_type.asc,sort_order.asc');
-        } catch (bannerError) {
-          console.warn('Supabase banner table is unavailable; using local fallback banners.', bannerError);
-          bannersResult = fallbackHeroBanners.map((b, i) => ({ id: String(b.id), banner_type: 'hero', image_url: b.image, alt_text: b.alt, sort_order: i, link_url: null }))
-            .concat(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, banner_type: 'promo', image_url: image, alt_text: 'Promo banner', sort_order: i, link_url: null })));
-        }
-
-        if (ignore) return;
-        const liveProducts = (productsResult ?? []).map(toProduct);
-        setProducts(liveProducts.length > 0 ? liveProducts : fallbackProducts);
-
-        const liveCategories = (categoriesResult ?? []).map((row: any) => ({
-          name: String(row.name ?? ''),
-          slug: String(row.slug ?? ''),
-          icon: String(row.image_url ?? ''),
-          hasSubmenu: false,
-        }));
-
-        setCategories(liveCategories.length > 0 ? liveCategories : fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
-
-        const liveBanners = (bannersResult ?? []).filter((row: any) => String(row.image_url ?? '').trim());
-        if (liveBanners.length > 0) {
-          const mapped = liveBanners.map((row: any, index: number) => ({
-            id: String(row.id ?? index),
-            image: String(row.image_url ?? '').trim(),
-            alt: String(row.alt_text ?? 'ফল বাজার ব্যানার'),
-            type: String(row.banner_type) === 'promo' ? 'promo' : 'hero',
-            sortOrder: Number(row.sort_order ?? index),
-            linkUrl: row.link_url ? String(row.link_url) : null,
-          })) as SiteBanner[];
-          setHeroBanners(mapped.filter((b) => b.type === 'hero'));
-          setPromoBanners(mapped.filter((b) => b.type === 'promo'));
-        }
-      } catch (err) {
-        if (!ignore) {
-          console.warn('Supabase catalogue load failed; using local fallback data.', err);
-          setProducts(fallbackProducts);
-          setCategories(fallbackCategories.map((c) => ({ name: c.name, slug: c.slug, icon: c.icon, hasSubmenu: c.hasSubmenu })));
-          setHeroBanners(fallbackHeroBanners.map((b, i) => ({ id: String(b.id), image: b.image, alt: b.alt, type: 'hero', sortOrder: i })));
-          setPromoBanners(fallbackPromoBanners.map((image, i) => ({ id: `fallback-promo-${i}`, image, alt: 'Promo banner', type: 'promo', sortOrder: i })));
-          setError(err instanceof Error ? err.message : 'Supabase data load failed');
-        }
-      } finally {
-        if (!ignore) {
-          setLoading(false);
-        }
+    load({ isManualRefresh: false });
+    return () => {
+      // Invalidate any in-flight attempt/retry so it can't set state after unmount.
+      attemptIdRef.current += 1;
+      if (retryTimerRef.current) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
       }
     };
-
-    fetchInitial();
-    return () => {
-      ignore = true;
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value = useMemo<SiteDataContextValue>(() => {
 
     // The database is the source of truth. These flags are encoded in the
     // product rows; use the current catalogue for all product sections.
-    // Until those flags are queried separately, preserve the existing
-    // visual grouping by matching the current site's featured IDs.
-    const flashIds = new Set(['246','245','244','243','242','241','240','239','238','237']);
-    const hotIds = new Set(['246','245','244','243','242','241','240','239','238','237']);
-
     return {
       products,
       categories,
@@ -245,10 +236,12 @@ export function SiteDataProvider({ children }: { children: React.ReactNode }) {
       heroBanners,
       promoBanners,
       loading,
+      retrying,
+      retryCount,
       error,
       refresh,
     };
-  }, [products, categories, heroBanners, promoBanners, loading, error]);
+  }, [products, categories, heroBanners, promoBanners, loading, retrying, retryCount, error]);
 
   return (
     <SiteDataContext.Provider value={value}>
