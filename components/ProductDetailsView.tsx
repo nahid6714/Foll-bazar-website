@@ -493,41 +493,46 @@ export default function ProductDetailsView({
         </div>
 
         <div className="prose prose-sm sm:prose text-gray-700 leading-relaxed flex flex-col gap-4">
-          <p>
-            গ্রীষ্মের উষ্ণ দিনে সতেজতার পরশ পেতে চান? আপনার জন্য নিয়ে এসেছি আমাদের বিশেষ সংগ্রহ –{' '}
-            <strong className="text-gray-900">{product.title}</strong>! টাটকা বাগান থেকে হাতে তুলে
-            আনা এই <strong className="text-gray-900">{categoryName}</strong> আপনার প্রতিটি
-            ইন্দ্রিয়কে মুগ্ধ করবে। এর মিষ্টি, রসালো শাঁস আর মন মাতানো সুগন্ধ আপনাকে অন্য জগতে ভাসিয়ে
-            নিয়ে যাবে।
-          </p>
+          {product.description ? (
+            <p className="whitespace-pre-line">{product.description}</p>
+          ) : (
+            <>
+              <p>
+                গ্রীষ্মের উষ্ণ দিনে সতেজতার পরশ পেতে চান? আপনার জন্য নিয়ে এসেছি আমাদের বিশেষ সংগ্রহ –{' '}
+                <strong className="text-gray-900">{product.title}</strong>! টাটকা বাগান থেকে হাতে তুলে
+                আনা এই <strong className="text-gray-900">{categoryName}</strong> আপনার প্রতিটি
+                ইন্দ্রিয়কে মুগ্ধ করবে। এর মিষ্টি, রসালো শাঁস আর মন মাতানো সুগন্ধ আপনাকে অন্য জগতে ভাসিয়ে
+                নিয়ে যাবে।
+              </p>
 
-          <h3 className="text-base font-bold text-gray-900 mt-2">
-            কেন বেছে নেবেন আমাদের {product.title}?
-          </h3>
+              <h3 className="text-base font-bold text-gray-900 mt-2">
+                কেন বেছে নেবেন আমাদের {product.title}?
+              </h3>
 
-          <ul className="list-disc list-inside space-y-2 text-gray-700">
-            <li>
-              <strong className="text-gray-900">অতুলনীয় স্বাদ:</strong> প্রতিটি লিচুতে পাবেন
-              প্রাকৃতিক মিষ্টি স্বাদ
-            </li>
-            <li>
-              <strong className="text-gray-900">আকর্ষণীয় গোলাপি রঙ:</strong> এর মন মুগ্ধ করা গোলাপি
-              রঙ আপনার প্লেটকে আরও সুন্দর করে তুলবে।
-            </li>
-            <li>
-              <strong className="text-gray-900">পরিবার ও বন্ধুদের জন্য:</strong> গরমের বিকেলে
-              পরিবার-বন্ধুদের সাথে উপভোগ করার জন্য আদর্শ। অতিথি আপ্যায়নে কিংবা উপহার হিসেবেও এটি
-              অতুলনীয়।
-            </li>
-          </ul>
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>
+                  <strong className="text-gray-900">অতুলনীয় স্বাদ:</strong> প্রতিটি লিচুতে পাবেন
+                  প্রাকৃতিক মিষ্টি স্বাদ
+                </li>
+                <li>
+                  <strong className="text-gray-900">আকর্ষণীয় গোলাপি রঙ:</strong> এর মন মুগ্ধ করা গোলাপি
+                  রঙ আপনার প্লেটকে আরও সুন্দর করে তুলবে।
+                </li>
+                <li>
+                  <strong className="text-gray-900">পরিবার ও বন্ধুদের জন্য:</strong> গরমের বিকেলে
+                  পরিবার-বন্ধুদের সাথে উপভোগ করার জন্য আদর্শ। অতিথি আপ্যায়নে কিংবা উপহার হিসেবেও এটি
+                  অতুলনীয়।
+                </li>
+              </ul>
 
-          <p className="mt-2 text-gray-800 font-medium">
-            স্টক সীমিত! এই গ্রীষ্মে সেরা মানের <strong className="text-[#df2d4d]">{product.title}</strong> এর
-            লোভনীয় স্বাদ উপভোগ করার সুযোগ হাতছাড়া করবেন না। এখনই অর্ডার করুন এবং সতেজতার এক নতুন
-            অভিজ্ঞতা লাভ করুন!
-          </p>
+              <p className="mt-2 text-gray-800 font-medium">
+                স্টক সীমিত! এই গ্রীষ্মে সেরা মানের <strong className="text-[#df2d4d]">{product.title}</strong> এর
+                লোভনীয় স্বাদ উপভোগ করার সুযোগ হাতছাড়া করবেন না। এখনই অর্ডার করুন এবং সতেজতার এক নতুন
+                অভিজ্ঞতা লাভ করুন!
+              </p>
+            </>
+          )}
         </div>
-      </section>
 
       {/* 3. Customer Reviews Card (Exact match for Screenshot 2 & 1) */}
       <section id="reviews-section" className="bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-7 mb-10 shadow-xs">

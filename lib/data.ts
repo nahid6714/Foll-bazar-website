@@ -14,6 +14,7 @@ export interface Product {
   categoryName?: string;
   slug?: string;
   stock?: number;
+  description?: string | null;
 }
 
 export interface CartItem {

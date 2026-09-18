@@ -66,12 +66,13 @@ function toProduct(row: any): Product {
     categoryName,
     slug: String(row.slug ?? '').trim() || undefined,
     stock: Math.max(0, Number(row.stock_quantity ?? 0)),
+    description: row.description ? String(row.description).trim() || null : null,
   };
 }
 
 
-const PRODUCTS_SELECT_WITH_STOCK = 'products?select=id,legacy_id,name,slug,image_url,old_price,price,stock_quantity,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
-const PRODUCTS_SELECT_LEGACY = 'products?select=id,legacy_id,name,slug,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
+const PRODUCTS_SELECT_WITH_STOCK = 'products?select=id,legacy_id,name,slug,description,image_url,old_price,price,stock_quantity,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
+const PRODUCTS_SELECT_LEGACY = 'products?select=id,legacy_id,name,slug,description,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
 
 async function fetchProductsWithStock() {
   try {
