@@ -533,6 +533,7 @@ export default function ProductDetailsView({
             </>
           )}
         </div>
+      </section>
 
       {/* 3. Customer Reviews Card (Exact match for Screenshot 2 & 1) */}
       <section id="reviews-section" className="bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-7 mb-10 shadow-xs">
