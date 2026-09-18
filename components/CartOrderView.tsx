@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import Image from 'next/image';
 import {
   ShoppingBag,
   Tag,
@@ -415,12 +414,12 @@ export default function CartOrderView({
                 <div key={item.id} className="flex items-center justify-between gap-3 p-2 rounded-xl bg-gray-50/70 border border-gray-100">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gray-200 bg-white">
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={item.image}
                         alt={item.title}
-                        fill
-                        className="object-cover"
-                        sizes="48px"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        loading="lazy"
                       />
                     </div>
                     <div className="min-w-0">

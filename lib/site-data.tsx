@@ -84,18 +84,43 @@ async function fetchProductsWithStock() {
 }
 
 export function SiteDataProvider({ children }: { children: React.ReactNode }) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<SiteCategory[]>(
-    fallbackCategories.map((c) => ({
-      name: c.name,
-      slug: c.slug,
-      icon: c.icon,
-      hasSubmenu: c.hasSubmenu,
-    }))
-  );
-  const [heroBanners, setHeroBanners] = useState<SiteBanner[]>([]);
-  const [promoBanners, setPromoBanners] = useState<SiteBanner[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Start with the bundled fallback catalogue (already inside the JS, zero
+  // network wait) instead of empty arrays. This means the homepage renders
+  // a REAL, fully-interactive HeroSlider and product cards on the very
+  // first paint — no "skeleton" screen blocking swipes/taps for a few
+  // seconds while Supabase responds. Once the live Supabase fetch resolves,
+  // it quietly replaces this data in the background.
+  const initialCategories = fallbackCategories.map((c) => ({
+    name: c.name,
+    slug: c.slug,
+    icon: c.icon,
+    hasSubmenu: c.hasSubmenu,
+  }));
+  const initialHeroBanners: SiteBanner[] = fallbackHeroBanners.map((b, i) => ({
+    id: String(b.id),
+    image: b.image,
+    alt: b.alt,
+    type: 'hero',
+    sortOrder: i,
+    linkUrl: null,
+  }));
+  const initialPromoBanners: SiteBanner[] = fallbackPromoBanners.map((image, i) => ({
+    id: `fallback-promo-${i}`,
+    image,
+    alt: 'Promo banner',
+    type: 'promo',
+    sortOrder: i,
+    linkUrl: null,
+  }));
+
+  const [products, setProducts] = useState<Product[]>(fallbackProducts);
+  const [categories, setCategories] = useState<SiteCategory[]>(initialCategories);
+  const [heroBanners, setHeroBanners] = useState<SiteBanner[]>(initialHeroBanners);
+  const [promoBanners, setPromoBanners] = useState<SiteBanner[]>(initialPromoBanners);
+  // Not "loading" on first paint — we already have usable fallback data to
+  // show and interact with immediately. This only flips true again for an
+  // explicit manual refresh() call, never for the initial background sync.
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = async () => {
