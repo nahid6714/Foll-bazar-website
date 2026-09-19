@@ -53,6 +53,7 @@ function toProduct(row: any): Product {
     id: String(row.legacy_id ?? row.id),
     title: String(row.name ?? ''),
     image: String(row.image_url ?? '').trim(),
+    galleryUrls: Array.isArray(row.gallery_urls) ? row.gallery_urls.map((u: any) => String(u ?? '').trim()).filter(Boolean) : [],
     price: String(price),
     oldPrice,
     soldText: Number(row.sold_quantity ?? 0) > 0
@@ -72,16 +73,26 @@ function toProduct(row: any): Product {
 }
 
 
-const PRODUCTS_SELECT_WITH_STOCK = 'products?select=id,legacy_id,name,slug,description,image_url,old_price,price,stock_quantity,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
-const PRODUCTS_SELECT_LEGACY = 'products?select=id,legacy_id,name,slug,description,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
+const PRODUCTS_SELECT_WITH_STOCK = 'products?select=id,legacy_id,name,slug,description,image_url,gallery_urls,old_price,price,stock_quantity,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
+const PRODUCTS_SELECT_LEGACY = 'products?select=id,legacy_id,name,slug,description,image_url,gallery_urls,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
 
 async function fetchProductsWithStock() {
   try {
     return await supabaseRest<any[]>(PRODUCTS_SELECT_WITH_STOCK);
-  } catch (error) {
-    // Keep the storefront usable if an older Supabase schema has not added stock_quantity yet.
-    console.warn('stock_quantity is unavailable; loading products without stock data.', error);
-    return await supabaseRest<any[]>(PRODUCTS_SELECT_LEGACY);
+  } catch (galleryOrStockError) {
+    // Support databases that have stock_quantity but have not run the gallery
+    // migration yet. The single-image storefront still works until migration
+    // is applied; once gallery_urls exists, the first query is used.
+    console.warn('gallery_urls/stock query unavailable; trying legacy product schema.', galleryOrStockError);
+    try {
+      return await supabaseRest<any[]>(PRODUCTS_SELECT_LEGACY);
+    } catch (legacyError) {
+      // A schema with neither gallery_urls nor stock_quantity can still serve
+      // the core catalogue.
+      console.warn('stock_quantity is unavailable; loading core product fields.', legacyError);
+      const coreSelect = 'products?select=id,legacy_id,name,slug,description,image_url,old_price,price,sold_quantity,discount_percent,is_featured,is_flash_sale,is_hot_deal,sort_order,category_id,categories(name,slug)&is_active=eq.true&order=sort_order.asc';
+      return await supabaseRest<any[]>(coreSelect);
+    }
   }
 }
 

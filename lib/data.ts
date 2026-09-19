@@ -2,6 +2,7 @@ export interface Product {
   id: string;
   title: string;
   image: string;
+  galleryUrls?: string[];
   price: string;
   oldPrice: string | null;
   soldText?: string | null;

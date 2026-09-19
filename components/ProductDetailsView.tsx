@@ -44,12 +44,13 @@ export default function ProductDetailsView({
   {
   const { products: allProductsList } = useSiteData();
 
-  // Use only the image currently stored on the product record.
-  // Never append legacy/demo images to a newly uploaded Cloudinary image.
+  // The admin app stores the complete Cloudinary gallery in `gallery_urls`.
+  // Keep the main image first and never mix in legacy/demo photos.
   const defaultGallery = useMemo(() => {
-    const imageUrl = String(product.image ?? '').trim();
-    return imageUrl ? [imageUrl] : [];
-  }, [product.image]);
+    const mainImage = String(product.image ?? '').trim();
+    const gallery = Array.isArray(product.galleryUrls) ? product.galleryUrls : [];
+    return Array.from(new Set([mainImage, ...gallery].map((url) => String(url ?? '').trim()).filter(Boolean)));
+  }, [product.image, product.galleryUrls]);
 
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
   const [isVideoActive, setIsVideoActive] = useState<boolean>(false);

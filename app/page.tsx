@@ -72,6 +72,7 @@ export default function HomePage() {
   const historyReadyRef = useRef(false);
   const skipNextHistoryPushRef = useRef(false);
   const handlingPopStateRef = useRef(false);
+  const initialRouteResolvedRef = useRef(false);
 
   useEffect(() => {
     productsRef.current = allProductsList;
@@ -84,25 +85,31 @@ export default function HomePage() {
   useEffect(() => {
     if (typeof window === 'undefined' || siteLoading) return;
     const path = window.location.pathname.replace(/\/+$/, '') || '/';
-    if (path === '/' ) return;
-    if (path === '/cart') { setCurrentView('cart'); return; }
-    if (path === '/track') { setCurrentView('track'); return; }
-    if (path === '/complaint') { setCurrentView('complaint'); return; }
+    if (path === '/' ) {
+      initialRouteResolvedRef.current = true;
+      return;
+    }
+    if (path === '/cart') { setCurrentView('cart'); initialRouteResolvedRef.current = true; return; }
+    if (path === '/track') { setCurrentView('track'); initialRouteResolvedRef.current = true; return; }
+    if (path === '/complaint') { setCurrentView('complaint'); initialRouteResolvedRef.current = true; return; }
     if (path === '/shop') {
       const category = new URLSearchParams(window.location.search).get('category');
       setShopCategory(category);
       setCurrentView('shop');
+      initialRouteResolvedRef.current = true;
       return;
     }
     if (path === '/login' || path === '/register') {
       setAuthInitialMode(path === '/register' ? 'register' : 'login');
       setCurrentView('auth');
+      initialRouteResolvedRef.current = true;
       return;
     }
     if (path.startsWith('/product/')) {
       const slug = decodeURIComponent(path.split('/').filter(Boolean).slice(1).join('/'));
       const found = allProductsList.find((item) => item.slug === slug || item.id === slug);
       if (found) { setViewingProduct(found); setCurrentView('product-detail'); }
+      initialRouteResolvedRef.current = true;
     }
   }, [siteLoading, allProductsList]);
 
@@ -118,8 +125,31 @@ export default function HomePage() {
     };
 
     if (!historyReadyRef.current) {
-      window.history.replaceState(initialState, '', window.location.href);
+      // Preserve the real URL/view when the page was opened directly (for
+      // example /product/some-slug). The route loader below will hydrate the
+      // matching view without creating a duplicate history entry.
+      const initialPath = window.location.pathname.replace(/\/+$/, '') || '/';
+      const initialView = initialPath.startsWith('/product/')
+        ? 'product-detail'
+        : initialPath === '/shop'
+          ? 'shop'
+          : initialPath === '/cart'
+            ? 'cart'
+            : initialPath === '/track'
+              ? 'track'
+              : initialPath === '/complaint'
+                ? 'complaint'
+                : (initialPath === '/login' || initialPath === '/register')
+                  ? 'auth'
+                  : 'home';
+      const initialAuthMode = initialPath === '/register' ? 'register' : 'login';
+      window.history.replaceState({
+        ...initialState,
+        view: initialView,
+        authMode: initialAuthMode,
+      }, '', window.location.href);
       historyReadyRef.current = true;
+      // Do not push a second entry for the initial URL.
       skipNextHistoryPushRef.current = true;
     }
 
@@ -193,7 +223,12 @@ export default function HomePage() {
         : currentView === 'complaint' ? '/complaint'
         : currentView === 'auth' ? `/${authInitialMode}`
         : '/';
-    window.history.pushState(state, '', path);
+    if (initialRouteResolvedRef.current) {
+      initialRouteResolvedRef.current = false;
+      window.history.replaceState(state, '', path);
+    } else {
+      window.history.pushState(state, '', path);
+    }
   }, [currentView, shopCategory, viewingProduct?.id, authInitialMode]);
 
   // Cart state
