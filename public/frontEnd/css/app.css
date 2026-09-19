@@ -1450,8 +1450,14 @@ body.notice-closed {
     transition: border-color 0.3s;
 }
 
-.product-card:hover {
-    border-color: var(--primary);
+/* Only apply hover styling on devices that actually support hovering
+   (a real mouse). On touch screens, an unguarded :hover rule makes the
+   browser treat the first tap on the card as "entering hover" instead of
+   a click, so the product only opens on a second tap. */
+@media (hover: hover) and (pointer: fine) {
+    .product-card:hover {
+        border-color: var(--primary);
+    }
 }
 
 .product-thumb {
@@ -6006,10 +6012,24 @@ html, body {
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
 }
 
-.product-card:hover {
-    transform: translateY(-2px) !important;
-    border-color: #fcd5dc !important;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+/* Only apply hover styling on devices that actually support hovering
+   (a real mouse). Touch screens have no real ":hover" state, so browsers
+   fake one on the first tap when an element has :hover styles that change
+   its appearance (here, transform/box-shadow) — that first tap just
+   "previews" the hover look instead of firing the click, and the product
+   page only opens on a second tap. Restricting these rules to
+   hover-capable pointers removes that fake-hover step on mobile, so a
+   single tap opens the product immediately. */
+@media (hover: hover) and (pointer: fine) {
+    .product-card:hover {
+        transform: translateY(-2px) !important;
+        border-color: #fcd5dc !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .product-card:hover .product-thumb-img {
+        transform: scale(1.05) !important;
+    }
 }
 
 .product-thumb {
@@ -6026,10 +6046,6 @@ html, body {
     object-fit: cover !important;
     display: block !important;
     transition: transform 0.3s ease !important;
-}
-
-.product-card:hover .product-thumb-img {
-    transform: scale(1.05) !important;
 }
 
 /* Deal badge matching screenshot (e.g. 81% ছাড়) */
