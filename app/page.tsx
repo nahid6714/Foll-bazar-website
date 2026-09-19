@@ -106,10 +106,34 @@ export default function HomePage() {
       return;
     }
     if (path.startsWith('/product/')) {
-      const slug = decodeURIComponent(path.split('/').filter(Boolean).slice(1).join('/'));
-      const found = allProductsList.find((item) => item.slug === slug || item.id === slug);
-      if (found) { setViewingProduct(found); setCurrentView('product-detail'); }
-      initialRouteResolvedRef.current = true;
+      // Product detail is a client-side view, so a hard refresh must first
+      // load the live catalogue and then resolve the URL against the same
+      // slug/id used when the product link was created. Do not immediately
+      // fall back to `/` while the catalogue is still empty.
+      let slug = '';
+      try {
+        slug = decodeURIComponent(path.split('/').filter(Boolean).slice(1).join('/'));
+      } catch {
+        slug = path.split('/').filter(Boolean).slice(1).join('/');
+      }
+      const normalizedSlug = slug.trim();
+      const found = allProductsList.find(
+        (item) => item.slug === normalizedSlug || item.id === normalizedSlug
+      );
+
+      if (found) {
+        setViewingProduct(found);
+        setCurrentView('product-detail');
+        initialRouteResolvedRef.current = true;
+      } else if (allProductsList.length > 0) {
+        // The catalogue has loaded and this product truly does not exist.
+        setViewingProduct(null);
+        setCurrentView('home');
+        initialRouteResolvedRef.current = true;
+      }
+      // If the catalogue is temporarily empty, keep the URL intact and let
+      // this effect retry when the live Supabase catalogue arrives.
+      return;
     }
   }, [siteLoading, allProductsList]);
 

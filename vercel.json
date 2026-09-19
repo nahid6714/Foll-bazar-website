@@ -1,12 +1,19 @@
 {
   "rewrites": [
     { "source": "/product/:slug", "destination": "/index.html" },
+    { "source": "/product/:slug/", "destination": "/index.html" },
     { "source": "/shop", "destination": "/index.html" },
+    { "source": "/shop/", "destination": "/index.html" },
     { "source": "/cart", "destination": "/index.html" },
+    { "source": "/cart/", "destination": "/index.html" },
     { "source": "/track", "destination": "/index.html" },
+    { "source": "/track/", "destination": "/index.html" },
     { "source": "/complaint", "destination": "/index.html" },
+    { "source": "/complaint/", "destination": "/index.html" },
     { "source": "/login", "destination": "/index.html" },
+    { "source": "/login/", "destination": "/index.html" },
     { "source": "/register", "destination": "/index.html" },
-    { "source": "/((?!_next/|.*\\.).*)", "destination": "/index.html" }
+    { "source": "/register/", "destination": "/index.html" },
+    { "source": "/((?!_next/|.*\.).*)", "destination": "/index.html" }
   ]
 }
