@@ -7084,3 +7084,126 @@ html, body {
         width: 100% !important;
     }
 }
+
+/* =========================================================
+   MOBILE HOME — NO HOVER EFFECTS
+   On phones, home-section cards/buttons must not visually change
+   when the browser emulates :hover after a touch.
+   Desktop hover behaviour remains unchanged.
+   ========================================================= */
+@media (max-width: 900px) {
+    .app-home .hero-slider:hover .hero-nav,
+    .app-home .hero-nav:hover {
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+
+    .app-home .category-menu-card:hover {
+        transform: none !important;
+        border-color: #eee !important;
+        box-shadow: none !important;
+    }
+
+    .app-home .category-menu-card:hover .category-menu-name {
+        color: #333 !important;
+    }
+
+    .app-home .brand-card:hover {
+        transform: none !important;
+        border-color: var(--border) !important;
+        box-shadow: none !important;
+    }
+
+    .app-home .brand-card:hover .brand-card-img img {
+        filter: grayscale(30%) !important;
+    }
+
+    .app-home .vendor-card:hover {
+        transform: none !important;
+        border-color: transparent !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,.07) !important;
+    }
+
+    .app-home .vendor-card:hover .vendor-visit-btn {
+        background: #f7f7f7 !important;
+        color: #444 !important;
+    }
+
+    .app-home .vendor-card:hover .vendor-visit-btn i {
+        transform: none !important;
+    }
+
+    .app-home .blog-card:hover {
+        transform: none !important;
+        border-color: #f0f0f0 !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,.07) !important;
+    }
+
+    .app-home .blog-card:hover .blog-card-img img {
+        transform: none !important;
+    }
+
+    .app-home .blog-card-title a:hover {
+        color: inherit !important;
+    }
+
+    .app-home .product-card:hover {
+        transform: none !important;
+        border-color: transparent !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .app-home .product-card:hover .product-thumb-img {
+        transform: none !important;
+    }
+
+    .app-home .product-title a:hover {
+        color: #1f2937 !important;
+    }
+
+    .app-home .btn-order:hover {
+        background: #df2d4d !important;
+        color: #ffffff !important;
+        transform: none !important;
+    }
+
+    .app-home .btn-cart:hover {
+        background: #ffffff !important;
+        color: #df2d4d !important;
+        transform: none !important;
+    }
+
+    .app-home .hot-deal-viewall:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        color: var(--primary) !important;
+    }
+
+    .app-home .flash-sale-viewall:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        color: #7a3b00 !important;
+    }
+
+    .app-home .blog-read-more:hover {
+        background: transparent !important;
+        color: var(--primary) !important;
+        transform: none !important;
+    }
+
+    .app-home .category-menu-card,
+    .app-home .brand-card,
+    .app-home .vendor-card,
+    .app-home .blog-card,
+    .app-home .product-card,
+    .app-home .product-thumb-img,
+    .app-home .brand-card-img img,
+    .app-home .blog-card-img img,
+    .app-home .btn-order,
+    .app-home .btn-cart,
+    .app-home .hot-deal-viewall,
+    .app-home .flash-sale-viewall,
+    .app-home .blog-read-more {
+        transition: none !important;
+    }
+}
